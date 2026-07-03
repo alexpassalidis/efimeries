@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Εφημερίες – Αύριο</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A;
+    --paper:#F7F3EA;
+    --board:#2F4B3C;
+    --chalk:#F2EFE3;
+    --gold:#D9A441;
+    --terracotta:#B5533C;
+    --muted:#5B6B7F;
+    --line:#E4DDCC;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Noto Sans", sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:28px 16px 60px;
+  }
+  .wrap{width:100%;max-width:520px;}
+
+  .school{
+    text-align:center;
+    font-size:13px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-weight:600;
+    margin-bottom:18px;
+  }
+
+  .board{
+    position:relative;
+    background:var(--board);
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(255,255,255,0.035) 0, transparent 40%),
+      radial-gradient(circle at 85% 75%, rgba(255,255,255,0.03) 0, transparent 45%);
+    border-radius:14px;
+    padding:30px 26px 26px;
+    box-shadow:0 18px 40px -18px rgba(27,42,74,0.45);
+  }
+  .pin{
+    position:absolute;
+    top:-11px;
+    left:50%;
+    transform:translateX(-50%);
+    width:22px;height:22px;
+    border-radius:50%;
+    background:var(--gold);
+    box-shadow:0 3px 6px rgba(0,0,0,0.25), inset 0 2px 3px rgba(255,255,255,0.35);
+  }
+  .eyebrow{
+    color:var(--gold);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    text-align:center;
+    margin-bottom:6px;
+  }
+  .weekday{
+    font-family:"Noto Serif", serif;
+    font-weight:700;
+    font-size:38px;
+    color:var(--chalk);
+    text-align:center;
+    line-height:1.1;
+  }
+  .fulldate{
+    text-align:center;
+    color:rgba(242,239,227,0.75);
+    font-size:14px;
+    margin-top:4px;
+    font-weight:500;
+  }
+
+  .card{
+    background:#fff;
+    border-radius:14px;
+    margin-top:18px;
+    padding:6px 0;
+    box-shadow:0 10px 26px -18px rgba(27,42,74,0.35);
+    border:1px solid var(--line);
+  }
+  .row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:16px 20px;
+    border-bottom:1px solid var(--line);
+  }
+  .row:last-child{border-bottom:none;}
+  .slot{
+    flex:0 0 auto;
+    width:34px;height:34px;
+    border-radius:50%;
+    background:var(--paper);
+    border:1.5px solid var(--board);
+    color:var(--board);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Noto Serif", serif;
+    font-weight:700;
+    font-size:15px;
+  }
+  .who{flex:1 1 auto;min-width:0;}
+  .name{
+    font-size:16.5px;
+    font-weight:600;
+    color:var(--ink);
+    overflow-wrap:anywhere;
+  }
+  .tag{
+    display:inline-block;
+    margin-top:4px;
+    font-size:12px;
+    font-weight:600;
+    color:var(--terracotta);
+    background:rgba(181,83,60,0.1);
+    border-radius:20px;
+    padding:2px 10px;
+  }
+
+  .empty{
+    text-align:center;
+    padding:34px 20px;
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.5;
+  }
+
+  .footer{
+    text-align:center;
+    margin-top:22px;
+    font-size:12px;
+    color:var(--muted);
+  }
+
+  @media (max-width:380px){
+    .weekday{font-size:32px;}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="school">— <span id="schoolName">Φόρτωση…</span> —</div>
+
+    <div class="board">
+      <div class="pin"></div>
+      <div class="eyebrow" id="relativeLabel">Εφημερίες αύριο</div>
+      <div class="weekday" id="weekdayLabel">—</div>
+      <div class="fulldate" id="fullDateLabel">—</div>
+    </div>
+
+    <div class="card" id="dutyCard"><div class="empty">Φόρτωση δεδομένων…</div></div>
+
+    <div class="footer" id="footerLabel"></div>
+  </div>
+
+<script>
+(function(){
+  const SCHOOL_DAYS = ["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή"];
+  const GREEK_MONTHS = ["Ιανουαρίου","Φεβρουαρίου","Μαρτίου","Απριλίου","Μαΐου","Ιουνίου",
+                         "Ιουλίου","Αυγούστου","Σεπτεμβρίου","Οκτωβρίου","Νοεμβρίου","Δεκεμβρίου"];
+  const DAY_KEYS = { "ΔΕΥΤΕΡΑ":"Δευτέρα","ΤΡΙΤΗ":"Τρίτη","ΤΕΤΑΡΤΗ":"Τετάρτη","ΠΕΜΠΤΗ":"Πέμπτη","ΠΑΡΑΣΚΕΥΗ":"Παρασκευή" };
+
+  function parseDataText(text){
+    const cfg = { base:{}, overrides:[] };
+    text.split(/\r?\n/).forEach(raw=>{
+      let line = raw.trim();
+      if(!line || line.startsWith("#")) return;
+      const eq = line.indexOf("=");
+      if(eq === -1) return;
+      const key = line.slice(0, eq).trim().toUpperCase();
+      const val = line.slice(eq+1).trim();
+      if(key === "CYCLE_START") cfg.cycleStart = val;
+      else if(key === "SCHOOL_NAME") cfg.schoolName = val;
+      else if(key === "LAST_UPDATED") cfg.lastUpdated = val;
+      else if(key === "OVERRIDE"){
+        const parts = val.split(",").map(s=>s.trim());
+        if(parts.length >= 3) cfg.overrides.push({date:parts[0], absent:parts[1], substitute:parts[2]});
+      } else if(DAY_KEYS[key]){
+        cfg.base[DAY_KEYS[key]] = val.split(/[;,]/).map(s=>s.trim());
+      }
+    });
+    return cfg;
+  }
+
+  function parseISODate(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
+  function toISODate(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+  function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
+  function nextSchoolDay(from){ let d=addDays(from,1); while(d.getDay()===0||d.getDay()===6){d=addDays(d,1);} return d; }
+  function weekOffset(date,cycleStart){
+    const diffDays = Math.round((date - cycleStart) / 86400000);
+    const weeks = Math.floor(diffDays/7);
+    return ((weeks % 4) + 4) % 4;
+  }
+  function rotatedAssignment(baseRow, offset){
+    const out=[];
+    for(let j=0;j<4;j++){
+      const idx = ((j - offset) % 4 + 4) % 4;
+      out.push(baseRow[idx] || "");
+    }
+    return out;
+  }
+
+  function render(cfg){
+    document.getElementById("schoolName").textContent = cfg.schoolName || "Σχολείο";
+
+    if(!cfg.cycleStart){
+      document.getElementById("dutyCard").innerHTML =
+        '<div class="empty">Λείπει το CYCLE_START στο αρχείο δεδομένων.</div>';
+      return;
+    }
+
+    const cycleStart = parseISODate(cfg.cycleStart);
+    const target = nextSchoolDay(new Date());
+    const dayName = SCHOOL_DAYS[target.getDay()-1];
+    const offset = weekOffset(target, cycleStart);
+    const baseRow = cfg.base[dayName] || ["","","",""];
+    let assignment = rotatedAssignment(baseRow, offset).map(name=>({name, coveredFor:null}));
+
+    const isoTarget = toISODate(target);
+    (cfg.overrides || []).forEach(ov=>{
+      if(ov.date === isoTarget){
+        assignment.forEach(slot=>{
+          if(slot.name === ov.absent){
+            slot.coveredFor = ov.absent;
+            slot.name = ov.substitute;
+          }
+        });
+      }
+    });
+
+    document.getElementById("weekdayLabel").textContent = dayName;
+    document.getElementById("fullDateLabel").textContent =
+      target.getDate() + " " + GREEK_MONTHS[target.getMonth()] + " " + target.getFullYear();
+
+    const isTomorrow = toISODate(addDays(new Date(),1)) === isoTarget;
+    document.getElementById("relativeLabel").textContent = isTomorrow ? "Εφημερίες αύριο" : "Εφημερίες επόμενης σχολικής ημέρας";
+
+    const card = document.getElementById("dutyCard");
+    const hasAnyName = assignment.some(a => a.name && a.name.trim() !== "");
+    if(!hasAnyName){
+      card.innerHTML = '<div class="empty">Το πρόγραμμα δεν έχει συμπληρωθεί ακόμη για την ημέρα «' + dayName + '».<br>Πρόσθεσε τα ονόματα στο data.txt.</div>';
+    } else {
+      card.innerHTML = assignment.map((slot,i)=>{
+        const tag = slot.coveredFor ? '<div class="tag">καλύπτει τον/την ' + slot.coveredFor + '</div>' : '';
+        const label = slot.name && slot.name.trim() !== "" ? slot.name : '—';
+        return '<div class="row"><div class="slot">'+(i+1)+'</div><div class="who"><div class="name">'+label+'</div>'+tag+'</div></div>';
+      }).join("");
+    }
+
+    document.getElementById("footerLabel").textContent = "Ενημερώθηκε: " + (cfg.lastUpdated || "—");
+  }
+
+  fetch("data.txt?_=" + Date.now())
+    .then(r => { if(!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+    .then(text => render(parseDataText(text)))
+    .catch(err => {
+      document.getElementById("dutyCard").innerHTML =
+        '<div class="empty">Δεν βρέθηκε το αρχείο data.txt δίπλα στο index.html, ή υπάρχει πρόβλημα σύνδεσης.<br><br>('+ err.message +')</div>';
+    });
+})();
+</script>
+</body>
+</html>
