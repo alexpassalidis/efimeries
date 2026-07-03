@@ -227,6 +227,14 @@
   </div>
 
   <div class="panel">
+    <h2>Κυκλική εναλλαγή θέσεων — τι έγινε στην πράξη (από την έναρξη έως σήμερα)</h2>
+    <div class="hint" id="auditNote" style="margin-top:0;"></div>
+    <div style="overflow-x:auto;margin-top:10px;">
+      <table id="auditTable"></table>
+    </div>
+  </div>
+
+  <div class="panel">
     <h2>Αποθήκευση</h2>
     <label>GitHub token (το βάζεις μία φορά, μένει αποθηκευμένο σε αυτή τη συσκευή)</label>
     <input type="password" id="token" placeholder="github_pat_...">
@@ -250,10 +258,22 @@
 (function(){
   const DAYS = ["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή"];
   const DAY_UP = ["ΔΕΥΤΕΡΑ","ΤΡΙΤΗ","ΤΕΤΑΡΤΗ","ΠΕΜΠΤΗ","ΠΑΡΑΣΚΕΥΗ"];
+  const POSITIONS = ["2ος Όροφος και Σκάλες","Ισόγειο","Αυλή","Βρύσες και Υπόγειο"];
   const state = { base:{}, overrides:[], schoolName:"", cycleStart:"", repo:null };
 
   // ---------- utils ----------
   function parseISODate(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
+  function parseAnyDate(s){
+    if(!s) return null;
+    s = s.trim();
+    let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if(m) return new Date(+m[1], +m[2]-1, +m[3]);
+    m = s.match(/^(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{4})$/);
+    if(m) return new Date(+m[3], +m[2]-1, +m[1]);
+    return null;
+  }
+  function fmtDMY(d){ return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear(); }
+  function isoToDMY(s){ const d=parseAnyDate(s); return d?fmtDMY(d):s; }
   function toISO(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
   function weekOffset(date,cycleStart){
     const diff = Math.round((date - cycleStart)/86400000);
@@ -284,12 +304,15 @@
       if(eq === -1) return;
       const key = line.slice(0,eq).trim().toUpperCase();
       const val = line.slice(eq+1).trim();
-      if(key==="CYCLE_START") cfg.cycleStart = val;
+      if(key==="CYCLE_START"){ const dt=parseAnyDate(val); cfg.cycleStart = dt ? toISO(dt) : ""; }
       else if(key==="SCHOOL_NAME") cfg.schoolName = val;
       else if(key==="LAST_UPDATED") cfg.lastUpdated = val;
       else if(key==="OVERRIDE"){
         const p = val.split(",").map(s=>s.trim());
-        if(p.length>=3) cfg.overrides.push({date:p[0],absent:p[1],substitute:p[2]});
+        if(p.length>=3){
+          const dt = parseAnyDate(p[0]);
+          if(dt) cfg.overrides.push({date:toISO(dt),absent:p[1],substitute:p[2]});
+        }
       } else {
         const i = DAY_UP.indexOf(key);
         if(i>-1) cfg.base[DAYS[i]] = val.split(/[;,]/).map(s=>s.trim());
@@ -302,7 +325,7 @@
     const L = [];
     L.push("# Αρχείο εφημεριών — δημιουργήθηκε από τη σελίδα Διαχείρισης");
     L.push("SCHOOL_NAME = " + state.schoolName);
-    L.push("CYCLE_START = " + state.cycleStart);
+    L.push("CYCLE_START = " + isoToDMY(state.cycleStart));
     L.push("");
     DAYS.forEach(d=>{
       const up = DAY_UP[DAYS.indexOf(d)];
@@ -311,10 +334,10 @@
     L.push("");
     state.overrides.forEach(ov=>{
       if(ov.date && ov.absent && ov.substitute)
-        L.push("OVERRIDE = " + ov.date + ", " + ov.absent + ", " + ov.substitute);
+        L.push("OVERRIDE = " + isoToDMY(ov.date) + ", " + ov.absent + ", " + ov.substitute);
     });
     L.push("");
-    L.push("LAST_UPDATED = " + toISO(new Date()));
+    L.push("LAST_UPDATED = " + fmtDMY(new Date()));
     L.push("");
     return L.join("\n");
   }
@@ -325,7 +348,7 @@
     const block = document.createElement("div");
     block.className = "dayblock";
     block.innerHTML = '<div class="dayname">'+d+'</div><div class="dayrow" data-day="'+d+'">' +
-      [1,2,3,4].map(p=>'<div><div class="poslabel">Θέση '+p+'</div><input type="text" data-pos="'+(p-1)+'" placeholder="Όνομα"></div>').join("") +
+      [1,2,3,4].map(p=>'<div><div class="poslabel">'+(p)+'. '+POSITIONS[p-1]+'</div><input type="text" data-pos="'+(p-1)+'" placeholder="Όνομα"></div>').join("") +
       '</div>';
     daysDiv.appendChild(block);
   });
@@ -460,8 +483,13 @@
     // 5. balance summary
     const balances = names.map(n=>({n, w:weekly[n]||0, c:covers[n]||0, o:covered[n]||0, b:(covers[n]||0)-(covered[n]||0)}));
     const owing = balances.filter(x=>x.b<0);
+    const owed = balances.filter(x=>x.b>0);
     if(owing.length)
       checks.push({ok:true,msg:"Χρωστάνε εφημερία (πρώτοι υποψήφιοι για επόμενη κάλυψη): "+owing.sort((a,b)=>a.b-b.b).map(x=>x.n+" ("+x.b+")").join(", ")});
+    if(owing.length && owed.length){
+      const ower = owing.sort((a,b)=>a.b-b.b)[0], lender = owed.sort((a,b)=>b.b-a.b)[0];
+      checks.push({ok:true,msg:"💡 Ξεπλήρωμα οφειλής: για να ισορροπήσει, ο/η «"+ower.n+"» μπορεί να αναλάβει μια τακτική εφημερία του/της «"+lender.n+"». Καταχώρησέ το ως κάλυψη: Απών = "+lender.n+", Κάλυψε = "+ower.n+", στην ημερομηνία που ο/η "+lender.n+" έχει κανονικά εφημερία. Το ισοζύγιο θα μηδενίσει μόνο του."});
+    }
     if(!checks.some(c=>!c.ok))
       checks.unshift({ok:true,msg:"Όλα σωστά — το σύστημα είναι δίκαιο και συνεπές. ✔"});
 
@@ -480,6 +508,51 @@
     } else tbl.innerHTML = "";
 
     updateSuggestion();
+    renderAudit();
+  }
+
+  // ---------- rotation audit: what actually happened since cycle start ----------
+  function renderAudit(){
+    const note = document.getElementById("auditNote");
+    const tbl = document.getElementById("auditTable");
+    tbl.innerHTML = ""; note.textContent = "";
+    const names = allNames();
+    if(!state.cycleStart || !names.length){
+      note.textContent = "Συμπλήρωσε το πρόγραμμα και την ημερομηνία έναρξης για να ενεργοποιηθεί ο έλεγχος.";
+      return;
+    }
+    const cs = parseISODate(state.cycleStart);
+    const today = new Date(); today.setHours(0,0,0,0);
+    if(today < cs){
+      note.textContent = "Ο κύκλος ξεκινά στις "+state.cycleStart+" — ο απολογισμός θα εμφανίζεται από τότε και μετά.";
+      return;
+    }
+    const mat = {}; names.forEach(n=>mat[n]=[0,0,0,0]);
+    for(let d = new Date(cs); d <= today; d = new Date(d.getTime()+86400000)){
+      const wd = d.getDay();
+      if(wd===0 || wd===6) continue;
+      const dayName = DAYS[wd-1];
+      const base = state.base[dayName] || [];
+      if(!base.some(x=>x)) continue;
+      let duty = rotated(base, weekOffset(d, cs));
+      const iso = toISO(d);
+      state.overrides.forEach(ov=>{
+        if(ov.date===iso) duty = duty.map(n=> n===ov.absent ? ov.substitute : n);
+      });
+      duty.forEach((n,j)=>{ if(n && mat[n]) mat[n][j]++; });
+    }
+    let warnAny = false;
+    tbl.innerHTML = "<tr><th>Καθηγητής/τρια</th>" + POSITIONS.map(p=>"<th>"+p+"</th>").join("") + "<th>Σύνολο</th><th></th></tr>" +
+      names.map(n=>{
+        const r = mat[n], tot = r[0]+r[1]+r[2]+r[3];
+        const even = (Math.max(...r) - Math.min(...r)) <= 1;
+        if(!even) warnAny = true;
+        return "<tr><td>"+esc(n)+"</td>"+r.map(v=>"<td>"+v+"</td>").join("")+
+               "<td><b>"+tot+"</b></td><td>"+(even?"<span class='pos'>✔</span>":"<span class='neg'>⚠</span>")+"</td></tr>";
+      }).join("");
+    note.textContent = warnAny
+      ? "⚠ Κάποιοι δεν έχουν περάσει (ακόμη) ισομερώς από όλες τις θέσεις — συνήθως οφείλεται σε καλύψεις και εξισορροπείται στη συνέχεια του κύκλου. Δες ποιοι έχουν ⚠ και λάβε το υπόψη στην επόμενη ανάθεση κάλυψης."
+      : "✔ Μέχρι σήμερα, όλοι έχουν περάσει ισομερώς από όλες τις θέσεις (μαζί με τις καλύψεις).";
   }
 
   // ---------- suggestion for newest incomplete override ----------

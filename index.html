@@ -224,7 +224,7 @@
     display:flex;
     align-items:center;
     gap:14px;
-    padding:15px 18px;
+    padding:17px 18px;
     background:#fff;
     border-radius:18px;
     box-shadow:0 10px 22px -16px rgba(27,42,74,0.28);
@@ -244,10 +244,19 @@
     font-size:14px;
   }
   .who{flex:1 1 auto;min-width:0;}
-  .name{
-    font-size:16px;
+  .posname{
+    font-family:"Noto Serif", serif;
+    font-size:17px;
     font-weight:700;
-    color:var(--ink);
+    letter-spacing:.005em;
+    color:var(--board);
+    margin-bottom:3px;
+    line-height:1.25;
+  }
+  .name{
+    font-size:14.5px;
+    font-weight:600;
+    color:var(--muted);
     overflow-wrap:anywhere;
   }
   .tag{
@@ -299,12 +308,7 @@
   </div>
 
   <div class="weeknav">
-    <button class="navbtn" id="prevWeek" aria-label="Προηγούμενη εβδομάδα">‹</button>
-    <div class="weeklabel">
-      <span id="weekRange">—</span>
-      <span class="cur" id="backToCurrent" style="display:none;">↩ Τρέχουσα εβδομάδα</span>
-    </div>
-    <button class="navbtn" id="nextWeek" aria-label="Επόμενη εβδομάδα">›</button>
+    <div class="weeklabel"><span id="weekRange">—</span></div>
   </div>
 
   <div class="chips" id="chips"></div>
@@ -318,12 +322,23 @@
 (function(){
   const DAYS = ["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή"];
   const DAYS_SHORT = ["Δευ","Τρί","Τετ","Πέμ","Παρ"];
+  const POSITIONS = ["2ος Όροφος και Σκάλες","Ισόγειο","Αυλή","Βρύσες και Υπόγειο"];
   const DAY_KEYS = { "ΔΕΥΤΕΡΑ":"Δευτέρα","ΤΡΙΤΗ":"Τρίτη","ΤΕΤΑΡΤΗ":"Τετάρτη","ΠΕΜΠΤΗ":"Πέμπτη","ΠΑΡΑΣΚΕΥΗ":"Παρασκευή" };
   const MONTHS = ["Ιανουαρίου","Φεβρουαρίου","Μαρτίου","Απριλίου","Μαΐου","Ιουνίου",
                   "Ιουλίου","Αυγούστου","Σεπτεμβρίου","Οκτωβρίου","Νοεμβρίου","Δεκεμβρίου"];
 
   /* ---------- helpers ---------- */
   function parseISO(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
+  function parseAnyDate(s){
+    if(!s) return null;
+    s = s.trim();
+    let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);            // yyyy-mm-dd
+    if(m) return new Date(+m[1], +m[2]-1, +m[3]);
+    m = s.match(/^(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{4})$/);   // dd/mm/yyyy, dd.mm.yyyy, dd-mm-yyyy
+    if(m) return new Date(+m[3], +m[2]-1, +m[1]);
+    return null;
+  }
+  function fmtDMY(d){ return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear(); }
   function toISO(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
   function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
   function mondayOf(d){ return addDays(d, -((d.getDay()+6)%7)); }
@@ -349,11 +364,14 @@
       if(eq === -1) return;
       const key = line.slice(0,eq).trim().toUpperCase();
       const val = line.slice(eq+1).trim();
-      if(key==="CYCLE_START") cfg.cycleStart = val;
+      if(key==="CYCLE_START"){ const dt=parseAnyDate(val); cfg.cycleStart = dt ? toISO(dt) : null; }
       else if(key==="LAST_UPDATED") cfg.lastUpdated = val;
       else if(key==="OVERRIDE"){
         const p = val.split(",").map(s=>s.trim());
-        if(p.length>=3) cfg.overrides.push({date:p[0],absent:p[1],substitute:p[2]});
+        if(p.length>=3){
+          const dt = parseAnyDate(p[0]);
+          if(dt) cfg.overrides.push({date:toISO(dt),absent:p[1],substitute:p[2]});
+        }
       } else if(DAY_KEYS[key]){
         cfg.base[DAY_KEYS[key]] = val.split(/[;,]/).map(s=>s.trim());
       }
@@ -406,9 +424,6 @@
       shownMonday.getDate() + (sameMonth?"":" "+MONTHS[shownMonday.getMonth()]) +
       " – " + fri.getDate() + " " + MONTHS[fri.getMonth()] + " " + fri.getFullYear();
 
-    document.getElementById("backToCurrent").style.display =
-      (toISO(shownMonday)===toISO(defaultMonday)) ? "none" : "inline";
-
     // chips
     const chips = document.getElementById("chips");
     chips.innerHTML = DAYS.map((d,i)=>{
@@ -432,29 +447,20 @@
       card.innerHTML = a.map((s,i)=>{
         const tag = s.coveredFor ? '<div class="tag">καλύπτει τον/την '+esc(s.coveredFor)+'</div>' : '';
         const label = s.name && s.name.trim()!=="" ? esc(s.name) : "—";
-        return '<div class="row"><div class="slot">'+(i+1)+'</div><div class="who"><div class="name">'+label+'</div>'+tag+'</div></div>';
+        return '<div class="row"><div class="slot">'+(i+1)+'</div><div class="who"><div class="posname">'+POSITIONS[i]+'</div><div class="name">'+label+'</div>'+tag+'</div></div>';
       }).join("");
     }
 
+    const lu = (cfg && cfg.lastUpdated) || "";
+    const luD = parseAnyDate(lu);
     document.getElementById("footerLabel").textContent =
-      "Ενημερώθηκε: " + ((cfg && cfg.lastUpdated) || "—");
+      "Ενημερώθηκε: " + (luD ? fmtDMY(luD) : (lu || "—"));
   }
 
   /* ---------- events ---------- */
   document.getElementById("chips").addEventListener("click", e=>{
     const b = e.target.closest(".chip");
     if(b){ selIdx = +b.dataset.i; render(); }
-  });
-  document.getElementById("prevWeek").addEventListener("click", ()=>{
-    shownMonday = addDays(shownMonday,-7); render();
-  });
-  document.getElementById("nextWeek").addEventListener("click", ()=>{
-    shownMonday = addDays(shownMonday,7); render();
-  });
-  document.getElementById("backToCurrent").addEventListener("click", ()=>{
-    shownMonday = new Date(defaultMonday);
-    selIdx = defaultTarget.getDay()-1;
-    render();
   });
 
   /* ---------- load ---------- */
