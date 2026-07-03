@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Εφημερίες – Αύριο</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A;
+    --paper:#F7F3EA;
+    --board:#2F4B3C;
+    --board2:#3E6152;
+    --chalk:#F2EFE3;
+    --gold:#D9A441;
+    --terracotta:#B5533C;
+    --muted:#5B6B7F;
+    --line:#E4DDCC;
+    --accent-grad:linear-gradient(135deg, var(--gold), var(--terracotta));
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 20% 0%, rgba(217,164,65,0.12) 0, transparent 45%),
+      radial-gradient(circle at 100% 100%, rgba(47,75,60,0.10) 0, transparent 50%),
+      var(--paper);
+    color:var(--ink);
+    font-family:"Noto Sans", sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:28px 16px 60px;
+  }
+  .wrap{width:100%;max-width:480px;animation:riseIn .5s cubic-bezier(.16,1,.3,1) both;}
+
+  @keyframes riseIn{
+    from{opacity:0;transform:translateY(14px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  @keyframes fadeIn{
+    from{opacity:0;transform:translateY(4px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  .school{
+    text-align:center;
+    font-size:12.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-weight:700;
+    margin-bottom:16px;
+  }
+  .school .dash{
+    color:var(--gold);
+    margin:0 8px;
+    opacity:.7;
+  }
+  .school sup{
+    font-size:.65em;
+    margin-left:1px;
+  }
+
+  .board{
+    position:relative;
+    background:linear-gradient(150deg, var(--board2) 0%, var(--board) 65%);
+    border-radius:26px;
+    padding:34px 28px 30px;
+    box-shadow:0 24px 48px -20px rgba(27,42,74,0.5);
+  }
+  .board::after{
+    content:"";
+    position:absolute;
+    top:0;left:0;right:0;
+    height:60%;
+    border-radius:26px 26px 60% 60% / 26px 26px 40px 40px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.09), transparent);
+    pointer-events:none;
+  }
+  .pin{
+    position:absolute;
+    top:-4px;
+    left:50%;
+    transform:translateX(-50%);
+    width:44px;height:5px;
+    border-radius:20px;
+    background:var(--accent-grad);
+    box-shadow:0 4px 14px -2px rgba(217,164,65,0.6);
+  }
+  .eyebrow{
+    display:inline-flex;
+    margin:0 auto 14px;
+    color:var(--gold);
+    font-size:11.5px;
+    font-weight:700;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    background:rgba(217,164,65,0.14);
+    border:1px solid rgba(217,164,65,0.28);
+    border-radius:20px;
+    padding:5px 14px;
+  }
+  .eyebrowWrap{display:flex;justify-content:center;}
+  .weekday{
+    font-family:"Noto Serif", serif;
+    font-weight:700;
+    font-size:42px;
+    letter-spacing:-.01em;
+    color:var(--chalk);
+    text-align:center;
+    line-height:1.1;
+  }
+  .fulldate{
+    text-align:center;
+    color:rgba(242,239,227,0.75);
+    font-size:14px;
+    margin-top:6px;
+    font-weight:500;
+  }
+
+  .card{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:22px;
+  }
+  .row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:15px 18px;
+    background:#fff;
+    border-radius:18px;
+    box-shadow:0 8px 20px -14px rgba(27,42,74,0.25);
+    animation:fadeIn .4s cubic-bezier(.16,1,.3,1) both;
+  }
+  .slot{
+    flex:0 0 auto;
+    width:34px;height:34px;
+    border-radius:50%;
+    background:var(--accent-grad);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Noto Sans", sans-serif;
+    font-weight:700;
+    font-size:14px;
+  }
+  .who{flex:1 1 auto;min-width:0;}
+  .name{
+    font-size:16px;
+    font-weight:600;
+    color:var(--ink);
+    overflow-wrap:anywhere;
+  }
+  .tag{
+    display:inline-block;
+    margin-top:5px;
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--terracotta);
+    background:rgba(181,83,60,0.1);
+    border-radius:20px;
+    padding:2px 10px;
+  }
+
+  .empty{
+    text-align:center;
+    padding:38px 22px;
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.6;
+    background:#fff;
+    border-radius:18px;
+    margin-top:22px;
+    box-shadow:0 8px 20px -14px rgba(27,42,74,0.25);
+  }
+
+  .footer{
+    text-align:center;
+    margin-top:26px;
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:.02em;
+  }
+
+  @media (max-width:380px){
+    .weekday{font-size:34px;}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="school"><span class="dash">—</span><span id="schoolName">Φόρτωση…</span><span class="dash">—</span></div>
+
+    <div class="board">
+      <div class="pin"></div>
+      <div class="eyebrowWrap"><div class="eyebrow" id="relativeLabel">Εφημερίες</div></div>
+      <div class="weekday" id="weekdayLabel">—</div>
+      <div class="fulldate" id="fullDateLabel">—</div>
+    </div>
+
+    <div class="card" id="dutyCard"><div class="empty">Φόρτωση δεδομένων…</div></div>
+
+    <div class="footer" id="footerLabel"></div>
+  </div>
+
+<script>
+(function(){
+  const SCHOOL_DAYS = ["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή"];
+  const GREEK_MONTHS = ["Ιανουαρίου","Φεβρουαρίου","Μαρτίου","Απριλίου","Μαΐου","Ιουνίου",
+                         "Ιουλίου","Αυγούστου","Σεπτεμβρίου","Οκτωβρίου","Νοεμβρίου","Δεκεμβρίου"];
+  const DAY_KEYS = { "ΔΕΥΤΕΡΑ":"Δευτέρα","ΤΡΙΤΗ":"Τρίτη","ΤΕΤΑΡΤΗ":"Τετάρτη","ΠΕΜΠΤΗ":"Πέμπτη","ΠΑΡΑΣΚΕΥΗ":"Παρασκευή" };
+
+  function parseDataText(text){
+    const cfg = { base:{}, overrides:[] };
+    text.split(/\r?\n/).forEach(raw=>{
+      let line = raw.trim();
+      if(!line || line.startsWith("#")) return;
+      const eq = line.indexOf("=");
+      if(eq === -1) return;
+      const key = line.slice(0, eq).trim().toUpperCase();
+      const val = line.slice(eq+1).trim();
+      if(key === "CYCLE_START") cfg.cycleStart = val;
+      else if(key === "SCHOOL_NAME") cfg.schoolName = val;
+      else if(key === "LAST_UPDATED") cfg.lastUpdated = val;
+      else if(key === "OVERRIDE"){
+        const parts = val.split(",").map(s=>s.trim());
+        if(parts.length >= 3) cfg.overrides.push({date:parts[0], absent:parts[1], substitute:parts[2]});
+      } else if(DAY_KEYS[key]){
+        cfg.base[DAY_KEYS[key]] = val.split(/[;,]/).map(s=>s.trim());
+      }
+    });
+    return cfg;
+  }
+
+  function parseISODate(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
+  function toISODate(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+  function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
+  function nextSchoolDay(from){ let d=addDays(from,1); while(d.getDay()===0||d.getDay()===6){d=addDays(d,1);} return d; }
+  function weekOffset(date,cycleStart){
+    const diffDays = Math.round((date - cycleStart) / 86400000);
+    const weeks = Math.floor(diffDays/7);
+    return ((weeks % 4) + 4) % 4;
+  }
+  function rotatedAssignment(baseRow, offset){
+    const out=[];
+    for(let j=0;j<4;j++){
+      const idx = ((j - offset) % 4 + 4) % 4;
+      out.push(baseRow[idx] || "");
+    }
+    return out;
+  }
+
+  function escapeHTML(s){
+    return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+  function formatOrdinals(text){
+    return escapeHTML(text).replace(/(\d+)([οή])/g, '$1<sup>$2</sup>');
+  }
+
+  function render(cfg){
+    document.getElementById("schoolName").innerHTML = formatOrdinals(cfg.schoolName || "Σχολείο");
+
+    if(!cfg.cycleStart){
+      document.getElementById("dutyCard").innerHTML =
+        '<div class="empty">Λείπει το CYCLE_START στο αρχείο δεδομένων.</div>';
+      return;
+    }
+
+    const cycleStart = parseISODate(cfg.cycleStart);
+    const target = nextSchoolDay(new Date());
+    const dayName = SCHOOL_DAYS[target.getDay()-1];
+    const offset = weekOffset(target, cycleStart);
+    const baseRow = cfg.base[dayName] || ["","","",""];
+    let assignment = rotatedAssignment(baseRow, offset).map(name=>({name, coveredFor:null}));
+
+    const isoTarget = toISODate(target);
+    (cfg.overrides || []).forEach(ov=>{
+      if(ov.date === isoTarget){
+        assignment.forEach(slot=>{
+          if(slot.name === ov.absent){
+            slot.coveredFor = ov.absent;
+            slot.name = ov.substitute;
+          }
+        });
+      }
+    });
+
+    document.getElementById("weekdayLabel").textContent = dayName;
+    document.getElementById("fullDateLabel").textContent =
+      target.getDate() + " " + GREEK_MONTHS[target.getMonth()] + " " + target.getFullYear();
+
+    document.getElementById("relativeLabel").textContent = "Εφημερίες";
+
+    const card = document.getElementById("dutyCard");
+    const hasAnyName = assignment.some(a => a.name && a.name.trim() !== "");
+    if(!hasAnyName){
+      card.innerHTML = '<div class="empty">Το πρόγραμμα δεν έχει συμπληρωθεί ακόμη για την ημέρα «' + dayName + '».<br>Πρόσθεσε τα ονόματα στο data.txt.</div>';
+    } else {
+      card.innerHTML = assignment.map((slot,i)=>{
+        const tag = slot.coveredFor ? '<div class="tag">καλύπτει τον/την ' + escapeHTML(slot.coveredFor) + '</div>' : '';
+        const label = slot.name && slot.name.trim() !== "" ? escapeHTML(slot.name) : '—';
+        return '<div class="row"><div class="slot">'+(i+1)+'</div><div class="who"><div class="name">'+label+'</div>'+tag+'</div></div>';
+      }).join("");
+    }
+
+    document.getElementById("footerLabel").textContent = "Ενημερώθηκε: " + (cfg.lastUpdated || "—");
+  }
+
+  fetch("data.txt?_=" + Date.now())
+    .then(r => { if(!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+    .then(text => render(parseDataText(text)))
+    .catch(err => {
+      document.getElementById("dutyCard").innerHTML =
+        '<div class="empty">Δεν βρέθηκε το αρχείο data.txt δίπλα στο index.html, ή υπάρχει πρόβλημα σύνδεσης.<br><br>('+ err.message +')</div>';
+    });
+})();
+</script>
+</body>
+</html>
