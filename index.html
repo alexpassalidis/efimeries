@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Εφημερίες – 3ο Γυμνάσιο Πολίχνης</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@600;700&family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A;
+    --paper:#F6F2E9;
+    --board:#2F4B3C;
+    --board2:#3E6152;
+    --chalk:#F2EFE3;
+    --gold:#D9A441;
+    --terracotta:#B5533C;
+    --muted:#6B7789;
+    --line:#E7E0CF;
+    --accent-grad:linear-gradient(135deg, var(--gold), var(--terracotta));
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(900px 420px at 15% -5%, rgba(217,164,65,0.14) 0, transparent 60%),
+      radial-gradient(800px 500px at 110% 110%, rgba(47,75,60,0.12) 0, transparent 55%),
+      var(--paper);
+    color:var(--ink);
+    font-family:"Noto Sans", sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:26px 14px 70px;
+  }
+  .wrap{width:100%;max-width:500px;animation:riseIn .55s cubic-bezier(.16,1,.3,1) both;}
+
+  @keyframes riseIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes fadeSlide{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+
+  /* ---------- header ---------- */
+  .school{
+    text-align:center;
+    font-size:12.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-weight:700;
+    margin-bottom:16px;
+  }
+  .school .dash{color:var(--gold);margin:0 9px;opacity:.75;}
+  .school sup{font-size:.62em;}
+
+  /* ---------- board / hero ---------- */
+  .board{
+    position:relative;
+    background:linear-gradient(150deg, var(--board2) 0%, var(--board) 62%);
+    border-radius:26px;
+    padding:26px 22px 22px;
+    box-shadow:0 26px 52px -22px rgba(27,42,74,0.5);
+    overflow:hidden;
+  }
+  .board::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(420px 200px at 85% -10%, rgba(255,255,255,0.10) 0, transparent 60%),
+      radial-gradient(300px 160px at 0% 110%, rgba(217,164,65,0.12) 0, transparent 60%);
+    pointer-events:none;
+  }
+  .ribbon{
+    position:absolute;
+    top:0;left:50%;
+    transform:translateX(-50%);
+    width:52px;height:5px;
+    border-radius:0 0 12px 12px;
+    background:var(--accent-grad);
+    box-shadow:0 4px 16px -2px rgba(217,164,65,0.65);
+  }
+  .eyebrowWrap{display:flex;justify-content:center;margin-bottom:14px;}
+  .eyebrow{
+    color:var(--gold);
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    background:rgba(217,164,65,0.13);
+    border:1px solid rgba(217,164,65,0.3);
+    border-radius:20px;
+    padding:5px 15px;
+  }
+  .weekday{
+    font-family:"Noto Serif", serif;
+    font-weight:700;
+    font-size:40px;
+    letter-spacing:-.01em;
+    color:var(--chalk);
+    text-align:center;
+    line-height:1.08;
+  }
+  .fulldate{
+    text-align:center;
+    color:rgba(242,239,227,0.72);
+    font-size:14px;
+    margin-top:5px;
+    font-weight:500;
+  }
+  .badge{
+    display:inline-block;
+    margin-left:8px;
+    font-size:10.5px;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--board);
+    background:var(--gold);
+    border-radius:20px;
+    padding:2px 9px;
+    vertical-align:2px;
+  }
+
+  /* ---------- week nav ---------- */
+  .weeknav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin:18px 2px 10px;
+  }
+  .navbtn{
+    flex:0 0 auto;
+    width:38px;height:38px;
+    border:none;
+    border-radius:12px;
+    background:#fff;
+    color:var(--board);
+    font-size:17px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 6px 16px -10px rgba(27,42,74,0.35);
+    transition:background .15s ease;
+  }
+  .navbtn:hover{background:var(--chalk);}
+  .navbtn:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+  .weeklabel{
+    flex:1 1 auto;
+    text-align:center;
+    font-size:13px;
+    font-weight:700;
+    color:var(--muted);
+  }
+  .weeklabel .cur{
+    display:block;
+    font-size:11px;
+    font-weight:700;
+    color:var(--gold);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    margin-top:2px;
+    cursor:pointer;
+  }
+  .weeklabel .cur:hover{text-decoration:underline;}
+
+  /* ---------- day chips ---------- */
+  .chips{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:7px;
+    margin-bottom:16px;
+  }
+  .chip{
+    border:none;
+    background:#fff;
+    border-radius:14px;
+    padding:9px 4px 8px;
+    cursor:pointer;
+    text-align:center;
+    box-shadow:0 6px 16px -12px rgba(27,42,74,0.3);
+    transition:transform .15s ease, background .15s ease;
+    font-family:inherit;
+    position:relative;
+  }
+  .chip:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+  .chip .d{
+    display:block;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .chip .n{
+    display:block;
+    font-family:"Noto Serif", serif;
+    font-size:17px;
+    font-weight:700;
+    color:var(--ink);
+    margin-top:2px;
+  }
+  .chip.today::after{
+    content:"";
+    position:absolute;
+    bottom:5px;left:50%;
+    transform:translateX(-50%);
+    width:5px;height:5px;
+    border-radius:50%;
+    background:var(--terracotta);
+  }
+  .chip.sel{
+    background:var(--board);
+  }
+  .chip.sel .d{color:rgba(242,239,227,0.75);}
+  .chip.sel .n{color:var(--chalk);}
+  .chip.sel.today::after{background:var(--gold);}
+
+  /* ---------- duty rows ---------- */
+  .card{display:flex;flex-direction:column;gap:10px;}
+  .row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:15px 18px;
+    background:#fff;
+    border-radius:18px;
+    box-shadow:0 10px 22px -16px rgba(27,42,74,0.28);
+    animation:fadeSlide .35s cubic-bezier(.16,1,.3,1) both;
+  }
+  .row:nth-child(2){animation-delay:.04s;}
+  .row:nth-child(3){animation-delay:.08s;}
+  .row:nth-child(4){animation-delay:.12s;}
+  .slot{
+    flex:0 0 auto;
+    width:36px;height:36px;
+    border-radius:12px;
+    background:var(--accent-grad);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;
+    font-size:14px;
+  }
+  .who{flex:1 1 auto;min-width:0;}
+  .name{
+    font-size:16px;
+    font-weight:700;
+    color:var(--ink);
+    overflow-wrap:anywhere;
+  }
+  .tag{
+    display:inline-block;
+    margin-top:5px;
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--terracotta);
+    background:rgba(181,83,60,0.1);
+    border:1px solid rgba(181,83,60,0.18);
+    border-radius:20px;
+    padding:2px 10px;
+  }
+
+  .empty{
+    text-align:center;
+    padding:36px 22px;
+    color:var(--muted);
+    font-size:14.5px;
+    line-height:1.6;
+    background:#fff;
+    border-radius:18px;
+    box-shadow:0 10px 22px -16px rgba(27,42,74,0.28);
+  }
+
+  .footer{
+    text-align:center;
+    margin-top:24px;
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:.02em;
+  }
+
+  @media (max-width:380px){
+    .weekday{font-size:33px;}
+    .chip .n{font-size:15px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="school"><span class="dash">—</span>3<sup>ο</sup> Γυμνάσιο Πολίχνης<span class="dash">—</span></div>
+
+  <div class="board">
+    <div class="ribbon"></div>
+    <div class="eyebrowWrap"><div class="eyebrow">Εφημερίες</div></div>
+    <div class="weekday" id="weekdayLabel">—</div>
+    <div class="fulldate" id="fullDateLabel">—</div>
+  </div>
+
+  <div class="weeknav">
+    <button class="navbtn" id="prevWeek" aria-label="Προηγούμενη εβδομάδα">‹</button>
+    <div class="weeklabel">
+      <span id="weekRange">—</span>
+      <span class="cur" id="backToCurrent" style="display:none;">↩ Τρέχουσα εβδομάδα</span>
+    </div>
+    <button class="navbtn" id="nextWeek" aria-label="Επόμενη εβδομάδα">›</button>
+  </div>
+
+  <div class="chips" id="chips"></div>
+
+  <div class="card" id="dutyCard"><div class="empty">Φόρτωση δεδομένων…</div></div>
+
+  <div class="footer" id="footerLabel"></div>
+</div>
+
+<script>
+(function(){
+  const DAYS = ["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή"];
+  const DAYS_SHORT = ["Δευ","Τρί","Τετ","Πέμ","Παρ"];
+  const DAY_KEYS = { "ΔΕΥΤΕΡΑ":"Δευτέρα","ΤΡΙΤΗ":"Τρίτη","ΤΕΤΑΡΤΗ":"Τετάρτη","ΠΕΜΠΤΗ":"Πέμπτη","ΠΑΡΑΣΚΕΥΗ":"Παρασκευή" };
+  const MONTHS = ["Ιανουαρίου","Φεβρουαρίου","Μαρτίου","Απριλίου","Μαΐου","Ιουνίου",
+                  "Ιουλίου","Αυγούστου","Σεπτεμβρίου","Οκτωβρίου","Νοεμβρίου","Δεκεμβρίου"];
+
+  /* ---------- helpers ---------- */
+  function parseISO(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
+  function toISO(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+  function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
+  function mondayOf(d){ return addDays(d, -((d.getDay()+6)%7)); }
+  function nextSchoolDay(from){ let d=addDays(from,1); while(d.getDay()===0||d.getDay()===6){d=addDays(d,1);} return d; }
+  function weekOffset(date,cycleStart){
+    const diff = Math.round((date - cycleStart)/86400000);
+    return ((Math.floor(diff/7) % 4) + 4) % 4;
+  }
+  function rotated(baseRow, offset){
+    const out=[];
+    for(let j=0;j<4;j++){ out.push(baseRow[((j-offset)%4+4)%4] || ""); }
+    return out;
+  }
+  function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+  /* ---------- data ---------- */
+  function parseDataText(text){
+    const cfg = { base:{}, overrides:[] };
+    text.split(/\r?\n/).forEach(raw=>{
+      const line = raw.trim();
+      if(!line || line.startsWith("#")) return;
+      const eq = line.indexOf("=");
+      if(eq === -1) return;
+      const key = line.slice(0,eq).trim().toUpperCase();
+      const val = line.slice(eq+1).trim();
+      if(key==="CYCLE_START") cfg.cycleStart = val;
+      else if(key==="LAST_UPDATED") cfg.lastUpdated = val;
+      else if(key==="OVERRIDE"){
+        const p = val.split(",").map(s=>s.trim());
+        if(p.length>=3) cfg.overrides.push({date:p[0],absent:p[1],substitute:p[2]});
+      } else if(DAY_KEYS[key]){
+        cfg.base[DAY_KEYS[key]] = val.split(/[;,]/).map(s=>s.trim());
+      }
+    });
+    return cfg;
+  }
+
+  /* ---------- state ---------- */
+  let cfg = null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const defaultTarget = nextSchoolDay(today);
+  const defaultMonday = mondayOf(defaultTarget);
+  let shownMonday = new Date(defaultMonday);
+  let selIdx = defaultTarget.getDay()-1;   // 0..4
+
+  /* ---------- assignment for a specific date ---------- */
+  function assignmentFor(date){
+    const dayName = DAYS[date.getDay()-1];
+    const cs = parseISO(cfg.cycleStart);
+    const base = cfg.base[dayName] || ["","","",""];
+    let a = rotated(base, weekOffset(date, cs)).map(n=>({name:n, coveredFor:null}));
+    const iso = toISO(date);
+    cfg.overrides.forEach(ov=>{
+      if(ov.date===iso){
+        a.forEach(s=>{ if(s.name===ov.absent){ s.coveredFor=ov.absent; s.name=ov.substitute; } });
+      }
+    });
+    return a;
+  }
+
+  /* ---------- render ---------- */
+  function render(){
+    const selDate = addDays(shownMonday, selIdx);
+    const isoSel = toISO(selDate);
+    const isoToday = toISO(today);
+    const isoTomorrow = toISO(addDays(today,1));
+
+    // hero
+    document.getElementById("weekdayLabel").innerHTML =
+      esc(DAYS[selIdx]) +
+      (isoSel===isoToday ? '<span class="badge">Σήμερα</span>' :
+       isoSel===isoTomorrow ? '<span class="badge">Αύριο</span>' : '');
+    document.getElementById("fullDateLabel").textContent =
+      selDate.getDate()+" "+MONTHS[selDate.getMonth()]+" "+selDate.getFullYear();
+
+    // week range label
+    const fri = addDays(shownMonday,4);
+    const sameMonth = shownMonday.getMonth()===fri.getMonth();
+    document.getElementById("weekRange").textContent =
+      shownMonday.getDate() + (sameMonth?"":" "+MONTHS[shownMonday.getMonth()]) +
+      " – " + fri.getDate() + " " + MONTHS[fri.getMonth()] + " " + fri.getFullYear();
+
+    document.getElementById("backToCurrent").style.display =
+      (toISO(shownMonday)===toISO(defaultMonday)) ? "none" : "inline";
+
+    // chips
+    const chips = document.getElementById("chips");
+    chips.innerHTML = DAYS.map((d,i)=>{
+      const dd = addDays(shownMonday,i);
+      const cls = "chip" + (i===selIdx?" sel":"") + (toISO(dd)===isoToday?" today":"");
+      return '<button class="'+cls+'" data-i="'+i+'" aria-label="'+d+'">' +
+             '<span class="d">'+DAYS_SHORT[i]+'</span><span class="n">'+dd.getDate()+'</span></button>';
+    }).join("");
+
+    // duty rows
+    const card = document.getElementById("dutyCard");
+    if(!cfg || !cfg.cycleStart){
+      card.innerHTML = '<div class="empty">Λείπει το CYCLE_START στο αρχείο δεδομένων.</div>';
+      return;
+    }
+    const a = assignmentFor(selDate);
+    const hasAny = a.some(s=>s.name && s.name.trim()!=="");
+    if(!hasAny){
+      card.innerHTML = '<div class="empty">Το πρόγραμμα δεν έχει συμπληρωθεί ακόμη για την ημέρα «'+esc(DAYS[selIdx])+'».</div>';
+    } else {
+      card.innerHTML = a.map((s,i)=>{
+        const tag = s.coveredFor ? '<div class="tag">καλύπτει τον/την '+esc(s.coveredFor)+'</div>' : '';
+        const label = s.name && s.name.trim()!=="" ? esc(s.name) : "—";
+        return '<div class="row"><div class="slot">'+(i+1)+'</div><div class="who"><div class="name">'+label+'</div>'+tag+'</div></div>';
+      }).join("");
+    }
+
+    document.getElementById("footerLabel").textContent =
+      "Ενημερώθηκε: " + ((cfg && cfg.lastUpdated) || "—");
+  }
+
+  /* ---------- events ---------- */
+  document.getElementById("chips").addEventListener("click", e=>{
+    const b = e.target.closest(".chip");
+    if(b){ selIdx = +b.dataset.i; render(); }
+  });
+  document.getElementById("prevWeek").addEventListener("click", ()=>{
+    shownMonday = addDays(shownMonday,-7); render();
+  });
+  document.getElementById("nextWeek").addEventListener("click", ()=>{
+    shownMonday = addDays(shownMonday,7); render();
+  });
+  document.getElementById("backToCurrent").addEventListener("click", ()=>{
+    shownMonday = new Date(defaultMonday);
+    selIdx = defaultTarget.getDay()-1;
+    render();
+  });
+
+  /* ---------- load ---------- */
+  fetch("data.txt?_="+Date.now())
+    .then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.text(); })
+    .then(t=>{ cfg = parseDataText(t); render(); })
+    .catch(err=>{
+      document.getElementById("dutyCard").innerHTML =
+        '<div class="empty">Δεν βρέθηκε το αρχείο data.txt δίπλα στο index.html.<br><br>('+esc(err.message)+')</div>';
+    });
+})();
+</script>
+</body>
+</html>
