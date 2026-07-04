@@ -91,6 +91,8 @@
   .dayrow input{font-size:13.5px;padding:8px 9px;}
   .dayrow .bkinput{margin-top:4px;font-size:12px;padding:6px 9px;border-style:dashed;color:var(--terracotta);background:#FBF7F4;}
   .dayrow .bkinput::placeholder{color:#C99;}
+  .poolwrap{margin-top:8px;}
+  .poolinput{font-size:13px;padding:8px 10px;border-style:dashed;border-color:var(--board);background:#F4F8F5;}
   .poslabel{font-size:10.5px;color:var(--muted);margin-bottom:2px;}
   .datewrap{position:relative;}
   .datewrap .dateinput{padding-right:38px;}
@@ -100,6 +102,15 @@
   }
   .calbtn:hover{background:var(--line);}
   .calnative{position:absolute;right:8px;bottom:0;width:1px;height:1px;opacity:0;pointer-events:none;border:none;padding:0;}
+  .ovweeknav{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .navbtn{flex:0 0 auto;width:34px;height:34px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--board);font-size:16px;font-weight:700;cursor:pointer;}
+  .navbtn:hover{border-color:var(--gold);}
+  .ovweeklabel{flex:1 1 auto;text-align:center;font-size:13px;font-weight:700;color:var(--board);}
+  .ovempty{font-size:13px;color:var(--muted);padding:6px 0 10px;font-style:italic;}
+  .repline{display:flex;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px;}
+  .repline:last-child{border-bottom:none;}
+  .repdate{flex:0 0 auto;font-weight:700;color:var(--board);width:78px;}
+  .repfix{background:rgba(217,164,65,0.1);border:1px solid rgba(217,164,65,0.3);border-radius:10px;padding:10px 12px;margin-top:6px;font-size:13px;line-height:1.5;}
 
   .ovrow{
     display:grid;
@@ -195,6 +206,21 @@
     margin-top:10px;
     display:none;
   }
+  #reportPrintArea{display:none;}
+  @media print{
+    @page{ size:A4 portrait; margin:14mm; }
+    body{ background:#fff; padding:0; }
+    .wrap{ display:none !important; }
+    #reportPrintArea{ display:block; color:#1B2A4A; font-family:"Noto Sans",sans-serif; }
+    #reportPrintArea .rphead{ display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid #2F4B3C; padding-bottom:4mm; margin-bottom:5mm; }
+    #reportPrintArea .rpschool{ font-family:"Noto Serif",serif; font-size:16pt; font-weight:700; color:#2F4B3C; }
+    #reportPrintArea .rptitle{ font-size:11pt; font-weight:800; letter-spacing:1px; color:#B5533C; }
+    #reportPrintArea h3{ font-size:12pt; margin:5mm 0 2mm; color:#2F4B3C; }
+    #reportPrintArea .rprow{ display:flex; gap:6mm; padding:1.5mm 0; border-bottom:1px solid #eee; font-size:10.5pt; }
+    #reportPrintArea .rpd{ font-weight:700; width:26mm; }
+    #reportPrintArea .rpfix{ border:1px solid #D9A441; border-radius:2mm; padding:3mm; margin-top:3mm; font-size:10.5pt; line-height:1.5; }
+    #reportPrintArea .rpmuted{ color:#666; }
+  }
 </style>
 </head>
 <body>
@@ -230,9 +256,15 @@
     <div class="hint" style="margin-top:0;margin-bottom:12px;">
       Ό,τι ορίζεις εδώ εμφανίζεται στη δημόσια σελίδα ως «Αναπληρωτής» δίπλα στη θέση του απόντα,
       την αντίστοιχη ημέρα — ώστε όλοι να το βλέπουν εκ των προτέρων. Μετράει αυτόματα στο ισοζύγιο δικαιοσύνης.
+      Η λίστα δείχνει <b>μία εβδομάδα κάθε φορά</b> για να μένει καθαρή.
+    </div>
+    <div class="ovweeknav">
+      <button type="button" class="navbtn" id="ovPrev" aria-label="Προηγούμενη εβδομάδα">‹</button>
+      <div class="ovweeklabel" id="ovWeekLabel">—</div>
+      <button type="button" class="navbtn" id="ovNext" aria-label="Επόμενη εβδομάδα">›</button>
     </div>
     <div id="overrides"></div>
-    <button class="btn ghost" id="addOverride">+ Προσθήκη αναπλήρωσης</button>
+    <button class="btn ghost" id="addOverride">+ Προσθήκη αναπλήρωσης σε αυτή την εβδομάδα</button>
     <div class="suggestion" id="suggestion"></div>
   </div>
 
@@ -250,6 +282,30 @@
     <div style="overflow-x:auto;margin-top:10px;">
       <table id="auditTable"></table>
     </div>
+  </div>
+
+  <div class="panel">
+    <h2>Προβολή ημέρας (αρχείο χρονιάς)</h2>
+    <div class="hint" style="margin-top:0;margin-bottom:10px;">Διάλεξε οποιαδήποτε ημερομηνία για να δεις τι ίσχυε/θα ισχύει εκείνη τη μέρα (θέσεις, ρεζέρβα, τυχόν κάλυψη).</div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+      <label style="margin:0;">Ημερομηνία:</label>
+      <div class="datewrap" style="max-width:210px;">
+        <input type="text" id="viewDate" class="dateinput" inputmode="numeric" placeholder="ηη/μμ/εεεε" maxlength="10">
+        <button type="button" class="calbtn" data-cal="viewDate" aria-label="Ημερολόγιο">📅</button>
+        <input type="date" class="calnative" data-cal="viewDate" tabindex="-1" aria-hidden="true">
+      </div>
+    </div>
+    <div id="viewOut"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Μηνιαία Αναφορά &amp; Ανισορροπίες</h2>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+      <label style="margin:0;">Μήνας:</label>
+      <select id="reportMonth" style="max-width:220px;"></select>
+      <button type="button" class="btn ghost" id="printReport">🖨 Εκτύπωση αναφοράς</button>
+    </div>
+    <div id="reportOut"></div>
   </div>
 
   <div class="panel">
@@ -272,6 +328,8 @@
   </div>
 </div>
 
+<div id="reportPrintArea"></div>
+
 <script>
 (function(){
   const DAYS = ["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή"];
@@ -293,14 +351,31 @@
   function fmtDMY(d){ return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear(); }
   function isoToDMY(s){ const d=parseAnyDate(s); return d?fmtDMY(d):s; }
   function toISO(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+  function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
+  function mondayOf(d){ return addDays(d, -((d.getDay()+6)%7)); }
+  const GMONTHS = ["Ιανουάριος","Φεβρουάριος","Μάρτιος","Απρίλιος","Μάιος","Ιούνιος","Ιούλιος","Αύγουστος","Σεπτέμβριος","Οκτώβριος","Νοέμβριος","Δεκέμβριος"];
   function weekOffset(date,cycleStart){
     const diff = Math.round((date - cycleStart)/86400000);
     return ((Math.floor(diff/7) % 4) + 4) % 4;
   }
+  function weekIndex(date,cycleStart){ return Math.floor(Math.round((date-cycleStart)/86400000)/7); }
+  function rotOffset(w,L){ return (L%4===0) ? Math.floor(4*w/L) : w; }
   function rotated(baseRow, offset){
     const out=[];
     for(let j=0;j<4;j++){ out.push(baseRow[((j-offset)%4+4)%4] || ""); }
     return out;
+  }
+  function positioned(list, w){
+    const L=list.length;
+    if(L<=4){ const four=[]; for(let k=0;k<4;k++) four.push(list[k]||""); return rotated(four, ((w%4)+4)%4); }
+    const start=((4*w)%L+L)%L; const four=[]; for(let k=0;k<4;k++) four.push(list[(start+k)%L]);
+    return rotated(four, ((rotOffset(w,L)%4)+4)%4);
+  }
+  function benchOf(list, w){
+    const L=list.length; if(L<=4) return [];
+    const start=((4*w)%L+L)%L; const act=new Set(); for(let k=0;k<4;k++) act.add((start+k)%L);
+    const b=[]; for(let idx=0;idx<L;idx++){ if(!act.has(idx)&&list[idx]&&list[idx].trim()!=="") b.push(list[idx]); }
+    return b;
   }
   function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   function detectRepo(){
@@ -380,7 +455,9 @@
         '<input type="text" data-pos="'+(p-1)+'" data-kind="reg" placeholder="Καθηγητής/τρια">'+
         '<input type="text" data-pos="'+(p-1)+'" data-kind="bk" class="bkinput" placeholder="Εφεδρεία (αν λείψει)">'+
         '</div>').join("") +
-      '</div>';
+      '</div>' +
+      '<div class="poolwrap"><div class="poslabel">Επιπλέον ρεζέρβα αυτής της ημέρας (ονόματα με ; — μπαίνουν εκ περιτροπής)</div>'+
+      '<input type="text" class="poolinput" data-day="'+d+'" placeholder="π.χ. Παπαδόπουλος; Νικολάου; ..."></div>';
     daysDiv.appendChild(block);
   });
 
@@ -391,12 +468,30 @@
   }
 
   const ovDiv = document.getElementById("overrides");
+  // Εβδομάδα που εμφανίζεται στη λίστα αναπληρώσεων
+  let ovWeekMonday = (function(){ const t=new Date(); t.setHours(0,0,0,0); return mondayOf(t); })();
+
   function nameOptions(selected){
     return '<option value=""></option>' + allNames().map(n=>'<option '+(n===selected?"selected":"")+'>'+esc(n)+'</option>').join("");
   }
+  function inShownWeek(iso){
+    if(!iso) return true; // κενές (νέες) εγγραφές δείχνονται στην τρέχουσα εβδομάδα
+    const d = parseAnyDate(iso); if(!d) return true;
+    const mon = ovWeekMonday, fri = addDays(mon,4);
+    return d>=mon && d<=fri;
+  }
   function renderOverrides(){
+    const fri = addDays(ovWeekMonday,4);
+    const sameM = ovWeekMonday.getMonth()===fri.getMonth();
+    document.getElementById("ovWeekLabel").textContent =
+      "Εβδομάδα " + ovWeekMonday.getDate() + (sameM?"":" "+GMONTHS[ovWeekMonday.getMonth()].slice(0,3)) +
+      " – " + fri.getDate() + " " + GMONTHS[fri.getMonth()].slice(0,3) + " " + fri.getFullYear();
+
     ovDiv.innerHTML = "";
+    let shown = 0;
     state.overrides.forEach((ov,i)=>{
+      if(!inShownWeek(ov.date)) return;
+      shown++;
       const row = document.createElement("div");
       row.className = "ovrow";
       row.innerHTML =
@@ -410,6 +505,13 @@
         '<button class="del" data-del="'+i+'" title="Διαγραφή">✕</button>';
       ovDiv.appendChild(row);
     });
+    const total = state.overrides.filter(o=>o.date && o.absent && o.substitute).length;
+    if(shown===0){
+      const e = document.createElement("div");
+      e.className = "ovempty";
+      e.textContent = "Καμία αναπλήρωση αυτή την εβδομάδα. (Σύνολο καταγεγραμμένων: "+total+")";
+      ovDiv.appendChild(e);
+    }
   }
 
   // ---------- read UI -> state ----------
@@ -425,7 +527,10 @@
         if(inp.dataset.kind==="bk") barr[p] = inp.value.trim();
         else arr[p] = inp.value.trim();
       });
-      state.base[d] = arr; state.backup[d] = barr;
+      const poolInp = document.querySelector('.poolinput[data-day="'+d+'"]');
+      const extras = poolInp ? poolInp.value.split(/[;,]/).map(s=>s.trim()).filter(Boolean) : [];
+      state.base[d] = arr.concat(extras);
+      state.backup[d] = barr;
     });
   }
   function pushToUI(){
@@ -436,6 +541,10 @@
         const p = +inp.dataset.pos;
         inp.value = inp.dataset.kind==="bk" ? ((state.backup[d]||[])[p]||"") : ((state.base[d]||[])[p]||"");
       });
+    });
+    DAYS.forEach(d=>{
+      const poolInp = document.querySelector('.poolinput[data-day="'+d+'"]');
+      if(poolInp) poolInp.value = ((state.base[d]||[]).slice(4)).join("; ");
     });
     renderOverrides();
   }
@@ -457,21 +566,10 @@
         checks.push({ok:false,msg:"«"+d+"»: το όνομα «"+dup[0]+"» εμφανίζεται δύο φορές την ίδια ημέρα."});
     });
 
-    // 2. weekly load balance (base duties per person)
+    // 2. εμφανίσεις στο πρόγραμμα (με ρεζέρβα, ο πραγματικός φόρτος φαίνεται στον πίνακα εναλλαγής)
     const weekly = {};
     names.forEach(n=>weekly[n]=0);
     DAYS.forEach(d=>(state.base[d]||[]).forEach(n=>{ if(n) weekly[n]=(weekly[n]||0)+1; }));
-    const wVals = Object.values(weekly);
-    if(wVals.length){
-      const mx = Math.max(...wVals), mn = Math.min(...wVals);
-      if(mx-mn>1){
-        const heavy = names.filter(n=>weekly[n]===mx).join(", ");
-        const light = names.filter(n=>weekly[n]===mn).join(", ");
-        checks.push({ok:false,msg:"Άνιση κατανομή τακτικών εφημεριών: "+heavy+" έχει/ουν "+mx+"/εβδομάδα ενώ "+light+" έχει/ουν "+mn+"."});
-      } else if(names.length){
-        checks.push({ok:true,msg:"Οι τακτικές εφημερίες είναι ισοκατανεμημένες ("+mn+(mx!==mn?"-"+mx:"")+" ανά άτομο/εβδομάδα)."});
-      }
-    }
 
     // 3. override validity
     const covers = {};    // covers done
@@ -496,7 +594,7 @@
           checks.push({ok:false,msg:tag+": η ημερομηνία πέφτει Σαββατοκύριακο."});
         } else {
           const dayName = DAYS[wd-1];
-          const duty = rotated(state.base[dayName]||[], weekOffset(dt,cs));
+          const duty = positioned(state.base[dayName]||[], weekIndex(dt,cs));
           if(names.includes(ov.absent) && !duty.includes(ov.absent))
             checks.push({ok:false,msg:tag+": ο/η «"+ov.absent+"» ΔΕΝ είχε εφημερία εκείνη την ημέρα — έλεγξε την ημερομηνία."});
           if(names.includes(ov.substitute) && duty.includes(ov.substitute))
@@ -543,7 +641,7 @@
     // render balance table
     const tbl = document.getElementById("balanceTable");
     if(balances.length){
-      tbl.innerHTML = "<tr><th>Καθηγητής/τρια</th><th>Τακτικές/εβδ.</th><th>Κάλυψε</th><th>Καλύφθηκε</th><th>Ισοζύγιο</th></tr>" +
+      tbl.innerHTML = "<tr><th>Καθηγητής/τρια</th><th>Εμφανίσεις</th><th>Κάλυψε</th><th>Καλύφθηκε</th><th>Ισοζύγιο</th></tr>" +
         balances.sort((a,b)=>a.b-b.b).map(x=>
           "<tr><td>"+esc(x.n)+"</td><td>"+x.w+"</td><td>"+x.c+"</td><td>"+x.o+"</td><td class='"+(x.b<0?"neg":x.b>0?"pos":"")+"'>"+(x.b>0?"+":"")+x.b+"</td></tr>"
         ).join("");
@@ -551,6 +649,7 @@
 
     updateSuggestion();
     renderAudit();
+    populateMonths();
   }
 
   // ---------- rotation audit: what actually happened since cycle start ----------
@@ -576,7 +675,7 @@
       const dayName = DAYS[wd-1];
       const base = state.base[dayName] || [];
       if(!base.some(x=>x)) continue;
-      let duty = rotated(base, weekOffset(d, cs));
+      let duty = positioned(base, weekIndex(d, cs));
       const iso = toISO(d);
       state.overrides.forEach(ov=>{
         if(ov.date===iso) duty = duty.map(n=> n===ov.absent ? ov.substitute : n);
@@ -597,6 +696,150 @@
       : "✔ Μέχρι σήμερα, όλοι έχουν περάσει ισομερώς από όλες τις θέσεις (μαζί με τις καλύψεις).";
   }
 
+  // ---------- monthly report ----------
+  function populateMonths(){
+    const sel = document.getElementById("reportMonth");
+    if(!sel) return;
+    const prev = sel.value;
+    const months = new Set();
+    state.overrides.forEach(o=>{ const d=parseAnyDate(o.date); if(d) months.add(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")); });
+    // πρόσθεσε και τον τρέχοντα/έναρξης μήνα ώστε να υπάρχει πάντα επιλογή
+    const now=new Date(); months.add(now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0"));
+    if(state.cycleStart){ const cs=parseISODate(state.cycleStart); months.add(cs.getFullYear()+"-"+String(cs.getMonth()+1).padStart(2,"0")); }
+    const arr = [...months].sort();
+    sel.innerHTML = '<option value="ALL">Όλη η περίοδος (σύνολο)</option>' +
+      arr.map(k=>{ const [y,m]=k.split("-").map(Number); return '<option value="'+k+'">'+GMONTHS[m-1]+" "+y+'</option>'; }).join("");
+    sel.value = (prev && [...sel.options].some(o=>o.value===prev)) ? prev : "ALL";
+    renderReport();
+  }
+
+  function renderReport(){
+    const out = document.getElementById("reportOut");
+    const sel = document.getElementById("reportMonth");
+    if(!out || !sel) return;
+    const names = allNames();
+    const done = state.overrides.filter(o=>o.date && o.absent && o.substitute).slice();
+    // φίλτρο μήνα
+    const mkey = sel.value;
+    const inMonth = o=>{ if(mkey==="ALL") return true; const d=parseAnyDate(o.date); return d && (d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"))===mkey; };
+    const list = done.filter(inMonth).sort((a,b)=>{ const da=parseAnyDate(a.date),db=parseAnyDate(b.date); return da-db; });
+
+    // ισοζύγιο ΣΩΡΕΥΤΙΚΟ (όλες οι καλύψεις έως το τέλος του επιλεγμένου μήνα)
+    const upto = mkey==="ALL" ? done : done.filter(o=>{ const d=parseAnyDate(o.date); return d && (d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"))<=mkey; });
+    const covers={}, covered={};
+    names.forEach(n=>{covers[n]=0;covered[n]=0;});
+    upto.forEach(o=>{ if(covers[o.substitute]!==undefined)covers[o.substitute]++; if(covered[o.absent]!==undefined)covered[o.absent]++; });
+    const bal = names.map(n=>({n, b:(covers[n]||0)-(covered[n]||0)})).filter(x=>x.b!==0);
+
+    let html = "";
+    // 1) λίστα καλύψεων
+    html += '<div style="font-weight:700;margin-bottom:6px;">Καλύψεις που έγιναν'+(mkey==="ALL"?"":" ("+sel.options[sel.selectedIndex].text+")")+': '+list.length+'</div>';
+    if(list.length){
+      html += list.map(o=>{
+        const d=parseAnyDate(o.date);
+        return '<div class="repline"><span class="repdate">'+fmtDMY(d)+'</span>'+
+               '<span>Ο/Η <b>'+esc(o.substitute)+'</b> κάλυψε τον/την <b>'+esc(o.absent)+'</b></span></div>';
+      }).join("");
+    } else {
+      html += '<div class="ovempty">Καμία καταγεγραμμένη κάλυψη σε αυτό το διάστημα.</div>';
+    }
+
+    // 2) ανισορροπίες
+    html += '<div style="font-weight:700;margin:14px 0 6px;">Ανισορροπίες (σωρευτικά έως τότε)</div>';
+    if(!bal.length){
+      html += '<div class="repline"><span class="pos">✔ Όλα ισορροπημένα — κανείς δεν χρωστάει ούτε δικαιούται εφημερία.</span></div>';
+    } else {
+      const owe = bal.filter(x=>x.b<0).sort((a,b)=>a.b-b.b);
+      const cred = bal.filter(x=>x.b>0).sort((a,b)=>b.b-a.b);
+      if(owe.length) html += '<div class="repline"><span class="repdate neg">Χρωστάνε</span><span>'+owe.map(x=>esc(x.n)+" ("+x.b+")").join(", ")+'</span></div>';
+      if(cred.length) html += '<div class="repline"><span class="repdate pos">Πιστωμένοι</span><span>'+cred.map(x=>esc(x.n)+" (+"+x.b+")").join(", ")+'</span></div>';
+
+      // 3) προτάσεις διόρθωσης — ταιριάζει τους μεγαλύτερους οφειλέτες με τους πιστωμένους
+      const fixes = [];
+      const owers = owe.map(x=>({n:x.n, k:-x.b}));      // πόσες χρωστάει
+      const creds = cred.map(x=>({n:x.n, k:x.b}));      // πόσες δικαιούται να ξεκουραστεί
+      let i=0,j=0;
+      while(i<owers.length && j<creds.length){
+        const take = Math.min(owers[i].k, creds[j].k);
+        fixes.push("Ο/Η <b>"+esc(owers[i].n)+"</b> να αναλάβει "+take+" τακτική"+(take>1?"ές εφημερίες":" εφημερία")+" του/της <b>"+esc(creds[j].n)+"</b>.");
+        owers[i].k-=take; creds[j].k-=take;
+        if(owers[i].k===0) i++;
+        if(creds[j].k===0) j++;
+      }
+      if(fixes.length){
+        html += '<div class="repfix"><b>Πώς διορθώνεται:</b><br>'+fixes.join("<br>")+
+                '<br><span style="color:var(--muted);">Καταχώρησε κάθε διόρθωση ως αναπλήρωση (Απών = ο πιστωμένος, Κάλυψε = ο οφειλέτης) στην ημέρα που ο πιστωμένος έχει κανονικά εφημερία.</span></div>';
+      }
+    }
+    out.innerHTML = html;
+  }
+
+  // ---------- historical day viewer ----------
+  function renderDayView(){
+    const out = document.getElementById("viewOut");
+    if(!out) return;
+    const inp = document.getElementById("viewDate");
+    const d = parseAnyDate(inp ? inp.value : "");
+    if(!d){ out.innerHTML = '<div class="ovempty">Διάλεξε ημερομηνία.</div>'; return; }
+    if(!state.cycleStart){ out.innerHTML = '<div class="ovempty">Βάλε πρώτα την ημερομηνία έναρξης κύκλου.</div>'; return; }
+    const wd = d.getDay();
+    if(wd===0 || wd===6){ out.innerHTML = '<div class="ovempty">'+fmtDMY(d)+': Σαββατοκύριακο — δεν υπάρχει εφημερία.</div>'; return; }
+    const cs = parseISODate(state.cycleStart);
+    if(d < cs){ out.innerHTML = '<div class="ovempty">'+fmtDMY(d)+': πριν την έναρξη του κύκλου ('+isoToDMY(state.cycleStart)+').</div>'; return; }
+    const dayName = DAYS[wd-1];
+    const w = weekIndex(d, cs);
+    const list = state.base[dayName]||[];
+    const bkList = (state.backup[dayName]||[]).slice(); while(bkList.length<list.length) bkList.push("");
+    const reg = positioned(list, w);
+    const rbk = positioned(bkList, w);
+    const iso = toISO(d);
+    const subs = {};
+    state.overrides.forEach(ov=>{ if(ov.date===iso && ov.absent && ov.substitute) subs[ov.absent]=ov.substitute; });
+    let html = '<div style="font-weight:700;margin-bottom:8px;color:var(--board);">'+dayName+' '+fmtDMY(d)+'</div>';
+    html += '<table><tr><th>Θέση</th><th>Εφημερία</th><th>Εφεδρεία</th></tr>' +
+      reg.map((n,i)=>{
+        const cov = subs[n];
+        const who = cov ? '<span class="neg">'+esc(cov)+'</span> <span class="rpmuted">(αντί '+esc(n)+')</span>' : (n?esc(n):"—");
+        return '<tr><td>'+esc(POSITIONS[i])+'</td><td>'+who+'</td><td>'+(rbk[i]?esc(rbk[i]):"—")+'</td></tr>';
+      }).join("") + '</table>';
+    const bench = benchOf(list, w);
+    if(bench.length) html += '<div style="margin-top:8px;font-size:13px;"><b>Ρεζέρβα εβδομάδας:</b> '+bench.map(esc).join(", ")+'</div>';
+    out.innerHTML = html;
+  }
+
+  // ---------- print monthly report ----------
+  function printReport(){
+    const sel = document.getElementById("reportMonth");
+    const label = sel ? sel.options[sel.selectedIndex].text : "";
+    const names = allNames();
+    const done = state.overrides.filter(o=>o.date && o.absent && o.substitute);
+    const mkey = sel ? sel.value : "ALL";
+    const inMonth = o=>{ if(mkey==="ALL") return true; const d=parseAnyDate(o.date); return d && (d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"))===mkey; };
+    const list = done.filter(inMonth).sort((a,b)=>parseAnyDate(a.date)-parseAnyDate(b.date));
+    const upto = mkey==="ALL"?done:done.filter(o=>{const d=parseAnyDate(o.date);return d&&(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"))<=mkey;});
+    const covers={},covered={}; names.forEach(n=>{covers[n]=0;covered[n]=0;});
+    upto.forEach(o=>{ if(covers[o.substitute]!==undefined)covers[o.substitute]++; if(covered[o.absent]!==undefined)covered[o.absent]++; });
+    const bal = names.map(n=>({n,b:(covers[n]||0)-(covered[n]||0)})).filter(x=>x.b!==0);
+
+    let h = '<div class="rphead"><span class="rpschool">3ο Γυμνάσιο Πολίχνης</span><span class="rptitle">ΑΝΑΦΟΡΑ ΕΦΗΜΕΡΙΩΝ — '+esc(label)+'</span></div>';
+    h += '<h3>Καλύψεις ('+list.length+')</h3>';
+    h += list.length ? list.map(o=>'<div class="rprow"><span class="rpd">'+fmtDMY(parseAnyDate(o.date))+'</span><span>Ο/Η '+esc(o.substitute)+' κάλυψε τον/την '+esc(o.absent)+'</span></div>').join("")
+                     : '<div class="rpmuted">Καμία κάλυψη σε αυτό το διάστημα.</div>';
+    h += '<h3>Ανισορροπίες (σωρευτικά)</h3>';
+    if(!bal.length){ h += '<div>Όλα ισορροπημένα — κανείς δεν χρωστάει ούτε δικαιούται εφημερία.</div>'; }
+    else {
+      const owe=bal.filter(x=>x.b<0).sort((a,b)=>a.b-b.b), cred=bal.filter(x=>x.b>0).sort((a,b)=>b.b-a.b);
+      if(owe.length) h += '<div class="rprow"><span class="rpd">Χρωστάνε</span><span>'+owe.map(x=>esc(x.n)+" ("+x.b+")").join(", ")+'</span></div>';
+      if(cred.length) h += '<div class="rprow"><span class="rpd">Πιστωμένοι</span><span>'+cred.map(x=>esc(x.n)+" (+"+x.b+")").join(", ")+'</span></div>';
+      const owers=owe.map(x=>({n:x.n,k:-x.b})), creds=cred.map(x=>({n:x.n,k:x.b})); let i=0,j=0; const fixes=[];
+      while(i<owers.length&&j<creds.length){ const take=Math.min(owers[i].k,creds[j].k); fixes.push("Ο/Η "+esc(owers[i].n)+" να αναλάβει "+take+" εφημερία"+(take>1?"ες":"")+" του/της "+esc(creds[j].n)+"."); owers[i].k-=take;creds[j].k-=take; if(owers[i].k===0)i++; if(creds[j].k===0)j++; }
+      if(fixes.length) h += '<div class="rpfix"><b>Πώς διορθώνεται:</b><br>'+fixes.join("<br>")+'</div>';
+    }
+    h += '<div class="rpmuted" style="margin-top:6mm;font-size:9pt;">Εκτυπώθηκε: '+fmtDMY(new Date())+'</div>';
+    document.getElementById("reportPrintArea").innerHTML = h;
+    window.print();
+  }
+
   // ---------- suggestion for newest incomplete override ----------
   function updateSuggestion(){
     const box = document.getElementById("suggestion");
@@ -608,7 +851,7 @@
     const dt = parseISODate(ov.date);
     if(dt.getDay()===0||dt.getDay()===6) return;
     const dayName = DAYS[dt.getDay()-1];
-    const duty = rotated(state.base[dayName]||[], weekOffset(dt,cs));
+    const duty = positioned(state.base[dayName]||[], weekIndex(dt,cs));
     const names = allNames();
     const covers={}, covered={};
     names.forEach(n=>{covers[n]=0;covered[n]=0;});
@@ -645,6 +888,7 @@
   document.addEventListener("input", e=>{
     const t = e.target;
     if(t.classList && t.classList.contains("dateinput")) autoFmtDate(t);
+    if(t.id === "viewDate"){ renderDayView(); return; }
     if(t.dataset && t.dataset.f !== undefined && t.dataset.i !== undefined){
       if(t.dataset.f === "date"){
         const dt = parseAnyDate(t.value);
@@ -661,10 +905,15 @@
   });
   document.getElementById("addOverride").addEventListener("click", ()=>{
     pullFromUI();
-    state.overrides.push({date:"",absent:"",substitute:""});
+    // Νέα εγγραφή προ-συμπληρωμένη με τη Δευτέρα της εμφανιζόμενης εβδομάδας
+    state.overrides.push({date:toISO(ovWeekMonday),absent:"",substitute:""});
     renderOverrides();
     runChecks();
   });
+  document.getElementById("ovPrev").addEventListener("click", ()=>{ ovWeekMonday = addDays(ovWeekMonday,-7); renderOverrides(); });
+  document.getElementById("ovNext").addEventListener("click", ()=>{ ovWeekMonday = addDays(ovWeekMonday,7); renderOverrides(); });
+  document.getElementById("reportMonth").addEventListener("change", renderReport);
+  document.getElementById("printReport").addEventListener("click", printReport);
   ovDiv.addEventListener("click", e=>{
     const b = e.target.closest("[data-del]");
     if(b){ state.overrides.splice(+b.dataset.del,1); renderOverrides(); runChecks(); }
@@ -677,7 +926,7 @@
     const nat = document.querySelector('.calnative[data-cal="'+b.dataset.cal+'"]');
     if(!nat) return;
     let curText = "";
-    if(b.dataset.cal==="cycleStart") curText = document.getElementById("cycleStart").value;
+    if(document.getElementById(b.dataset.cal)) curText = document.getElementById(b.dataset.cal).value;
     else { const ti = document.querySelector('.dateinput[data-f="date"][data-i="'+nat.dataset.i+'"]'); curText = ti ? ti.value : ""; }
     const d = parseAnyDate(curText);
     nat.value = d ? toISO(d) : "";
@@ -689,9 +938,11 @@
     if(!nat) return;
     const d = nat.value ? parseAnyDate(nat.value) : null;
     const dmy = d ? fmtDMY(d) : "";
-    if(nat.dataset.cal==="cycleStart"){
-      document.getElementById("cycleStart").value = dmy;
-      pullFromUI(); runChecks();
+    const idEl = document.getElementById(nat.dataset.cal);
+    if(idEl){
+      idEl.value = dmy;
+      if(nat.dataset.cal==="cycleStart"){ pullFromUI(); runChecks(); }
+      else if(nat.dataset.cal==="viewDate"){ renderDayView(); }
     } else {
       const i = +nat.dataset.i;
       const ti = document.querySelector('.dateinput[data-f="date"][data-i="'+i+'"]');
@@ -708,9 +959,15 @@
       const cfg = parseDataText(t);
       state.base = cfg.base; state.overrides = cfg.overrides; state.backup = cfg.backup||{};
       state.cycleStart = cfg.cycleStart||"";
-      pushToUI(); runChecks();
+      // Αν δεν έχει ξεκινήσει ο κύκλος, δείξε την 1η εβδομάδα του κύκλου
+      if(state.cycleStart){
+        const cs = parseISODate(state.cycleStart);
+        const t = new Date(); t.setHours(0,0,0,0);
+        if(t < cs) ovWeekMonday = mondayOf(cs);
+      }
+      pushToUI(); populateMonths(); runChecks(); renderDayView();
     })
-    .catch(()=>{ pushToUI(); runChecks(); });
+    .catch(()=>{ pushToUI(); populateMonths(); runChecks(); renderDayView(); });
 
   // ---------- save ----------
   const tokenInp = document.getElementById("token");
