@@ -149,6 +149,19 @@
     text-align:center;padding:36px 22px;color:var(--muted);font-size:14.5px;line-height:1.6;
     background:#fff;border-radius:18px;box-shadow:0 10px 22px -16px rgba(27,42,74,0.28);
   }
+  .benchline{
+    display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+    background:#fff;border-radius:16px;padding:12px 16px;margin-top:2px;
+    box-shadow:0 10px 22px -16px rgba(27,42,74,0.28);
+  }
+  .benchline .blabel{
+    font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+    margin-right:2px;
+  }
+  .benchline .bname{
+    font-size:13px;font-weight:700;color:var(--board);background:var(--paper);
+    border-radius:20px;padding:3px 11px;
+  }
 
   /* ---------- actions ---------- */
   .actions{display:flex;justify-content:center;margin-top:20px;}
@@ -257,7 +270,23 @@
   function mondayOf(d){ return addDays(d, -((d.getDay()+6)%7)); }
   function nextSchoolDay(from){ let d=addDays(from,1); while(d.getDay()===0||d.getDay()===6){d=addDays(d,1);} return d; }
   function weekOffset(date,cs){ const diff=Math.round((date-cs)/86400000); return ((Math.floor(diff/7)%4)+4)%4; }
+  function weekIndex(date,cs){ return Math.floor(Math.round((date-cs)/86400000)/7); }
   function rotated(baseRow, offset){ const out=[]; for(let j=0;j<4;j++){ out.push(baseRow[((j-offset)%4+4)%4]||""); } return out; }
+  function rotOffset(w,L){ return (L%4===0) ? Math.floor(4*w/L) : w; }
+  // Θέσεις για μεταβλητό πλήθος ατόμων ανά ημέρα (εκ περιτροπής ρεζέρβα + περιστροφή θέσης).
+  function positioned(list, w){
+    const L = list.length;
+    if(L<=4){ const four=[]; for(let k=0;k<4;k++) four.push(list[k]||""); return rotated(four, ((w%4)+4)%4); }
+    const start = ((4*w)%L+L)%L;
+    const four=[]; for(let k=0;k<4;k++) four.push(list[(start+k)%L]);
+    return rotated(four, ((rotOffset(w,L)%4)+4)%4);
+  }
+  function benchOf(list, w){
+    const L=list.length; if(L<=4) return [];
+    const start=((4*w)%L+L)%L; const act=new Set(); for(let k=0;k<4;k++) act.add((start+k)%L);
+    const b=[]; for(let idx=0;idx<L;idx++){ if(!act.has(idx) && list[idx] && list[idx].trim()!=="") b.push(list[idx]); }
+    return b;
+  }
   function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
   /* ---------- data ---------- */
@@ -286,19 +315,25 @@
   /* ---------- state ---------- */
   let cfg = null;
   const today = new Date(); today.setHours(0,0,0,0);
-  const defaultTarget = nextSchoolDay(today);
-  const shownMonday = mondayOf(defaultTarget);   // μόνο τρέχουσα εβδομάδα
-  let selIdx = defaultTarget.getDay()-1;
+  let shownMonday, selIdx;
+  function initAnchor(){
+    const cs = (cfg && cfg.cycleStart) ? parseISO(cfg.cycleStart) : null;
+    // Πριν την έναρξη του κύκλου, δείξε κατευθείαν την 1η εβδομάδα (τη Δευτέρα του CYCLE_START).
+    const target = (cs && today < cs) ? cs : nextSchoolDay(today);
+    shownMonday = mondayOf(target);
+    selIdx = target.getDay()-1;
+  }
 
-  /* ---------- assignment: επιστρέφει {regular, substitute} ανά θέση ---------- */
+  /* ---------- assignment: επιστρέφει {regular, substitute, backup} ανά θέση ---------- */
   function assignmentFor(date){
     const dayName = DAYS[date.getDay()-1];
     const cs = parseISO(cfg.cycleStart);
-    const off = weekOffset(date, cs);
-    const base = cfg.base[dayName] || ["","","",""];
-    const bk = cfg.backup[dayName] || ["","","",""];
-    const reg = rotated(base, off);
-    const rbk = rotated(bk, off);
+    const w = weekIndex(date, cs);
+    const list = cfg.base[dayName] || ["","","",""];
+    const bkList = (cfg.backup[dayName]||[]).slice();
+    while(bkList.length < list.length) bkList.push("");
+    const reg = positioned(list, w);
+    const rbk = positioned(bkList, w);
     const a = reg.map((n,i)=>({regular:n, backup:rbk[i]||"", substitute:null}));
     const iso = toISO(date);
     cfg.overrides.forEach(ov=>{
@@ -307,6 +342,11 @@
       }
     });
     return a;
+  }
+  function benchFor(date){
+    const dayName = DAYS[date.getDay()-1];
+    const cs = parseISO(cfg.cycleStart);
+    return benchOf(cfg.base[dayName] || [], weekIndex(date, cs));
   }
 
   /* ---------- render ---------- */
@@ -325,10 +365,7 @@
     eb.style.color = c.bold; eb.style.background = c.soft;
 
     // hero
-    document.getElementById("weekdayLabel").innerHTML =
-      esc(DAYS[selIdx]) +
-      (isoSel===isoToday ? '<span class="badge">Σήμερα</span>' :
-       isoSel===isoTomorrow ? '<span class="badge">Αύριο</span>' : '');
+    document.getElementById("weekdayLabel").innerHTML = esc(DAYS[selIdx]);
     document.getElementById("fullDateLabel").textContent =
       selDate.getDate()+" "+MONTHS[selDate.getMonth()]+" "+selDate.getFullYear();
 
@@ -381,6 +418,11 @@
                    '<span class="rname">'+resName+'</span></div>'+
                '</div>';
       }).join("");
+      const bench = benchFor(selDate);
+      if(bench.length){
+        card.innerHTML += '<div class="benchline"><span class="blabel">Ρεζέρβα εβδομάδας</span>'+
+          bench.map(n=>'<span class="bname">'+esc(n)+'</span>').join("")+'</div>';
+      }
     }
 
     buildPrint(selDate, a, hasAny);
@@ -421,7 +463,7 @@
   /* ---------- load ---------- */
   fetch("data.txt?_="+Date.now())
     .then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.text(); })
-    .then(t=>{ cfg = parseDataText(t); render(); })
+    .then(t=>{ cfg = parseDataText(t); initAnchor(); render(); })
     .catch(err=>{
       document.getElementById("dutyCard").innerHTML =
         '<div class="empty">Δεν βρέθηκε το αρχείο data.txt δίπλα στο index.html.<br><br>('+esc(err.message)+')</div>';
