@@ -91,8 +91,6 @@
   .dayrow input{font-size:13.5px;padding:8px 9px;}
   .dayrow .bkinput{margin-top:4px;font-size:12px;padding:6px 9px;border-style:dashed;color:var(--terracotta);background:#FBF7F4;}
   .dayrow .bkinput::placeholder{color:#C99;}
-  .poolwrap{margin-top:8px;}
-  .poolinput{font-size:13px;padding:8px 10px;border-style:dashed;border-color:var(--board);background:#F4F8F5;}
   .poslabel{font-size:10.5px;color:var(--muted);margin-bottom:2px;}
   .datewrap{position:relative;}
   .datewrap .dateinput{padding-right:38px;}
@@ -220,6 +218,9 @@
     #reportPrintArea .rpd{ font-weight:700; width:26mm; }
     #reportPrintArea .rpfix{ border:1px solid #D9A441; border-radius:2mm; padding:3mm; margin-top:3mm; font-size:10.5pt; line-height:1.5; }
     #reportPrintArea .rpmuted{ color:#666; }
+    #reportPrintArea table{ width:100%; border-collapse:collapse; margin-bottom:4mm; }
+    #reportPrintArea table th, #reportPrintArea table td{ border:1px solid #ccc; padding:1.2mm 2mm; font-size:8.5pt; text-align:left; }
+    #reportPrintArea table th{ background:#F0EEE6; font-size:8pt; text-transform:uppercase; letter-spacing:.3px; }
   }
 </style>
 </head>
@@ -455,9 +456,7 @@
         '<input type="text" data-pos="'+(p-1)+'" data-kind="reg" placeholder="Καθηγητής/τρια">'+
         '<input type="text" data-pos="'+(p-1)+'" data-kind="bk" class="bkinput" placeholder="Εφεδρεία (αν λείψει)">'+
         '</div>').join("") +
-      '</div>' +
-      '<div class="poolwrap"><div class="poslabel">Επιπλέον ρεζέρβα αυτής της ημέρας (ονόματα με ; — μπαίνουν εκ περιτροπής)</div>'+
-      '<input type="text" class="poolinput" data-day="'+d+'" placeholder="π.χ. Παπαδόπουλος; Νικολάου; ..."></div>';
+      '</div>';
     daysDiv.appendChild(block);
   });
 
@@ -527,9 +526,7 @@
         if(inp.dataset.kind==="bk") barr[p] = inp.value.trim();
         else arr[p] = inp.value.trim();
       });
-      const poolInp = document.querySelector('.poolinput[data-day="'+d+'"]');
-      const extras = poolInp ? poolInp.value.split(/[;,]/).map(s=>s.trim()).filter(Boolean) : [];
-      state.base[d] = arr.concat(extras);
+      state.base[d] = arr;
       state.backup[d] = barr;
     });
   }
@@ -541,10 +538,6 @@
         const p = +inp.dataset.pos;
         inp.value = inp.dataset.kind==="bk" ? ((state.backup[d]||[])[p]||"") : ((state.base[d]||[])[p]||"");
       });
-    });
-    DAYS.forEach(d=>{
-      const poolInp = document.querySelector('.poolinput[data-day="'+d+'"]');
-      if(poolInp) poolInp.value = ((state.base[d]||[]).slice(4)).join("; ");
     });
     renderOverrides();
   }
@@ -713,6 +706,60 @@
     renderReport();
   }
 
+  // ---------- πλήρες πρόγραμμα εφημεριών (όλες οι εφημερίες, όχι μόνο καλύψεις) ----------
+  function monthRange(mkey){
+    if(mkey==="ALL") return null;
+    const [y,m] = mkey.split("-").map(Number);
+    return { start: new Date(y,m-1,1), end: new Date(y,m,0) };
+  }
+  function schoolDaysInRange(start,end){
+    const days=[];
+    for(let d=new Date(start); d<=end; d=addDays(d,1)){ const wd=d.getDay(); if(wd!==0 && wd!==6) days.push(new Date(d)); }
+    return days;
+  }
+  function rosterForDate(d){
+    if(!state.cycleStart) return null;
+    const cs = parseISODate(state.cycleStart);
+    if(d < cs) return null;
+    const dayName = DAYS[d.getDay()-1];
+    const list = state.base[dayName] || ["","","",""];
+    if(!list.some(n=>n && n.trim()!=="")) return null;
+    const reg = positioned(list, weekIndex(d, cs));
+    const iso = toISO(d);
+    const subs = {};
+    state.overrides.forEach(ov=>{ if(ov.date===iso && ov.absent && ov.substitute) subs[ov.absent]=ov.substitute; });
+    return { dayName, entries: reg.map((n,i)=>({ pos: POSITIONS[i], original: n, name: (n && subs[n]) ? subs[n] : n, covered: !!(n && subs[n]) })) };
+  }
+  function buildMonthRoster(mkey){
+    const range = monthRange(mkey);
+    if(!range || !state.cycleStart) return [];
+    const cs = parseISODate(state.cycleStart);
+    const start = range.start < cs ? cs : range.start;
+    if(start > range.end) return [];
+    return schoolDaysInRange(start, range.end)
+      .map(d=>({ date:d, roster: rosterForDate(d) }))
+      .filter(x=>x.roster);
+  }
+  function computeTotals(mkey){
+    const names = allNames();
+    const totals = {}; names.forEach(n=>totals[n]=0);
+    if(!state.cycleStart) return totals;
+    const cs = parseISODate(state.cycleStart);
+    let start, end;
+    if(mkey==="ALL"){
+      start = cs; end = new Date(); end.setHours(0,0,0,0);
+    } else {
+      const r = monthRange(mkey); if(!r) return totals;
+      start = r.start < cs ? cs : r.start; end = r.end;
+    }
+    if(start > end) return totals;
+    schoolDaysInRange(start,end).forEach(d=>{
+      const r = rosterForDate(d);
+      if(r) r.entries.forEach(e=>{ if(e.name){ totals[e.name] = (totals[e.name]||0)+1; } });
+    });
+    return totals;
+  }
+
   function renderReport(){
     const out = document.getElementById("reportOut");
     const sel = document.getElementById("reportMonth");
@@ -732,6 +779,36 @@
     const bal = names.map(n=>({n, b:(covers[n]||0)-(covered[n]||0)})).filter(x=>x.b!==0);
 
     let html = "";
+
+    // 0) πλήρες πρόγραμμα εφημεριών του μήνα (όλες οι εφημερίες, όχι μόνο καλύψεις)
+    if(mkey!=="ALL"){
+      const roster = buildMonthRoster(mkey);
+      html += '<div style="font-weight:700;margin-bottom:6px;">Πλήρες πρόγραμμα εφημεριών ('+sel.options[sel.selectedIndex].text+')</div>';
+      if(roster.length){
+        html += '<div style="overflow-x:auto;margin-bottom:14px;"><table><tr><th>Ημέρα</th>' +
+          POSITIONS.map(p=>"<th>"+p+"</th>").join("") + '</tr>' +
+          roster.map(({date,roster:r})=>{
+            const cells = r.entries.map(e=>{
+              if(!e.name) return "<td>—</td>";
+              return e.covered ? "<td><span class='neg'>"+esc(e.name)+"</span><br><span class='rpmuted' style='font-size:11px;'>αντί "+esc(e.original)+"</span></td>"
+                                : "<td>"+esc(e.name)+"</td>";
+            }).join("");
+            return "<tr><td style='white-space:nowrap;font-weight:700;'>"+r.dayName.slice(0,3)+" "+fmtDMY(date)+"</td>"+cells+"</tr>";
+          }).join("") + '</table></div>';
+      } else {
+        html += '<div class="ovempty">Δεν υπάρχουν σχολικές ημέρες σε αυτό το διάστημα (πριν την έναρξη κύκλου ή κενό πρόγραμμα).</div>';
+      }
+    }
+
+    // 0β) σύνολο εφημεριών ανά καθηγητή (πραγματικός φόρτος, μαζί με καλύψεις)
+    const totals = computeTotals(mkey);
+    const totRows = names.map(n=>({n, t:totals[n]||0})).sort((a,b)=>b.t-a.t);
+    if(totRows.some(x=>x.t>0)){
+      html += '<div style="font-weight:700;margin-bottom:6px;">Σύνολο εφημεριών ανά καθηγητή'+(mkey==="ALL"?" (έως σήμερα)":"")+'</div>';
+      html += '<div style="overflow-x:auto;margin-bottom:14px;"><table><tr><th>Καθηγητής/τρια</th><th>Εφημερίες</th></tr>' +
+        totRows.map(x=>"<tr><td>"+esc(x.n)+"</td><td>"+x.t+"</td></tr>").join("") + '</table></div>';
+    }
+
     // 1) λίστα καλύψεων
     html += '<div style="font-weight:700;margin-bottom:6px;">Καλύψεις που έγιναν'+(mkey==="ALL"?"":" ("+sel.options[sel.selectedIndex].text+")")+': '+list.length+'</div>';
     if(list.length){
@@ -822,6 +899,32 @@
     const bal = names.map(n=>({n,b:(covers[n]||0)-(covered[n]||0)})).filter(x=>x.b!==0);
 
     let h = '<div class="rphead"><span class="rpschool">3ο Γυμνάσιο Πολίχνης</span><span class="rptitle">ΑΝΑΦΟΡΑ ΕΦΗΜΕΡΙΩΝ — '+esc(label)+'</span></div>';
+
+    if(mkey!=="ALL"){
+      const roster = buildMonthRoster(mkey);
+      h += '<h3>Πλήρες πρόγραμμα εφημεριών</h3>';
+      if(roster.length){
+        h += '<table><tr><th>Ημέρα</th>'+POSITIONS.map(p=>"<th>"+p+"</th>").join("")+'</tr>' +
+          roster.map(({date,roster:r})=>{
+            const cells = r.entries.map(e=>{
+              if(!e.name) return "<td>—</td>";
+              return e.covered ? "<td>"+esc(e.name)+" <span class='rpmuted'>(αντί "+esc(e.original)+")</span></td>" : "<td>"+esc(e.name)+"</td>";
+            }).join("");
+            return "<tr><td><b>"+r.dayName.slice(0,3)+" "+fmtDMY(date)+"</b></td>"+cells+"</tr>";
+          }).join("") + '</table>';
+      } else {
+        h += '<div class="rpmuted">Καμία σχολική ημέρα σε αυτό το διάστημα.</div>';
+      }
+    }
+
+    const totals = computeTotals(mkey);
+    const totRows = names.map(n=>({n,t:totals[n]||0})).sort((a,b)=>b.t-a.t);
+    if(totRows.some(x=>x.t>0)){
+      h += '<h3>Σύνολο εφημεριών ανά καθηγητή'+(mkey==="ALL"?" (έως σήμερα)":"")+'</h3>';
+      h += '<table><tr><th>Καθηγητής/τρια</th><th>Εφημερίες</th></tr>' +
+        totRows.map(x=>"<tr><td>"+esc(x.n)+"</td><td>"+x.t+"</td></tr>").join("") + '</table>';
+    }
+
     h += '<h3>Καλύψεις ('+list.length+')</h3>';
     h += list.length ? list.map(o=>'<div class="rprow"><span class="rpd">'+fmtDMY(parseAnyDate(o.date))+'</span><span>Ο/Η '+esc(o.substitute)+' κάλυψε τον/την '+esc(o.absent)+'</span></div>').join("")
                      : '<div class="rpmuted">Καμία κάλυψη σε αυτό το διάστημα.</div>';
