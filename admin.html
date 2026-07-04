@@ -89,7 +89,17 @@
   .dayrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
   @media (max-width:640px){.dayrow{grid-template-columns:1fr 1fr;}}
   .dayrow input{font-size:13.5px;padding:8px 9px;}
+  .dayrow .bkinput{margin-top:4px;font-size:12px;padding:6px 9px;border-style:dashed;color:var(--terracotta);background:#FBF7F4;}
+  .dayrow .bkinput::placeholder{color:#C99;}
   .poslabel{font-size:10.5px;color:var(--muted);margin-bottom:2px;}
+  .datewrap{position:relative;}
+  .datewrap .dateinput{padding-right:38px;}
+  .calbtn{
+    position:absolute;right:4px;top:50%;transform:translateY(-50%);
+    border:none;background:transparent;cursor:pointer;font-size:17px;line-height:1;padding:4px 6px;border-radius:8px;
+  }
+  .calbtn:hover{background:var(--line);}
+  .calnative{position:absolute;right:8px;bottom:0;width:1px;height:1px;opacity:0;pointer-events:none;border:none;padding:0;}
 
   .ovrow{
     display:grid;
@@ -201,7 +211,11 @@
       </div>
       <div>
         <label>Έναρξη κύκλου (πρώτη Δευτέρα) — ηη/μμ/εεεε</label>
-        <input type="text" id="cycleStart" class="dateinput" inputmode="numeric" placeholder="ηη/μμ/εεεε" maxlength="10">
+        <div class="datewrap">
+          <input type="text" id="cycleStart" class="dateinput" inputmode="numeric" placeholder="ηη/μμ/εεεε" maxlength="10">
+          <button type="button" class="calbtn" data-cal="cycleStart" aria-label="Ημερολόγιο">📅</button>
+          <input type="date" class="calnative" data-cal="cycleStart" tabindex="-1" aria-hidden="true">
+        </div>
       </div>
     </div>
   </div>
@@ -263,7 +277,7 @@
   const DAYS = ["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή"];
   const DAY_UP = ["ΔΕΥΤΕΡΑ","ΤΡΙΤΗ","ΤΕΤΑΡΤΗ","ΠΕΜΠΤΗ","ΠΑΡΑΣΚΕΥΗ"];
   const POSITIONS = ["2ος Όροφος και Σκάλες","Ισόγειο","Αυλή","Βρύσες και Υπόγειο"];
-  const state = { base:{}, overrides:[], schoolName:"3ο Γυμνάσιο Πολίχνης", cycleStart:"", repo:null };
+  const state = { base:{}, backup:{}, overrides:[], schoolName:"3ο Γυμνάσιο Πολίχνης", cycleStart:"", repo:null };
 
   // ---------- utils ----------
   function parseISODate(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
@@ -300,7 +314,7 @@
 
   // ---------- parse / serialize ----------
   function parseDataText(text){
-    const cfg = { base:{}, overrides:[] };
+    const cfg = { base:{}, backup:{}, overrides:[] };
     text.split(/\r?\n/).forEach(raw=>{
       const line = raw.trim();
       if(!line || line.startsWith("#")) return;
@@ -320,6 +334,10 @@
       } else {
         const i = DAY_UP.indexOf(key);
         if(i>-1) cfg.base[DAYS[i]] = val.split(/[;,]/).map(s=>s.trim());
+        else if(key.indexOf("ΑΝΑΠΛ_")===0){
+          const j = DAY_UP.indexOf(key.slice(6));
+          if(j>-1) cfg.backup[DAYS[j]] = val.split(/[;,]/).map(s=>s.trim());
+        }
       }
     });
     return cfg;
@@ -334,6 +352,12 @@
     DAYS.forEach(d=>{
       const up = DAY_UP[DAYS.indexOf(d)];
       L.push(up + " = " + (state.base[d]||["","","",""]).join("; "));
+    });
+    L.push("");
+    DAYS.forEach(d=>{
+      const up = DAY_UP[DAYS.indexOf(d)];
+      const b = state.backup[d]||["","","",""];
+      if(b.some(x=>x && x.trim()!=="")) L.push("ΑΝΑΠΛ_"+up + " = " + b.join("; "));
     });
     L.push("");
     state.overrides.forEach(ov=>{
@@ -352,7 +376,10 @@
     const block = document.createElement("div");
     block.className = "dayblock";
     block.innerHTML = '<div class="dayname">'+d+'</div><div class="dayrow" data-day="'+d+'">' +
-      [1,2,3,4].map(p=>'<div><div class="poslabel">'+(p)+'. '+POSITIONS[p-1]+'</div><input type="text" data-pos="'+(p-1)+'" placeholder="Όνομα"></div>').join("") +
+      [1,2,3,4].map(p=>'<div><div class="poslabel">'+(p)+'. '+POSITIONS[p-1]+'</div>'+
+        '<input type="text" data-pos="'+(p-1)+'" data-kind="reg" placeholder="Καθηγητής/τρια">'+
+        '<input type="text" data-pos="'+(p-1)+'" data-kind="bk" class="bkinput" placeholder="Εφεδρεία (αν λείψει)">'+
+        '</div>').join("") +
       '</div>';
     daysDiv.appendChild(block);
   });
@@ -373,7 +400,11 @@
       const row = document.createElement("div");
       row.className = "ovrow";
       row.innerHTML =
-        '<div><label>Ημερομηνία (ηη/μμ/εεεε)</label><input type="text" class="dateinput" inputmode="numeric" placeholder="ηη/μμ/εεεε" maxlength="10" value="'+esc(isoToDMY(ov.date||""))+'" data-i="'+i+'" data-f="date"></div>' +
+        '<div><label>Ημερομηνία (ηη/μμ/εεεε)</label><div class="datewrap">'+
+          '<input type="text" class="dateinput" inputmode="numeric" placeholder="ηη/μμ/εεεε" maxlength="10" value="'+esc(isoToDMY(ov.date||""))+'" data-i="'+i+'" data-f="date">'+
+          '<button type="button" class="calbtn" data-cal="ov'+i+'" aria-label="Ημερολόγιο">📅</button>'+
+          '<input type="date" class="calnative" data-cal="ov'+i+'" data-i="'+i+'" tabindex="-1" aria-hidden="true">'+
+        '</div></div>' +
         '<div><label>Απών/ούσα</label><select data-i="'+i+'" data-f="absent">'+nameOptions(ov.absent)+'</select></div>' +
         '<div><label>Κάλυψε</label><select data-i="'+i+'" data-f="substitute">'+nameOptions(ov.substitute)+'</select></div>' +
         '<button class="del" data-del="'+i+'" title="Διαγραφή">✕</button>';
@@ -388,16 +419,23 @@
     state.cycleStart = csDt ? toISO(csDt) : "";
     document.querySelectorAll(".dayrow").forEach(row=>{
       const d = row.dataset.day;
-      const arr = ["","","",""];
-      row.querySelectorAll("input").forEach(inp=>{ arr[+inp.dataset.pos] = inp.value.trim(); });
-      state.base[d] = arr;
+      const arr = ["","","",""], barr = ["","","",""];
+      row.querySelectorAll("input").forEach(inp=>{
+        const p = +inp.dataset.pos;
+        if(inp.dataset.kind==="bk") barr[p] = inp.value.trim();
+        else arr[p] = inp.value.trim();
+      });
+      state.base[d] = arr; state.backup[d] = barr;
     });
   }
   function pushToUI(){
     document.getElementById("cycleStart").value = isoToDMY(state.cycleStart || "");
     document.querySelectorAll(".dayrow").forEach(row=>{
       const d = row.dataset.day;
-      row.querySelectorAll("input").forEach(inp=>{ inp.value = (state.base[d]||[])[+inp.dataset.pos] || ""; });
+      row.querySelectorAll("input").forEach(inp=>{
+        const p = +inp.dataset.pos;
+        inp.value = inp.dataset.kind==="bk" ? ((state.backup[d]||[])[p]||"") : ((state.base[d]||[])[p]||"");
+      });
     });
     renderOverrides();
   }
@@ -632,12 +670,43 @@
     if(b){ state.overrides.splice(+b.dataset.del,1); renderOverrides(); runChecks(); }
   });
 
+  // ---------- calendar picker ----------
+  document.addEventListener("click", e=>{
+    const b = e.target.closest(".calbtn");
+    if(!b) return;
+    const nat = document.querySelector('.calnative[data-cal="'+b.dataset.cal+'"]');
+    if(!nat) return;
+    let curText = "";
+    if(b.dataset.cal==="cycleStart") curText = document.getElementById("cycleStart").value;
+    else { const ti = document.querySelector('.dateinput[data-f="date"][data-i="'+nat.dataset.i+'"]'); curText = ti ? ti.value : ""; }
+    const d = parseAnyDate(curText);
+    nat.value = d ? toISO(d) : "";
+    if(nat.showPicker){ try{ nat.showPicker(); }catch(err){ nat.focus(); } }
+    else { nat.style.pointerEvents="auto"; nat.focus(); nat.click(); }
+  });
+  document.addEventListener("change", e=>{
+    const nat = e.target.closest(".calnative");
+    if(!nat) return;
+    const d = nat.value ? parseAnyDate(nat.value) : null;
+    const dmy = d ? fmtDMY(d) : "";
+    if(nat.dataset.cal==="cycleStart"){
+      document.getElementById("cycleStart").value = dmy;
+      pullFromUI(); runChecks();
+    } else {
+      const i = +nat.dataset.i;
+      const ti = document.querySelector('.dateinput[data-f="date"][data-i="'+i+'"]');
+      if(ti) ti.value = dmy;
+      if(d && state.overrides[i]) state.overrides[i].date = toISO(d);
+      runChecks();
+    }
+  });
+
   // ---------- load ----------
   fetch("data.txt?_="+Date.now())
     .then(r=>{ if(!r.ok) throw 0; return r.text(); })
     .then(t=>{
       const cfg = parseDataText(t);
-      state.base = cfg.base; state.overrides = cfg.overrides;
+      state.base = cfg.base; state.overrides = cfg.overrides; state.backup = cfg.backup||{};
       state.cycleStart = cfg.cycleStart||"";
       pushToUI(); runChecks();
     })

@@ -231,6 +231,7 @@
   const DAYS_SHORT = ["Δευ","Τρί","Τετ","Πέμ","Παρ"];
   const POSITIONS = ["2ος Όροφος και Σκάλες","Ισόγειο","Αυλή","Βρύσες και Υπόγειο"];
   const DAY_KEYS = { "ΔΕΥΤΕΡΑ":"Δευτέρα","ΤΡΙΤΗ":"Τρίτη","ΤΕΤΑΡΤΗ":"Τετάρτη","ΠΕΜΠΤΗ":"Πέμπτη","ΠΑΡΑΣΚΕΥΗ":"Παρασκευή" };
+  const BACKUP_KEYS = { "ΑΝΑΠΛ_ΔΕΥΤΕΡΑ":"Δευτέρα","ΑΝΑΠΛ_ΤΡΙΤΗ":"Τρίτη","ΑΝΑΠΛ_ΤΕΤΑΡΤΗ":"Τετάρτη","ΑΝΑΠΛ_ΠΕΜΠΤΗ":"Πέμπτη","ΑΝΑΠΛ_ΠΑΡΑΣΚΕΥΗ":"Παρασκευή" };
   const MONTHS = ["Ιανουαρίου","Φεβρουαρίου","Μαρτίου","Απριλίου","Μαΐου","Ιουνίου",
                   "Ιουλίου","Αυγούστου","Σεπτεμβρίου","Οκτωβρίου","Νοεμβρίου","Δεκεμβρίου"];
   // Ένα διακριτικό χρώμα ανά ημέρα (soft = φόντο chip, bold = επιλεγμένο/αριθμοί, ink = κείμενο chip)
@@ -261,7 +262,7 @@
 
   /* ---------- data ---------- */
   function parseDataText(text){
-    const cfg = { base:{}, overrides:[] };
+    const cfg = { base:{}, backup:{}, overrides:[] };
     text.split(/\r?\n/).forEach(raw=>{
       const line = raw.trim();
       if(!line || line.startsWith("#")) return;
@@ -273,6 +274,8 @@
       else if(key==="OVERRIDE"){
         const p = val.split(",").map(s=>s.trim());
         if(p.length>=3){ const dt=parseAnyDate(p[0]); if(dt) cfg.overrides.push({date:toISO(dt),absent:p[1],substitute:p[2]}); }
+      } else if(BACKUP_KEYS[key]){
+        cfg.backup[BACKUP_KEYS[key]] = val.split(/[;,]/).map(s=>s.trim());
       } else if(DAY_KEYS[key]){
         cfg.base[DAY_KEYS[key]] = val.split(/[;,]/).map(s=>s.trim());
       }
@@ -291,9 +294,12 @@
   function assignmentFor(date){
     const dayName = DAYS[date.getDay()-1];
     const cs = parseISO(cfg.cycleStart);
+    const off = weekOffset(date, cs);
     const base = cfg.base[dayName] || ["","","",""];
-    const reg = rotated(base, weekOffset(date, cs));
-    const a = reg.map(n=>({regular:n, substitute:null}));
+    const bk = cfg.backup[dayName] || ["","","",""];
+    const reg = rotated(base, off);
+    const rbk = rotated(bk, off);
+    const a = reg.map((n,i)=>({regular:n, backup:rbk[i]||"", substitute:null}));
     const iso = toISO(date);
     cfg.overrides.forEach(ov=>{
       if(ov.date===iso){
@@ -363,13 +369,15 @@
         const regName = s.regular && s.regular.trim()!=="" ? esc(s.regular) : "—";
         const absentCls = s.substitute ? " absent" : "";
         const missTag = s.substitute ? '<span class="miss">λείπει</span>' : '';
-        const resFilled = s.substitute ? " filled" : "";
-        const resName = s.substitute ? esc(s.substitute) : "—";
+        let resCls, resLabel, resName;
+        if(s.substitute){ resCls=" filled"; resLabel="Καλύπτει"; resName=esc(s.substitute); }
+        else if(s.backup && s.backup.trim()!==""){ resCls=""; resLabel="Εφεδρεία"; resName=esc(s.backup); }
+        else { resCls=""; resLabel="Αναπληρωτής"; resName="—"; }
         return '<div class="row">'+
                  '<div class="slot">'+(i+1)+'</div>'+
                  '<div class="who"><div class="posname">'+POSITIONS[i]+'</div>'+
                    '<div class="name'+absentCls+'">'+regName+'</div>'+missTag+'</div>'+
-                 '<div class="reserve'+resFilled+'"><span class="rlabel">Αναπληρωτής</span>'+
+                 '<div class="reserve'+resCls+'"><span class="rlabel">'+resLabel+'</span>'+
                    '<span class="rname">'+resName+'</span></div>'+
                '</div>';
       }).join("");
@@ -387,10 +395,11 @@
     const dayLabel = DAYS[selDate.getDay()-1] + " " + fmtDMY(selDate);
     const rows = (hasAny ? a : [{},{},{},{}]).map((s,i)=>{
       const eff = s && s.substitute ? esc(s.substitute) : (s && s.regular ? esc(s.regular) : "—");
-      const sub = s && s.substitute ? '<div class="psub">αναπληρώνει τον/την '+esc(s.regular)+'</div>' : '';
+      const note = s && s.substitute ? '<div class="psub">αναπληρώνει τον/την '+esc(s.regular)+'</div>'
+                 : (s && s.backup && s.backup.trim()!=="" ? '<div class="psub">εφεδρεία: '+esc(s.backup)+'</div>' : '');
       return '<div class="prow"><span class="pnum">'+(i+1)+'</span>'+
              '<span class="ppos">'+POSITIONS[i]+'</span>'+
-             '<span class="pname">'+eff+sub+'</span></div>';
+             '<span class="pname">'+eff+note+'</span></div>';
     }).join("");
     const sheet =
       '<div class="psheet">'+
