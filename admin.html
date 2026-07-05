@@ -36,16 +36,21 @@
   .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
   @media (max-width:560px){.grid2{grid-template-columns:1fr;} .grid3{grid-template-columns:1fr;}}
 
-  .dayblock{margin-bottom:18px;padding-bottom:4px;border-bottom:1px solid var(--line);}
-  .dayblock:last-child{border-bottom:none;}
-  .dayname{font-weight:700;font-size:14.5px;margin-bottom:8px;color:var(--board);}
-  .cycleblock{margin-bottom:10px;padding:10px 10px 6px;border:1px dashed var(--line);border-radius:10px;background:#FAFAF5;}
-  .cyclelabel{font-size:11px;font-weight:800;color:var(--board);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em;}
+  .dayblock{margin-bottom:16px;padding:14px 14px 10px;border-radius:14px;border-left:5px solid var(--dc-bold, var(--line));background:var(--dc-soft, #fafaf8);}
+  .dayblock:last-child{margin-bottom:0;}
+  .dayname{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;margin-bottom:10px;color:var(--dc-ink, var(--board));}
+  .dayname .daydot{width:9px;height:9px;border-radius:50%;background:var(--dc-bold, var(--board));flex:0 0 auto;}
+  .cycleblock{margin-bottom:10px;padding:10px 10px 6px;border:1px solid var(--dc-line, var(--line));border-radius:10px;background:#fff;}
+  .cycleblock.cyc-b{background:rgba(0,0,0,0.015);}
+  .cyclelabel{font-size:11px;font-weight:800;color:var(--dc-ink, var(--board));margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:6px;}
+  .cyclelabel::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--dc-bold, var(--board));}
   .dayrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
   @media (max-width:640px){.dayrow{grid-template-columns:1fr 1fr;}}
   .dayrow input{font-size:13.5px;padding:8px 9px;}
-  .dayrow .bkinput{margin-top:4px;font-size:12px;padding:6px 9px;border-style:dashed;color:var(--terracotta);background:#FBF7F4;}
-  .dayrow .bkinput::placeholder{color:#C99;}
+  .bkinput{margin-top:4px;font-size:13px;padding:8px 10px;border-style:dashed;color:var(--terracotta);border-color:var(--terracotta);background:#FBF7F4;}
+  .bkinput::placeholder{color:#C99;}
+  .poolwrap{margin-top:8px;}
+  .poolinput{font-size:13px;padding:8px 10px;border-style:dashed;border-color:var(--board);background:#F4F8F5;}
   .poslabel{font-size:10.5px;color:var(--muted);margin-bottom:2px;}
   .datewrap{position:relative;}
   .datewrap .dateinput{padding-right:38px;}
@@ -246,6 +251,14 @@
   const DAY_UP = ["ΔΕΥΤΕΡΑ","ΤΡΙΤΗ","ΤΕΤΑΡΤΗ","ΠΕΜΠΤΗ","ΠΑΡΑΣΚΕΥΗ"];
   const POSITIONS = ["2ος Όροφος και Σκάλες","Ισόγειο","Αυλή","Βρύσες και Υπόγειο"];
   const CYCLE_KEYS = ["Α","Β"];
+  // Ίδια παλέτα με τη δημόσια σελίδα, για οπτική συνέχεια
+  const DAY_COLORS = {
+    "Δευτέρα":  { soft:"#EEF3FA", bold:"#3F6FA6", ink:"#274763", line:"#D7E3F0" },
+    "Τρίτη":    { soft:"#EEF6F1", bold:"#3B8B5E", ink:"#234E37", line:"#D6EBDD" },
+    "Τετάρτη":  { soft:"#FBF6EA", bold:"#8C6A22", ink:"#5A461C", line:"#F0E4C6" },
+    "Πέμπτη":   { soft:"#FBF0EA", bold:"#C0664A", ink:"#6E3826", line:"#F2DDD2" },
+    "Παρασκευή":{ soft:"#F5F0F8", bold:"#7C5AA3", ink:"#45325C", line:"#E5DCEE" }
+  };
   const DEFAULT_CYCLE_TIMES = { "Α":"08:00–11:00", "Β":"11:00–14:10" };
   const CYCLE_TITLES = { "Α":"1ος Κύκλος", "Β":"2ος Κύκλος" };
   const GMONTHS = ["Ιανουάριος","Φεβρουάριος","Μάρτιος","Απρίλιος","Μάιος","Ιούνιος","Ιούλιος","Αύγουστος","Σεπτέμβριος","Οκτώβριος","Νοέμβριος","Δεκέμβριος"];
@@ -267,7 +280,21 @@
   function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
   function mondayOf(d){ return addDays(d, -((d.getDay()+6)%7)); }
   function weekOffset(date,cycleStart){ const diff=Math.round((date-cycleStart)/86400000); return ((Math.floor(diff/7)%4)+4)%4; }
+  function weekIndex(date,cycleStart){ return Math.floor(Math.round((date-cycleStart)/86400000)/7); }
+  function rotOffset(w,L){ return (L%4===0) ? Math.floor(4*w/L) : w; }
   function rotated(baseRow, offset){ const out=[]; for(let j=0;j<4;j++){ out.push(baseRow[((j-offset)%4+4)%4]||""); } return out; }
+  function positioned(list, w){
+    const L=list.length;
+    if(L<=4){ const four=[]; for(let k=0;k<4;k++) four.push(list[k]||""); return rotated(four, ((w%4)+4)%4); }
+    const start=((4*w)%L+L)%L; const four=[]; for(let k=0;k<4;k++) four.push(list[(start+k)%L]);
+    return rotated(four, ((rotOffset(w,L)%4)+4)%4);
+  }
+  function benchOf(list, w){
+    const L=list.length; if(L<=4) return [];
+    const start=((4*w)%L+L)%L; const act=new Set(); for(let k=0;k<4;k++) act.add((start+k)%L);
+    const b=[]; for(let idx=0;idx<L;idx++){ if(!act.has(idx)&&list[idx]&&list[idx].trim()!=="") b.push(list[idx]); }
+    return b;
+  }
   function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   function detectRepo(){
     const host = location.hostname;
@@ -295,12 +322,17 @@
   function cycleRegular(dayName, ck, date){
     const cs = parseISODate(state.cycleStart);
     const base = (state.base[dayName] && state.base[dayName][ck]) || ["","","",""];
-    return rotated(base, weekOffset(date, cs));
+    return positioned(base, weekIndex(date, cs));
   }
   function cycleBackup(dayName, ck, date){
     const cs = parseISODate(state.cycleStart);
     const bk = (state.backup[dayName] && state.backup[dayName][ck]) || ["","","",""];
-    return rotated(bk, weekOffset(date, cs));
+    return positioned(bk, weekIndex(date, cs));
+  }
+  function cycleBench(dayName, ck, date){
+    const cs = parseISODate(state.cycleStart);
+    const base = (state.base[dayName] && state.base[dayName][ck]) || [];
+    return benchOf(base, weekIndex(date, cs));
   }
   function allOnDutyThatDay(date){
     if(!state.cycleStart) return [];
@@ -372,16 +404,25 @@
   DAYS.forEach(d=>{
     const block = document.createElement("div");
     block.className = "dayblock";
+    const c = DAY_COLORS[d];
+    block.style.setProperty("--dc-bold", c.bold);
+    block.style.setProperty("--dc-soft", c.soft);
+    block.style.setProperty("--dc-ink", c.ink);
+    block.style.setProperty("--dc-line", c.line);
     const cycleBlocks = CYCLE_KEYS.map(ck=>
-      '<div class="cycleblock"><div class="cyclelabel" data-cyclelabel="'+ck+'">'+cycleLabel(ck)+'</div>'+
+      '<div class="cycleblock'+(ck==="Β"?" cyc-b":"")+'"><div class="cyclelabel" data-cyclelabel="'+ck+'">'+cycleLabel(ck)+'</div>'+
       '<div class="dayrow" data-day="'+d+'" data-cycle="'+ck+'">' +
         [1,2,3,4].map(p=>'<div><div class="poslabel">'+p+'. '+POSITIONS[p-1]+'</div>'+
           '<input type="text" data-pos="'+(p-1)+'" data-kind="reg" placeholder="Καθηγητής/τρια">'+
-          '<input type="text" data-pos="'+(p-1)+'" data-kind="bk" class="bkinput" placeholder="Εφεδρεία (αν λείψει)">'+
           '</div>').join("") +
-      '</div></div>'
+      '</div>' +
+      '<div class="poolwrap"><div class="poslabel">Επιπλέον ρεζέρβα αυτού του κύκλου (ονόματα με ; — μπαίνουν εκ περιτροπής)</div>'+
+      '<input type="text" class="poolinput" data-day="'+d+'" data-cycle="'+ck+'" placeholder="π.χ. Παπαδόπουλος; Νικολάου; ..."></div>'+
+      '<div class="poolwrap"><div class="poslabel">Εφεδρείες (προαιρετικό) — ΙΔΙΑ ΣΕΙΡΑ κι αριθμός με το σύνολο πάνω (4 θέσεις + ρεζέρβα)</div>'+
+      '<input type="text" class="bkinput" data-day="'+d+'" data-cycle="'+ck+'" placeholder="π.χ. εφεδρεία1; εφεδρεία2; ..."></div>'+
+      '</div>'
     ).join("");
-    block.innerHTML = '<div class="dayname">'+d+'</div>' + cycleBlocks;
+    block.innerHTML = '<div class="dayname"><span class="daydot"></span>'+d+'</div>' + cycleBlocks;
     daysDiv.appendChild(block);
   });
   function refreshCycleLabels(){
@@ -420,8 +461,13 @@
       shown++;
       const row = document.createElement("div");
       row.className = "ovrow";
+      const dObj = parseAnyDate(ov.date);
+      const dName = dObj && dObj.getDay()>=1 && dObj.getDay()<=5 ? DAYS[dObj.getDay()-1] : null;
+      const dc = dName ? DAY_COLORS[dName] : null;
+      if(dc){ row.style.borderLeft = "4px solid "+dc.bold; row.style.paddingLeft = "10px"; row.style.background = dc.soft; row.style.borderRadius = "10px"; row.style.paddingTop="8px"; row.style.paddingBottom="8px"; }
+      const dayChip = dName ? '<span style="display:inline-block;margin-bottom:4px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:'+dc.ink+';">'+dName+'</span>' : '';
       row.innerHTML =
-        '<div><label>Ημερομηνία (ηη/μμ/εεεε)</label><div class="datewrap">'+
+        '<div>'+dayChip+'<label>Ημερομηνία (ηη/μμ/εεεε)</label><div class="datewrap">'+
           '<input type="text" class="dateinput" inputmode="numeric" placeholder="ηη/μμ/εεεε" maxlength="10" value="'+esc(isoToDMY(ov.date||""))+'" data-i="'+i+'" data-f="date">'+
           '<button type="button" class="calbtn" data-cal="ov'+i+'" aria-label="Ημερολόγιο">📅</button>'+
           '<input type="date" class="calnative" data-cal="ov'+i+'" data-i="'+i+'" tabindex="-1" aria-hidden="true">'+
@@ -449,14 +495,16 @@
     state.cycleTimes["Β"] = document.getElementById("cycle2Time").value.trim() || DEFAULT_CYCLE_TIMES["Β"];
     document.querySelectorAll(".dayrow").forEach(row=>{
       const d = row.dataset.day, ck = row.dataset.cycle;
-      const arr = ["","","",""], barr = ["","","",""];
-      row.querySelectorAll("input").forEach(inp=>{
-        const p = +inp.dataset.pos;
-        if(inp.dataset.kind==="bk") barr[p] = inp.value.trim();
-        else arr[p] = inp.value.trim();
-      });
-      state.base[d][ck] = arr;
-      state.backup[d][ck] = barr;
+      const arr = ["","","",""];
+      row.querySelectorAll("input").forEach(inp=>{ arr[+inp.dataset.pos] = inp.value.trim(); });
+      const poolInp = document.querySelector('.poolinput[data-day="'+d+'"][data-cycle="'+ck+'"]');
+      const extras = poolInp ? poolInp.value.split(/[;,]/).map(s=>s.trim()).filter(Boolean) : [];
+      const full = arr.concat(extras);
+      state.base[d][ck] = full;
+      const bkInp = document.querySelector('.bkinput[data-day="'+d+'"][data-cycle="'+ck+'"]');
+      const bkRaw = bkInp ? bkInp.value.split(/[;,]/).map(s=>s.trim()) : [];
+      const bkFull = full.map((_,i)=> bkRaw[i] || "");
+      state.backup[d][ck] = bkFull;
     });
     refreshCycleLabels();
   }
@@ -467,9 +515,17 @@
     document.querySelectorAll(".dayrow").forEach(row=>{
       const d = row.dataset.day, ck = row.dataset.cycle;
       row.querySelectorAll("input").forEach(inp=>{
-        const p = +inp.dataset.pos;
-        inp.value = inp.dataset.kind==="bk" ? ((state.backup[d][ck]||[])[p]||"") : ((state.base[d][ck]||[])[p]||"");
+        inp.value = (state.base[d][ck]||[])[+inp.dataset.pos] || "";
       });
+    });
+    document.querySelectorAll(".poolinput").forEach(inp=>{
+      const d = inp.dataset.day, ck = inp.dataset.cycle;
+      inp.value = ((state.base[d][ck]||[]).slice(4)).join("; ");
+    });
+    document.querySelectorAll(".bkinput").forEach(inp=>{
+      const d = inp.dataset.day, ck = inp.dataset.cycle;
+      const bk = state.backup[d][ck]||[];
+      inp.value = bk.some(x=>x) ? bk.join("; ") : "";
     });
     refreshCycleLabels();
     renderOverrides();
@@ -493,12 +549,12 @@
         if(dup.length)
           checks.push({ok:false,msg:tag+": το όνομα «"+dup[0]+"» εμφανίζεται δύο φορές."});
       });
-      // ίδιο άτομο και στους δύο κύκλους την ίδια μέρα (πιθανή υπερφόρτωση)
+      // ίδιο άτομο σε πισίνες και των δύο κύκλων την ίδια μέρα (κίνδυνος να συμπέσουν κάποια εβδομάδα)
       const a1 = (state.base[d]["Α"]||[]).filter(n=>n);
       const a2 = (state.base[d]["Β"]||[]).filter(n=>n);
       const both = a1.filter(n=>a2.includes(n));
       if(both.length)
-        checks.push({ok:false,msg:"«"+d+"»: ο/η «"+both[0]+"» έχει εφημερία και στους δύο κύκλους την ίδια μέρα."});
+        checks.push({ok:false,msg:"«"+d+"»: ο/η «"+both[0]+"» υπάρχει στις λίστες και των δύο κύκλων — κάποια εβδομάδα μπορεί να βρεθεί με εφημερία και στους δύο. Καλύτερα να μην επαναλαμβάνεται στην ίδια μέρα."});
     });
 
     // 2. εμφανίσεις στο πρόγραμμα (και οι δύο κύκλοι μαζί)
@@ -608,7 +664,7 @@
       CYCLE_KEYS.forEach(ck=>{
         const base = state.base[dayName][ck] || [];
         if(!base.some(x=>x)) return;
-        let duty = rotated(base, weekOffset(d, cs));
+        let duty = positioned(base, weekIndex(d, cs));
         state.overrides.forEach(ov=>{ if(ov.date===iso) duty = duty.map(n=> n===ov.absent ? ov.substitute : n); });
         duty.forEach((n,j)=>{ if(n && mat[n]) mat[n][j]++; });
       });
@@ -646,12 +702,14 @@
     const iso = toISO(d);
     const subs = {};
     state.overrides.forEach(ov=>{ if(ov.date===iso && ov.absent && ov.substitute) subs[ov.absent]=ov.substitute; });
+    const w = weekIndex(d, cs);
     const cyclesOut = CYCLE_KEYS.map(ck=>{
       const base = state.base[dayName][ck] || ["","","",""];
       if(!base.some(n=>n && n.trim()!=="")) return null;
-      const reg = rotated(base, weekOffset(d, cs));
+      const reg = positioned(base, w);
       const entries = reg.map((n,i)=>({ pos:POSITIONS[i], original:n, name:(n && subs[n]) ? subs[n] : n, covered:!!(n && subs[n]) }));
-      return { cycle:ck, label:cycleLabel(ck), entries };
+      const bench = benchOf(base, w);
+      return { cycle:ck, label:cycleLabel(ck), entries, bench };
     }).filter(Boolean);
     if(!cyclesOut.length) return null;
     return { dayName, cyclesOut };
@@ -721,12 +779,14 @@
           POSITIONS.map(p=>"<th>"+p+"</th>").join("") + '</tr>' +
           roster.flatMap(({date,roster:r})=>
             r.cyclesOut.map(cd=>{
+              const dc = DAY_COLORS[r.dayName];
+              const rowStyle = "border-left:4px solid "+dc.bold+";background:"+dc.soft+";";
               const cells = cd.entries.map(e=>{
                 if(!e.name) return "<td>—</td>";
                 return e.covered ? "<td><span class='neg'>"+esc(e.name)+"</span><br><span class='rpmuted-inline' style='font-size:11px;color:#888;'>αντί "+esc(e.original)+"</span></td>"
                                   : "<td>"+esc(e.name)+"</td>";
               }).join("");
-              return "<tr><td style='white-space:nowrap;font-weight:700;'>"+r.dayName.slice(0,3)+" "+fmtDMY(date)+"<br><span style='font-weight:400;color:var(--muted);font-size:11px;'>"+esc(cd.label)+"</span></td>"+cells+"</tr>";
+              return "<tr style='"+rowStyle+"'><td style='white-space:nowrap;font-weight:700;color:"+dc.ink+";'>"+r.dayName.slice(0,3)+" "+fmtDMY(date)+"<br><span style='font-weight:400;color:var(--muted);font-size:11px;'>"+esc(cd.label)+"</span></td>"+cells+"</tr>";
             })
           ).join("") + '</table></div>';
       } else {
@@ -795,12 +855,16 @@
     if(d < cs){ out.innerHTML = '<div class="ovempty">'+fmtDMY(d)+': πριν την έναρξη του κύκλου ('+isoToDMY(state.cycleStart)+').</div>'; return; }
     const r = rosterForDate(d);
     if(!r){ out.innerHTML = '<div class="ovempty">Το πρόγραμμα δεν έχει συμπληρωθεί για αυτή την ημέρα.</div>'; return; }
-    let html = '<div style="font-weight:700;margin-bottom:8px;color:var(--board);">'+r.dayName+' '+fmtDMY(d)+'</div>';
+    const dc = DAY_COLORS[r.dayName];
+    let html = '<div style="display:inline-flex;align-items:center;gap:8px;font-weight:800;margin-bottom:8px;padding:4px 12px;border-radius:20px;background:'+dc.soft+';color:'+dc.ink+';"><span style="width:8px;height:8px;border-radius:50%;background:'+dc.bold+';"></span>'+r.dayName+' '+fmtDMY(d)+'</div>';
     html += '<table><tr><th>Κύκλος</th><th>Θέση</th><th>Εφημερία</th></tr>' +
       r.cyclesOut.flatMap(cd=>cd.entries.map((e,i)=>{
         const who = e.covered ? "<span class='neg'>"+esc(e.name)+"</span> <span style='color:#888;font-size:11px;'>(αντί "+esc(e.original)+")</span>" : (e.name?esc(e.name):"—");
-        return "<tr><td>"+esc(cd.label)+"</td><td>"+esc(e.pos)+"</td><td>"+who+"</td></tr>";
+        return "<tr style='border-left:3px solid "+dc.bold+";'><td>"+esc(cd.label)+"</td><td>"+esc(e.pos)+"</td><td>"+who+"</td></tr>";
       })).join("") + '</table>';
+    const benchLines = r.cyclesOut.filter(cd=>cd.bench && cd.bench.length)
+      .map(cd=>"<div style='margin-top:8px;font-size:13px;'><b>Ρεζέρβα ("+esc(cd.label)+"):</b> "+cd.bench.map(esc).join(", ")+"</div>").join("");
+    if(benchLines) html += benchLines;
     out.innerHTML = html;
   }
 
