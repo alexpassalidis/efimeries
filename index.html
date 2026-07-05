@@ -8,17 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@600;700&family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#1B2A4A;
-    --paper:#F6F2E9;
-    --board:#2F4B3C;
-    --board2:#3E6152;
-    --chalk:#F2EFE3;
-    --gold:#D9A441;
-    --terracotta:#B5533C;
-    --muted:#6B7789;
-    --line:#E7E0CF;
-    --day:#3F6FA6;
-    --day-soft:#E4EDF6;
+    --ink:#1B2A4A; --paper:#F6F2E9; --board:#2F4B3C; --board2:#3E6152;
+    --chalk:#F2EFE3; --gold:#D9A441; --terracotta:#B5533C; --muted:#6B7789; --line:#E7E0CF;
+    --day:#3F6FA6; --day-soft:#E4EDF6;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -27,190 +19,89 @@
       radial-gradient(900px 420px at 15% -5%, rgba(217,164,65,0.14) 0, transparent 60%),
       radial-gradient(800px 500px at 110% 110%, rgba(47,75,60,0.12) 0, transparent 55%),
       var(--paper);
-    color:var(--ink);
-    font-family:"Noto Sans", sans-serif;
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding:26px 14px 70px;
+    color:var(--ink); font-family:"Noto Sans", sans-serif; min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; padding:26px 14px 70px;
   }
   .wrap{width:100%;max-width:500px;animation:riseIn .55s cubic-bezier(.16,1,.3,1) both;}
-
   @keyframes riseIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
   @keyframes fadeSlide{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
   @media (prefers-reduced-motion: reduce){ *{animation:none !important;transition:none !important;} }
 
-  /* ---------- header ---------- */
-  .school{
-    text-align:center;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--muted);font-weight:700;margin-bottom:16px;
-  }
+  .school{text-align:center;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:16px;}
   .school .dash{color:var(--gold);margin:0 9px;opacity:.75;}
   .school sup{font-size:.62em;}
 
-  /* ---------- board / hero ---------- */
-  .board{
-    position:relative;
-    background:linear-gradient(150deg, var(--board2) 0%, var(--board) 62%);
-    border-radius:26px;padding:26px 22px 22px;
-    box-shadow:0 26px 52px -22px rgba(27,42,74,0.5);overflow:hidden;
-  }
-  .board::before{
-    content:"";position:absolute;inset:0;
-    background:
-      radial-gradient(420px 200px at 85% -10%, rgba(255,255,255,0.10) 0, transparent 60%),
-      radial-gradient(300px 160px at 0% 110%, rgba(217,164,65,0.12) 0, transparent 60%);
-    pointer-events:none;
-  }
-  .ribbon{
-    position:absolute;top:0;left:50%;transform:translateX(-50%);
-    width:52px;height:5px;border-radius:0 0 12px 12px;
-    background:var(--day);box-shadow:0 4px 16px -2px rgba(0,0,0,0.25);
-    transition:background .25s ease;
-  }
+  .board{position:relative;background:linear-gradient(150deg, var(--board2) 0%, var(--board) 62%);border-radius:26px;padding:26px 22px 22px;box-shadow:0 26px 52px -22px rgba(27,42,74,0.5);overflow:hidden;}
+  .board::before{content:"";position:absolute;inset:0;background:radial-gradient(420px 200px at 85% -10%, rgba(255,255,255,0.10) 0, transparent 60%),radial-gradient(300px 160px at 0% 110%, rgba(217,164,65,0.12) 0, transparent 60%);pointer-events:none;}
+  .ribbon{position:absolute;top:0;left:50%;transform:translateX(-50%);width:52px;height:5px;border-radius:0 0 12px 12px;background:var(--day);box-shadow:0 4px 16px -2px rgba(0,0,0,0.25);transition:background .25s ease;}
   .eyebrowWrap{display:flex;justify-content:center;margin-bottom:14px;}
-  .eyebrow{
-    color:var(--day);font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
-    background:var(--day-soft);border-radius:20px;padding:5px 15px;transition:all .25s ease;
-  }
-  .weekday{
-    font-family:"Noto Serif", serif;font-weight:700;font-size:40px;letter-spacing:-.01em;
-    color:var(--chalk);text-align:center;line-height:1.08;
-  }
+  .eyebrow{color:var(--day);font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;background:var(--day-soft);border-radius:20px;padding:5px 15px;transition:all .25s ease;}
+  .weekday{font-family:"Noto Serif", serif;font-weight:700;font-size:40px;letter-spacing:-.01em;color:var(--chalk);text-align:center;line-height:1.08;}
   .fulldate{text-align:center;color:rgba(242,239,227,0.72);font-size:14px;margin-top:5px;font-weight:500;}
-  .badge{
-    display:inline-block;margin-left:8px;font-size:10.5px;font-weight:800;letter-spacing:.08em;
-    text-transform:uppercase;color:var(--board);background:var(--gold);border-radius:20px;
-    padding:2px 9px;vertical-align:2px;
-  }
 
-  /* ---------- week label ---------- */
   .weeknav{display:flex;align-items:center;justify-content:center;margin:18px 2px 10px;}
   .weeklabel{text-align:center;font-size:13px;font-weight:700;color:var(--muted);}
 
-  /* ---------- day chips ---------- */
-  .chips{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:16px;}
-  .chip{
-    border:none;border-radius:14px;padding:9px 4px 8px;cursor:pointer;text-align:center;
-    box-shadow:0 6px 16px -12px rgba(27,42,74,0.3);transition:transform .12s ease;
-    font-family:inherit;position:relative;
-  }
+  .chips{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:18px;}
+  .chip{border:none;border-radius:14px;padding:9px 4px 8px;cursor:pointer;text-align:center;box-shadow:0 6px 16px -12px rgba(27,42,74,0.3);transition:transform .12s ease;font-family:inherit;position:relative;}
   .chip:hover{transform:translateY(-1px);}
   .chip:focus-visible{outline:2px solid var(--ink);outline-offset:2px;}
   .chip .d{display:block;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;}
   .chip .n{display:block;font-family:"Noto Serif", serif;font-size:17px;font-weight:700;margin-top:2px;}
-  .chip.today::after{
-    content:"";position:absolute;bottom:5px;left:50%;transform:translateX(-50%);
-    width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.55;
-  }
+  .chip.today::after{content:"";position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.55;}
 
-  /* ---------- duty rows ---------- */
+  .cyclegroup{margin-bottom:20px;}
+  .cyclehead{display:flex;align-items:baseline;gap:8px;margin:0 2px 8px;}
+  .cyclehead .ctitle{font-family:"Noto Serif",serif;font-weight:700;font-size:15px;color:var(--board);}
+  .cyclehead .ctime{font-size:12px;font-weight:700;color:var(--muted);background:#fff;border-radius:20px;padding:2px 10px;}
+
   .card{display:flex;flex-direction:column;gap:10px;}
-  .row{
-    display:flex;align-items:center;gap:12px;padding:15px 16px;background:#fff;border-radius:18px;
-    box-shadow:0 10px 22px -16px rgba(27,42,74,0.28);animation:fadeSlide .35s cubic-bezier(.16,1,.3,1) both;
-  }
-  .row:nth-child(2){animation-delay:.04s;}
-  .row:nth-child(3){animation-delay:.08s;}
-  .row:nth-child(4){animation-delay:.12s;}
-  .slot{
-    flex:0 0 auto;width:36px;height:36px;border-radius:12px;background:var(--day);color:#fff;
-    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;
-    transition:background .25s ease;
-  }
+  .row{display:flex;align-items:center;gap:12px;padding:15px 16px;background:#fff;border-radius:18px;box-shadow:0 10px 22px -16px rgba(27,42,74,0.28);animation:fadeSlide .35s cubic-bezier(.16,1,.3,1) both;}
+  .row:nth-child(2){animation-delay:.04s;} .row:nth-child(3){animation-delay:.08s;} .row:nth-child(4){animation-delay:.12s;}
+  .slot{flex:0 0 auto;width:36px;height:36px;border-radius:12px;background:var(--day);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;transition:background .25s ease;}
   .who{flex:1 1 auto;min-width:0;}
-  .posname{
-    font-family:"Noto Serif", serif;font-size:16.5px;font-weight:700;letter-spacing:.005em;
-    color:var(--board);margin-bottom:3px;line-height:1.22;
-  }
+  .posname{font-family:"Noto Serif", serif;font-size:16.5px;font-weight:700;letter-spacing:.005em;color:var(--board);margin-bottom:3px;line-height:1.22;}
   .name{font-size:14px;font-weight:600;color:var(--muted);overflow-wrap:anywhere;}
   .name.absent{text-decoration:line-through;opacity:.55;}
-  .miss{
-    display:inline-block;margin-left:6px;font-size:10px;font-weight:800;letter-spacing:.04em;
-    text-transform:uppercase;color:var(--terracotta);vertical-align:1px;
-  }
+  .miss{display:inline-block;margin-left:6px;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--terracotta);vertical-align:1px;}
 
-  /* ---------- reserve box ---------- */
-  .reserve{
-    flex:0 0 auto;width:104px;text-align:center;border-radius:12px;padding:7px 6px;
-    border:1px dashed var(--line);background:#FAF7EF;
-  }
-  .reserve .rlabel{
-    font-size:8.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
-    color:var(--muted);display:block;margin-bottom:2px;
-  }
+  .reserve{flex:0 0 auto;width:104px;text-align:center;border-radius:12px;padding:7px 6px;border:1px dashed var(--line);background:#FAF7EF;}
+  .reserve .rlabel{font-size:8.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:2px;}
   .reserve .rname{font-size:12.5px;font-weight:700;color:#C9C2B2;line-height:1.15;overflow-wrap:anywhere;}
   .reserve.filled{border-style:solid;border-color:rgba(181,83,60,0.4);background:rgba(181,83,60,0.09);}
   .reserve.filled .rlabel{color:var(--terracotta);}
   .reserve.filled .rname{color:var(--terracotta);}
 
-  .empty{
-    text-align:center;padding:36px 22px;color:var(--muted);font-size:14.5px;line-height:1.6;
-    background:#fff;border-radius:18px;box-shadow:0 10px 22px -16px rgba(27,42,74,0.28);
-  }
-  .benchline{
-    display:flex;flex-wrap:wrap;align-items:center;gap:8px;
-    background:#fff;border-radius:16px;padding:12px 16px;margin-top:2px;
-    box-shadow:0 10px 22px -16px rgba(27,42,74,0.28);
-  }
-  .benchline .blabel{
-    font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
-    margin-right:2px;
-  }
-  .benchline .bname{
-    font-size:13px;font-weight:700;color:var(--board);background:var(--paper);
-    border-radius:20px;padding:3px 11px;
-  }
+  .empty{text-align:center;padding:36px 22px;color:var(--muted);font-size:14.5px;line-height:1.6;background:#fff;border-radius:18px;box-shadow:0 10px 22px -16px rgba(27,42,74,0.28);}
 
-  /* ---------- actions ---------- */
-  .actions{display:flex;justify-content:center;margin-top:20px;}
-  .printbtn{
-    border:none;border-radius:14px;padding:11px 20px;font-size:13.5px;font-weight:700;font-family:inherit;
-    color:var(--board);background:#fff;cursor:pointer;box-shadow:0 8px 20px -12px rgba(27,42,74,0.35);
-    transition:transform .12s ease, background .15s ease;
-  }
+  .actions{display:flex;justify-content:center;margin-top:6px;}
+  .printbtn{border:none;border-radius:14px;padding:11px 20px;font-size:13.5px;font-weight:700;font-family:inherit;color:var(--board);background:#fff;cursor:pointer;box-shadow:0 8px 20px -12px rgba(27,42,74,0.35);transition:transform .12s ease, background .15s ease;}
   .printbtn:hover{transform:translateY(-1px);background:var(--chalk);}
   .printbtn:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
 
   .footer{text-align:center;margin-top:20px;font-size:12px;color:var(--muted);letter-spacing:.02em;}
 
-  @media (max-width:380px){
-    .weekday{font-size:33px;}
-    .chip .n{font-size:15px;}
-    .reserve{width:84px;}
-    .reserve .rname{font-size:11.5px;}
-    .posname{font-size:15px;}
-  }
+  @media (max-width:380px){ .weekday{font-size:33px;} .chip .n{font-size:15px;} .reserve{width:84px;} .reserve .rname{font-size:11.5px;} .posname{font-size:15px;} }
 
-  /* ================= PRINT ================= */
   #printArea{display:none;}
   @media print{
-    @page{ size:A4 portrait; margin:12mm; }
+    @page{ size:A4 portrait; margin:10mm; }
     body{ background:#fff; padding:0; display:block; }
     .wrap{ display:none !important; }
     #printArea{ display:block; }
-    .psheet{
-      height:124mm; border:2px solid #2F4B3C; border-radius:8px; padding:10mm 12mm;
-      display:flex; flex-direction:column; page-break-inside:avoid;
-    }
-    .phead{ display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid #2F4B3C; padding-bottom:5mm; }
-    .pschool{ font-family:"Noto Serif",serif; font-size:17pt; font-weight:700; color:#2F4B3C; }
-    .ptitle{ font-size:12pt; font-weight:800; letter-spacing:2px; color:#B5533C; }
-    .pday{ font-family:"Noto Serif",serif; font-size:22pt; font-weight:700; color:#1B2A4A; margin:6mm 0 5mm; }
-    .prows{ display:flex; flex-direction:column; gap:3.5mm; }
-    .prow{ display:flex; align-items:center; gap:5mm; }
-    .pnum{
-      flex:0 0 auto; width:9mm; height:9mm; border-radius:3mm; background:#2F4B3C; color:#fff;
-      display:flex; align-items:center; justify-content:center; font-weight:800; font-size:12pt;
-    }
-    .ppos{ font-family:"Noto Serif",serif; font-size:14pt; font-weight:700; color:#2F4B3C; flex:1 1 auto; }
-    .pname{ font-size:14pt; font-weight:700; color:#1B2A4A; text-align:right; }
-    .psub{ font-size:9.5pt; font-weight:600; color:#B5533C; }
-    .pcut{
-      text-align:center; color:#98918059; color:#999; font-size:9pt; letter-spacing:2px;
-      border-top:1.5px dashed #bbb; margin:5mm 0; padding-top:1mm;
-    }
+    .psheet{ border:2px solid #2F4B3C; border-radius:8px; padding:6mm 10mm; page-break-inside:avoid; }
+    .phead{ display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid #2F4B3C; padding-bottom:3mm; }
+    .pschool{ font-family:"Noto Serif",serif; font-size:15pt; font-weight:700; color:#2F4B3C; }
+    .ptitle{ font-size:10.5pt; font-weight:800; letter-spacing:2px; color:#B5533C; }
+    .pday{ font-family:"Noto Serif",serif; font-size:18pt; font-weight:700; color:#1B2A4A; margin:4mm 0 2mm; }
+    .pcyclehead{ font-size:10.5pt; font-weight:800; color:#2F4B3C; margin:3mm 0 1.5mm; border-top:1px dashed #ccc; padding-top:2mm; }
+    .prows{ display:flex; flex-direction:column; gap:2mm; }
+    .prow{ display:flex; align-items:center; gap:4mm; }
+    .pnum{ flex:0 0 auto; width:7mm; height:7mm; border-radius:2mm; background:#2F4B3C; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:9.5pt; }
+    .ppos{ font-family:"Noto Serif",serif; font-size:10.5pt; font-weight:700; color:#2F4B3C; flex:1 1 auto; }
+    .pname{ font-size:10.5pt; font-weight:700; color:#1B2A4A; text-align:right; }
+    .psub{ font-size:8pt; font-weight:600; color:#B5533C; }
+    .pcut{ text-align:center; color:#999; font-size:8.5pt; letter-spacing:2px; border-top:1.5px dashed #bbb; margin:4mm 0; padding-top:1mm; }
   }
 </style>
 </head>
@@ -220,7 +111,7 @@
 
   <div class="board">
     <div class="ribbon"></div>
-    <div class="eyebrowWrap"><div class="eyebrow" id="eyebrow">Εφημερίες</div></div>
+    <div class="eyebrowWrap"><div class="eyebrow">Εφημερίες</div></div>
     <div class="weekday" id="weekdayLabel">—</div>
     <div class="fulldate" id="fullDateLabel">—</div>
   </div>
@@ -229,7 +120,7 @@
 
   <div class="chips" id="chips"></div>
 
-  <div class="card" id="dutyCard"><div class="empty">Φόρτωση δεδομένων…</div></div>
+  <div id="dutyContainer"><div class="empty">Φόρτωση δεδομένων…</div></div>
 
   <div class="actions"><button class="printbtn" id="printBtn">🖨 Εκτύπωση ημέρας (×2 σε Α4)</button></div>
 
@@ -242,21 +133,22 @@
 (function(){
   const DAYS = ["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή"];
   const DAYS_SHORT = ["Δευ","Τρί","Τετ","Πέμ","Παρ"];
+  const DAY_UP = ["ΔΕΥΤΕΡΑ","ΤΡΙΤΗ","ΤΕΤΑΡΤΗ","ΠΕΜΠΤΗ","ΠΑΡΑΣΚΕΥΗ"];
   const POSITIONS = ["2ος Όροφος και Σκάλες","Ισόγειο","Αυλή","Βρύσες και Υπόγειο"];
-  const DAY_KEYS = { "ΔΕΥΤΕΡΑ":"Δευτέρα","ΤΡΙΤΗ":"Τρίτη","ΤΕΤΑΡΤΗ":"Τετάρτη","ΠΕΜΠΤΗ":"Πέμπτη","ΠΑΡΑΣΚΕΥΗ":"Παρασκευή" };
-  const BACKUP_KEYS = { "ΑΝΑΠΛ_ΔΕΥΤΕΡΑ":"Δευτέρα","ΑΝΑΠΛ_ΤΡΙΤΗ":"Τρίτη","ΑΝΑΠΛ_ΤΕΤΑΡΤΗ":"Τετάρτη","ΑΝΑΠΛ_ΠΕΜΠΤΗ":"Πέμπτη","ΑΝΑΠΛ_ΠΑΡΑΣΚΕΥΗ":"Παρασκευή" };
-  const MONTHS = ["Ιανουαρίου","Φεβρουαρίου","Μαρτίου","Απριλίου","Μαΐου","Ιουνίου",
-                  "Ιουλίου","Αυγούστου","Σεπτεμβρίου","Οκτωβρίου","Νοεμβρίου","Δεκεμβρίου"];
-  // Ένα διακριτικό χρώμα ανά ημέρα (soft = φόντο chip, bold = επιλεγμένο/αριθμοί, ink = κείμενο chip)
+  const MONTHS = ["Ιανουαρίου","Φεβρουαρίου","Μαρτίου","Απριλίου","Μαΐου","Ιουνίου","Ιουλίου","Αυγούστου","Σεπτεμβρίου","Οκτωβρίου","Νοεμβρίου","Δεκεμβρίου"];
   const DAY_COLORS = [
-    {soft:"#E4EDF6", bold:"#3F6FA6", ink:"#274763"}, // Δευτέρα – μπλε
-    {soft:"#E2F0E8", bold:"#3B8B5E", ink:"#234E37"}, // Τρίτη – πράσινο
-    {soft:"#F6EED9", bold:"#8C6A22", ink:"#5A461C"}, // Τετάρτη – χρυσό
-    {soft:"#F6E7E0", bold:"#C0664A", ink:"#6E3826"}, // Πέμπτη – τερακότα
-    {soft:"#ECE5F2", bold:"#7C5AA3", ink:"#45325C"}  // Παρασκευή – μωβ
+    {soft:"#E4EDF6", bold:"#3F6FA6", ink:"#274763"},
+    {soft:"#E2F0E8", bold:"#3B8B5E", ink:"#234E37"},
+    {soft:"#F6EED9", bold:"#8C6A22", ink:"#5A461C"},
+    {soft:"#F6E7E0", bold:"#C0664A", ink:"#6E3826"},
+    {soft:"#ECE5F2", bold:"#7C5AA3", ink:"#45325C"}
+  ];
+  // Δύο κύκλοι εφημερίας ανά ημέρα. Οι ώρες μπορούν να παρακαμφθούν από CYCLE1_TIME/CYCLE2_TIME στο data.txt.
+  const CYCLES = [
+    { key:"Α", label:"1ος Κύκλος", time:"08:00–11:00" },
+    { key:"Β", label:"2ος Κύκλος", time:"11:00–14:10" }
   ];
 
-  /* ---------- helpers ---------- */
   function parseISO(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
   function parseAnyDate(s){
     if(!s) return null; s=s.trim();
@@ -270,28 +162,25 @@
   function mondayOf(d){ return addDays(d, -((d.getDay()+6)%7)); }
   function nextSchoolDay(from){ let d=addDays(from,1); while(d.getDay()===0||d.getDay()===6){d=addDays(d,1);} return d; }
   function weekOffset(date,cs){ const diff=Math.round((date-cs)/86400000); return ((Math.floor(diff/7)%4)+4)%4; }
-  function weekIndex(date,cs){ return Math.floor(Math.round((date-cs)/86400000)/7); }
   function rotated(baseRow, offset){ const out=[]; for(let j=0;j<4;j++){ out.push(baseRow[((j-offset)%4+4)%4]||""); } return out; }
-  function rotOffset(w,L){ return (L%4===0) ? Math.floor(4*w/L) : w; }
-  // Θέσεις για μεταβλητό πλήθος ατόμων ανά ημέρα (εκ περιτροπής ρεζέρβα + περιστροφή θέσης).
-  function positioned(list, w){
-    const L = list.length;
-    if(L<=4){ const four=[]; for(let k=0;k<4;k++) four.push(list[k]||""); return rotated(four, ((w%4)+4)%4); }
-    const start = ((4*w)%L+L)%L;
-    const four=[]; for(let k=0;k<4;k++) four.push(list[(start+k)%L]);
-    return rotated(four, ((rotOffset(w,L)%4)+4)%4);
-  }
-  function benchOf(list, w){
-    const L=list.length; if(L<=4) return [];
-    const start=((4*w)%L+L)%L; const act=new Set(); for(let k=0;k<4;k++) act.add((start+k)%L);
-    const b=[]; for(let idx=0;idx<L;idx++){ if(!act.has(idx) && list[idx] && list[idx].trim()!=="") b.push(list[idx]); }
-    return b;
-  }
   function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
-  /* ---------- data ---------- */
+  // ---------- δεδομένα ----------
+  function emptyDayMap(){ const o={}; DAYS.forEach(d=>o[d]={"Α":["","","",""],"Β":["","","",""]}); return o; }
+  function parseCycleKey(keyUp){
+    // επιστρέφει {kind:'base'|'backup', day, cycle} ή null
+    const parts = keyUp.split("_");
+    let kind="base", rest=parts;
+    if(parts[0]==="ΑΝΑΠΛ"){ kind="backup"; rest=parts.slice(1); }
+    if(rest.length!==2) return null;
+    let [dayUp,cyc]=rest;
+    const di = DAY_UP.indexOf(dayUp); if(di===-1) return null;
+    if(cyc==="A") cyc="Α"; if(cyc==="B") cyc="Β";
+    if(cyc!=="Α" && cyc!=="Β") return null;
+    return { kind, day:DAYS[di], cycle:cyc };
+  }
   function parseDataText(text){
-    const cfg = { base:{}, backup:{}, overrides:[] };
+    const cfg = { base:emptyDayMap(), backup:emptyDayMap(), overrides:[], cycleTimes:{} };
     text.split(/\r?\n/).forEach(raw=>{
       const line = raw.trim();
       if(!line || line.startsWith("#")) return;
@@ -300,83 +189,74 @@
       const val = line.slice(eq+1).trim();
       if(key==="CYCLE_START"){ const dt=parseAnyDate(val); cfg.cycleStart = dt ? toISO(dt) : null; }
       else if(key==="LAST_UPDATED") cfg.lastUpdated = val;
+      else if(key==="CYCLE1_TIME") cfg.cycleTimes["Α"]=val;
+      else if(key==="CYCLE2_TIME") cfg.cycleTimes["Β"]=val;
       else if(key==="OVERRIDE"){
         const p = val.split(",").map(s=>s.trim());
         if(p.length>=3){ const dt=parseAnyDate(p[0]); if(dt) cfg.overrides.push({date:toISO(dt),absent:p[1],substitute:p[2]}); }
-      } else if(BACKUP_KEYS[key]){
-        cfg.backup[BACKUP_KEYS[key]] = val.split(/[;,]/).map(s=>s.trim());
-      } else if(DAY_KEYS[key]){
-        cfg.base[DAY_KEYS[key]] = val.split(/[;,]/).map(s=>s.trim());
+      } else {
+        const pk = parseCycleKey(key);
+        if(pk){
+          const arr = val.split(/[;,]/).map(s=>s.trim());
+          if(pk.kind==="base") cfg.base[pk.day][pk.cycle]=arr; else cfg.backup[pk.day][pk.cycle]=arr;
+        }
       }
     });
     return cfg;
   }
 
-  /* ---------- state ---------- */
+  // ---------- state ----------
   let cfg = null;
   const today = new Date(); today.setHours(0,0,0,0);
   let shownMonday, selIdx;
   function initAnchor(){
     const cs = (cfg && cfg.cycleStart) ? parseISO(cfg.cycleStart) : null;
-    // Πριν την έναρξη του κύκλου, δείξε κατευθείαν την 1η εβδομάδα (τη Δευτέρα του CYCLE_START).
     const target = (cs && today < cs) ? cs : nextSchoolDay(today);
     shownMonday = mondayOf(target);
     selIdx = target.getDay()-1;
   }
 
-  /* ---------- assignment: επιστρέφει {regular, substitute, backup} ανά θέση ---------- */
+  function cycleTime(ck){ return (cfg && cfg.cycleTimes && cfg.cycleTimes[ck]) || CYCLES.find(c=>c.key===ck).time; }
+
+  /* assignment: επιστρέφει πίνακα κύκλων, καθένας με entries {regular,backup,substitute} ανά θέση */
   function assignmentFor(date){
     const dayName = DAYS[date.getDay()-1];
     const cs = parseISO(cfg.cycleStart);
-    const w = weekIndex(date, cs);
-    const list = cfg.base[dayName] || ["","","",""];
-    const bkList = (cfg.backup[dayName]||[]).slice();
-    while(bkList.length < list.length) bkList.push("");
-    const reg = positioned(list, w);
-    const rbk = positioned(bkList, w);
-    const a = reg.map((n,i)=>({regular:n, backup:rbk[i]||"", substitute:null}));
+    const off = weekOffset(date, cs);
     const iso = toISO(date);
-    cfg.overrides.forEach(ov=>{
-      if(ov.date===iso){
-        a.forEach(s=>{ if(s.regular && s.regular===ov.absent) s.substitute = ov.substitute; });
-      }
+    return CYCLES.map(c=>{
+      const base = (cfg.base[dayName] && cfg.base[dayName][c.key]) || ["","","",""];
+      const bk = (cfg.backup[dayName] && cfg.backup[dayName][c.key]) || ["","","",""];
+      const reg = rotated(base, off);
+      const rbk = rotated(bk, off);
+      const entries = reg.map((n,i)=>({regular:n, backup:rbk[i]||"", substitute:null}));
+      cfg.overrides.forEach(ov=>{
+        if(ov.date===iso){ entries.forEach(s=>{ if(s.regular && s.regular===ov.absent) s.substitute = ov.substitute; }); }
+      });
+      return { key:c.key, label:c.label, time:cycleTime(c.key), entries };
     });
-    return a;
-  }
-  function benchFor(date){
-    const dayName = DAYS[date.getDay()-1];
-    const cs = parseISO(cfg.cycleStart);
-    return benchOf(cfg.base[dayName] || [], weekIndex(date, cs));
   }
 
-  /* ---------- render ---------- */
   function render(){
     const selDate = addDays(shownMonday, selIdx);
     const isoSel = toISO(selDate);
     const isoToday = toISO(today);
-    const isoTomorrow = toISO(addDays(today,1));
     const wrap = document.querySelector(".wrap");
     const c = DAY_COLORS[selIdx];
 
-    // χρώμα ημέρας στα κοινά στοιχεία
     wrap.style.setProperty("--day", c.bold);
     wrap.style.setProperty("--day-soft", c.soft);
-    const eb = document.getElementById("eyebrow");
-    eb.style.color = c.bold; eb.style.background = c.soft;
 
-    // hero
     document.getElementById("weekdayLabel").innerHTML = esc(DAYS[selIdx]);
     document.getElementById("fullDateLabel").textContent =
       selDate.getDate()+" "+MONTHS[selDate.getMonth()]+" "+selDate.getFullYear();
 
-    // week range
     const fri = addDays(shownMonday,4);
     const sameMonth = shownMonday.getMonth()===fri.getMonth();
     document.getElementById("weekRange").textContent =
       "Εβδομάδα " + shownMonday.getDate() + (sameMonth?"":" "+MONTHS[shownMonday.getMonth()]) +
       " – " + fri.getDate() + " " + MONTHS[fri.getMonth()] + " " + fri.getFullYear();
 
-    // chips (χρώμα ανά ημέρα)
     document.getElementById("chips").innerHTML = DAYS.map((d,i)=>{
       const dd = addDays(shownMonday,i);
       const cc = DAY_COLORS[i];
@@ -390,82 +270,77 @@
              '<span class="n" style="color:'+nCol+'">'+dd.getDate()+'</span></button>';
     }).join("");
 
-    // duty rows
-    const card = document.getElementById("dutyCard");
+    const container = document.getElementById("dutyContainer");
     if(!cfg || !cfg.cycleStart){
-      card.innerHTML = '<div class="empty">Λείπει το CYCLE_START στο αρχείο δεδομένων.</div>';
+      container.innerHTML = '<div class="empty">Λείπει το CYCLE_START στο αρχείο δεδομένων.</div>';
       document.getElementById("printArea").innerHTML = "";
       return;
     }
-    const a = assignmentFor(selDate);
-    const hasAny = a.some(s=>s.regular && s.regular.trim()!=="");
+    const cyclesData = assignmentFor(selDate);
+    const hasAny = cyclesData.some(cd=>cd.entries.some(s=>s.regular && s.regular.trim()!==""));
     if(!hasAny){
-      card.innerHTML = '<div class="empty">Το πρόγραμμα δεν έχει συμπληρωθεί ακόμη για την ημέρα «'+esc(DAYS[selIdx])+'».</div>';
+      container.innerHTML = '<div class="empty">Το πρόγραμμα δεν έχει συμπληρωθεί ακόμη για την ημέρα «'+esc(DAYS[selIdx])+'».</div>';
     } else {
-      card.innerHTML = a.map((s,i)=>{
-        const regName = s.regular && s.regular.trim()!=="" ? esc(s.regular) : "—";
-        const absentCls = s.substitute ? " absent" : "";
-        const missTag = s.substitute ? '<span class="miss">λείπει</span>' : '';
-        let resCls, resLabel, resName;
-        if(s.substitute){ resCls=" filled"; resLabel="Καλύπτει"; resName=esc(s.substitute); }
-        else if(s.backup && s.backup.trim()!==""){ resCls=""; resLabel="Εφεδρεία"; resName=esc(s.backup); }
-        else { resCls=""; resLabel="Αναπληρωτής"; resName="—"; }
-        return '<div class="row">'+
-                 '<div class="slot">'+(i+1)+'</div>'+
-                 '<div class="who"><div class="posname">'+POSITIONS[i]+'</div>'+
-                   '<div class="name'+absentCls+'">'+regName+'</div>'+missTag+'</div>'+
-                 '<div class="reserve'+resCls+'"><span class="rlabel">'+resLabel+'</span>'+
-                   '<span class="rname">'+resName+'</span></div>'+
-               '</div>';
+      container.innerHTML = cyclesData.map(cd=>{
+        const rows = cd.entries.map((s,i)=>{
+          const regName = s.regular && s.regular.trim()!=="" ? esc(s.regular) : "—";
+          const absentCls = s.substitute ? " absent" : "";
+          const missTag = s.substitute ? '<span class="miss">λείπει</span>' : '';
+          let resCls, resLabel, resName;
+          if(s.substitute){ resCls=" filled"; resLabel="Καλύπτει"; resName=esc(s.substitute); }
+          else if(s.backup && s.backup.trim()!==""){ resCls=""; resLabel="Εφεδρεία"; resName=esc(s.backup); }
+          else { resCls=""; resLabel="Αναπληρωτής"; resName="—"; }
+          return '<div class="row">'+
+                   '<div class="slot">'+(i+1)+'</div>'+
+                   '<div class="who"><div class="posname">'+POSITIONS[i]+'</div>'+
+                     '<div class="name'+absentCls+'">'+regName+'</div>'+missTag+'</div>'+
+                   '<div class="reserve'+resCls+'"><span class="rlabel">'+resLabel+'</span>'+
+                     '<span class="rname">'+resName+'</span></div>'+
+                 '</div>';
+        }).join("");
+        return '<div class="cyclegroup"><div class="cyclehead"><span class="ctitle">'+esc(cd.label)+'</span><span class="ctime">'+esc(cd.time)+'</span></div><div class="card">'+rows+'</div></div>';
       }).join("");
-      const bench = benchFor(selDate);
-      if(bench.length){
-        card.innerHTML += '<div class="benchline"><span class="blabel">Ρεζέρβα εβδομάδας</span>'+
-          bench.map(n=>'<span class="bname">'+esc(n)+'</span>').join("")+'</div>';
-      }
     }
 
-    buildPrint(selDate, a, hasAny);
+    buildPrint(selDate, cyclesData, hasAny);
 
     const lu = (cfg && cfg.lastUpdated) || "";
     const luD = parseAnyDate(lu);
     document.getElementById("footerLabel").textContent = "Ενημερώθηκε: " + (luD ? fmtDMY(luD) : (lu || "—"));
   }
 
-  /* ---------- print: η ίδια μέρα δύο φορές (πάνω/κάτω) σε Α4 ---------- */
-  function buildPrint(selDate, a, hasAny){
+  /* print: η ίδια μέρα δύο φορές (πάνω/κάτω) σε Α4, με τους δύο κύκλους ο καθένας */
+  function buildPrint(selDate, cyclesData, hasAny){
     const dayLabel = DAYS[selDate.getDay()-1] + " " + fmtDMY(selDate);
-    const rows = (hasAny ? a : [{},{},{},{}]).map((s,i)=>{
-      const eff = s && s.substitute ? esc(s.substitute) : (s && s.regular ? esc(s.regular) : "—");
-      const note = s && s.substitute ? '<div class="psub">αναπληρώνει τον/την '+esc(s.regular)+'</div>'
-                 : (s && s.backup && s.backup.trim()!=="" ? '<div class="psub">εφεδρεία: '+esc(s.backup)+'</div>' : '');
-      return '<div class="prow"><span class="pnum">'+(i+1)+'</span>'+
-             '<span class="ppos">'+POSITIONS[i]+'</span>'+
-             '<span class="pname">'+eff+note+'</span></div>';
-    }).join("");
-    const sheet =
-      '<div class="psheet">'+
+    function sheetHTML(){
+      const groups = cyclesData.map(cd=>{
+        const rows = (hasAny ? cd.entries : [{},{},{},{}]).map((s,i)=>{
+          const eff = s && s.substitute ? esc(s.substitute) : (s && s.regular ? esc(s.regular) : "—");
+          const note = s && s.substitute ? '<div class="psub">αναπληρώνει τον/την '+esc(s.regular)+'</div>'
+                     : (s && s.backup && s.backup.trim()!=="" ? '<div class="psub">εφεδρεία: '+esc(s.backup)+'</div>' : '');
+          return '<div class="prow"><span class="pnum">'+(i+1)+'</span><span class="ppos">'+POSITIONS[i]+'</span><span class="pname">'+eff+note+'</span></div>';
+        }).join("");
+        return '<div class="pcyclehead">'+esc(cd.label)+' ('+esc(cd.time)+')</div><div class="prows">'+rows+'</div>';
+      }).join("");
+      return '<div class="psheet">'+
         '<div class="phead"><span class="pschool">3ο Γυμνάσιο Πολίχνης</span><span class="ptitle">ΕΦΗΜΕΡΙΕΣ</span></div>'+
-        '<div class="pday">'+dayLabel+'</div>'+
-        '<div class="prows">'+rows+'</div>'+
-      '</div>';
-    document.getElementById("printArea").innerHTML =
-      sheet + '<div class="pcut">✂ — — — — — — — — — — κόψτε εδώ — — — — — — — — — — ✂</div>' + sheet;
+        '<div class="pday">'+dayLabel+'</div>'+ groups +
+        '</div>';
+    }
+    document.getElementById("printArea").innerHTML = sheetHTML() + '<div class="pcut">✂ — — — — — — — — — — κόψτε εδώ — — — — — — — — — — ✂</div>' + sheetHTML();
   }
 
-  /* ---------- events ---------- */
   document.getElementById("chips").addEventListener("click", e=>{
     const b = e.target.closest(".chip");
     if(b){ selIdx = +b.dataset.i; render(); }
   });
   document.getElementById("printBtn").addEventListener("click", ()=>window.print());
 
-  /* ---------- load ---------- */
   fetch("data.txt?_="+Date.now())
     .then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.text(); })
     .then(t=>{ cfg = parseDataText(t); initAnchor(); render(); })
     .catch(err=>{
-      document.getElementById("dutyCard").innerHTML =
+      document.getElementById("dutyContainer").innerHTML =
         '<div class="empty">Δεν βρέθηκε το αρχείο data.txt δίπλα στο index.html.<br><br>('+esc(err.message)+')</div>';
     });
 })();
