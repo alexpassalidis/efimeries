@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Î©ÏÎ¿Î»ÏÎ³Î¹Î¿ Î ÏÏÎ³ÏÎ±Î¼Î¼Î± Î£ÏÎ¿Î»ÎµÎ¯Î¿Ï</title>
+<title>Ωρολόγιο Πρόγραμμα Σχολείου</title>
 <style>
   :root{
     --bg:#f4f6fb; --panel:#ffffff; --ink:#1f2937; --muted:#6b7280;
@@ -68,7 +68,7 @@
   .master-tbl .m span{opacity:.9}
   @keyframes pulseConf{0%,100%{box-shadow:inset 0 0 0 9999px rgba(220,38,38,.12)}50%{box-shadow:inset 0 0 0 9999px rgba(220,38,38,.34)}}
   td.conflict{outline:3px solid #dc2626!important;outline-offset:-3px;position:relative;animation:pulseConf 1.1s ease-in-out infinite}
-  td.conflict::after{content:"â ";position:absolute;top:0;right:2px;color:#b91c1c;font-size:12px;font-weight:800;text-shadow:0 0 2px #fff,0 0 2px #fff;z-index:2}
+  td.conflict::after{content:"⚠";position:absolute;top:0;right:2px;color:#b91c1c;font-size:12px;font-weight:800;text-shadow:0 0 2px #fff,0 0 2px #fff;z-index:2}
   td.dragover{background:#dbeafe}
   .stat{display:inline-block;margin-right:16px;font-size:13px}
   .stat b{color:var(--accent)}
@@ -139,103 +139,103 @@
 <body>
 <header>
   <div>
-    <h1>ð Î©ÏÎ¿Î»ÏÎ³Î¹Î¿ Î ÏÏÎ³ÏÎ±Î¼Î¼Î±</h1>
-    <div class="sub">ÎÎ·Î¼Î¹Î¿ÏÏÎ³Î¯Î± &amp; Î´Î¹Î±ÏÎµÎ¯ÏÎ¹ÏÎ· ÏÏÎ¿Î»Î¹ÎºÎ¿Ï ÏÏÎ¿Î³ÏÎ¬Î¼Î¼Î±ÏÎ¿Ï</div>
+    <h1>📅 Ωρολόγιο Πρόγραμμα</h1>
+    <div class="sub">Δημιουργία &amp; διαχείριση σχολικού προγράμματος</div>
   </div>
   <div class="topbtns">
-    <button class="ghost" onclick="loadSample()">â¶ï¸ Demo (6 ÏÎ¼Î®Î¼Î±ÏÎ±)</button>
-    <button class="ghost" onclick="saveProject()">ð¾ ÎÏÎ¿Î¸Î®ÎºÎµÏÏÎ·</button>
-    <button class="ghost" onclick="document.getElementById('loadFile').click()">ð Î¦ÏÏÏÏÏÎ·</button>
+    <button class="ghost" onclick="loadSample()">▶️ Demo (6 τμήματα)</button>
+    <button class="ghost" onclick="saveProject()">💾 Αποθήκευση</button>
+    <button class="ghost" onclick="document.getElementById('loadFile').click()">📂 Φόρτωση</button>
     <input type="file" id="loadFile" accept=".json" class="hidden" onchange="loadProject(event)">
-    <button class="ghost" onclick="document.getElementById('importCsv').click()">â¬ï¸ ÎÎ¹ÏÎ±Î³ÏÎ³Î® CSV</button>
+    <button class="ghost" onclick="document.getElementById('importCsv').click()">⬆️ Εισαγωγή CSV</button>
     <input type="file" id="importCsv" accept=".csv" class="hidden" onchange="importAssignmentsCSV(event)">
-    <button class="ghost danger" onclick="resetAll()">ÎÎ±Î¸Î±ÏÎ¹ÏÎ¼ÏÏ</button>
+    <button class="ghost danger" onclick="resetAll()">Καθαρισμός</button>
   </div>
 </header>
 
 <nav id="tabs"></nav>
 <main>
   <section id="tab-settings" class="panel">
-    <h2>Î¡ÏÎ¸Î¼Î¯ÏÎµÎ¹Ï ÏÏÎ¿Î³ÏÎ¬Î¼Î¼Î±ÏÎ¿Ï</h2>
-    <p class="hint" style="margin-top:0">ÎÏÎ¯Î»ÎµÎ¾Îµ Î·Î¼Î­ÏÎµÏ ÎºÎ±Î¹ ÏÏÎ¹ÏÎµ ÏÏÏÎµÏ Î´Î¹Î´Î±ÎºÏÎ¹ÎºÎ­Ï ÏÏÎµÏ Î­ÏÎµÎ¹ Î· ÎºÎ±Î¸ÎµÎ¼Î¯Î±. ÎÎ¹ ÏÏÎµÏ Î¼ÏÎ¿ÏÎµÎ¯ Î½Î± Î´Î¹Î±ÏÎ­ÏÎ¿ÏÎ½ Î±Î½Î¬ Î·Î¼Î­ÏÎ± (Ï.Ï. Î Î±ÏÎ±ÏÎºÎµÏÎ® 6 ÏÏÎµÏ).</p>
+    <h2>Ρυθμίσεις προγράμματος</h2>
+    <p class="hint" style="margin-top:0">Επίλεξε ημέρες και όρισε πόσες διδακτικές ώρες έχει η καθεμία. Οι ώρες μπορεί να διαφέρουν ανά ημέρα (π.χ. Παρασκευή 6 ώρες).</p>
     <table class="data" id="daySettings" style="max-width:480px"></table>
-    <div class="row" style="margin-top:12px"><button class="primary" onclick="applySettings()">ÎÏÎ±ÏÎ¼Î¿Î³Î®</button></div>
+    <div class="row" style="margin-top:12px"><button class="primary" onclick="applySettings()">Εφαρμογή</button></div>
     <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
-    <h2 style="font-size:15px">Î Î¿Î¹ÏÏÎ·ÏÎ± &amp; ÏÏÏÏÎ¸ÎµÏÎ¿Î¹ ÎºÎ±Î½ÏÎ½ÎµÏ</h2>
+    <h2 style="font-size:15px">Ποιότητα &amp; πρόσθετοι κανόνες</h2>
     <div class="row">
-      <label>ÎÎ­Î³. ÏÏÎ½ÎµÏÏÎ¼ÎµÎ½ÎµÏ ÏÏÎµÏ ÎºÎ±Î¸Î·Î³Î·ÏÎ®: <input type="number" id="setMaxConsec" min="0" max="12" value="0" style="width:60px" title="0 = ÏÏÏÎ¯Ï ÏÏÎ¹Î¿"></label>
-      <label><input type="checkbox" id="setAvoidSame" checked> ÎÏÎ¿ÏÏÎ³Î® Î¯Î´Î¹Î¿Ï Î¼Î±Î¸Î®Î¼Î±ÏÎ¿Ï 2 ÏÎ¿ÏÎ­Ï/Î·Î¼Î­ÏÎ±</label>
-      <label><input type="checkbox" id="setAB" onchange="toggleABUi()"> ÎÎ½Î±Î»Î»Î±ÏÏÏÎ¼ÎµÎ½ÎµÏ ÎµÎ²Î´Î¿Î¼Î¬Î´ÎµÏ Î/Î</label>
+      <label>Μέγ. συνεχόμενες ώρες καθηγητή: <input type="number" id="setMaxConsec" min="0" max="12" value="0" style="width:60px" title="0 = χωρίς όριο"></label>
+      <label><input type="checkbox" id="setAvoidSame" checked> Αποφυγή ίδιου μαθήματος 2 φορές/ημέρα</label>
+      <label><input type="checkbox" id="setAB" onchange="toggleABUi()"> Εναλλασσόμενες εβδομάδες Α/Β</label>
     </div>
-    <p class="hint">Î Î¬ÏÎ± Â«ÎÏÎ±ÏÎ¼Î¿Î³Î®Â» ÏÎ±ÏÎ±ÏÎ¬Î½Ï Î³Î¹Î± Î½Î± Î±ÏÎ¿Î¸Î·ÎºÎµÏÏÎ¿ÏÎ½ ÎºÎ±Î¹ Î±ÏÏÎ¬ Î¼Î±Î¶Î¯ Î¼Îµ ÏÎ¹Ï Î·Î¼Î­ÏÎµÏ/ÏÏÎµÏ.</p>
+    <p class="hint">Πάτα «Εφαρμογή» παραπάνω για να αποθηκευτούν και αυτά μαζί με τις ημέρες/ώρες.</p>
     <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
-    <h2 style="font-size:15px">ÎÏÏÏÎ¼Î±ÏÎ· ÏÏÎ¯ÏÎ· ÏÎ¼Î®Î¼Î±ÏÎ¿Ï (Î¿Î¼Î¬Î´ÎµÏ Î¼Î±Î¸Î·Î¼Î¬ÏÏÎ½)</h2>
-    <p class="hint" style="margin-top:0">ÎÏÎ±Î½ Î­Î½Î± ÏÎ¼Î®Î¼Î± Î­ÏÎµÎ¹ Î±ÏÏ Î­Î½Î± Î¼Î¬Î¸Î·Î¼Î± ÎºÎ¬Î¸Îµ Î¿Î½ÏÎ¼Î±ÏÎ¿Ï ÏÎ·Ï Î¿Î¼Î¬Î´Î±Ï, ÏÎ¿ ÏÏÏÎ³ÏÎ±Î¼Î¼Î± ÏÎ± ÏÎ¿ÏÎ¿Î¸ÎµÏÎµÎ¯ <b>Î±ÏÏÏÎ¼Î±ÏÎ± ÏÎ·Î½ Î¯Î´Î¹Î± ÏÏÎ±</b> (ÎºÎ¬Î¸Îµ ÏÏÎ¿Î¿Î¼Î¬Î´Î± Î¼Î±Î¸Î·ÏÏÎ½ ÏÎµ Î´Î¹Î±ÏÎ¿ÏÎµÏÎ¹ÎºÏ Î¼Î¬Î¸Î·Î¼Î± ÏÎ±ÏÏÏÏÏÎ¿Î½Î±). Î¥ÏÎ¿ÏÏÎ·ÏÎ¯Î¶Î¿Î½ÏÎ±Î¹ Î¿Î¼Î¬Î´ÎµÏ 2 Î® ÏÎµÏÎ¹ÏÏÏÏÎµÏÏÎ½ Î¼Î±Î¸Î·Î¼Î¬ÏÏÎ½ (Ï.Ï. 3 Î¾Î­Î½ÎµÏ Î³Î»ÏÏÏÎµÏ). ÎÏÎ¬ÏÎµ ÏÎ± Î¿Î½ÏÎ¼Î±ÏÎ± ÏÏÏÎ¹ÏÎ¼Î­Î½Î± Î¼Îµ ÎºÏÎ¼Î¼Î±.</p>
+    <h2 style="font-size:15px">Αυτόματη σχίση τμήματος (ομάδες μαθημάτων)</h2>
+    <p class="hint" style="margin-top:0">Όταν ένα τμήμα έχει από ένα μάθημα κάθε ονόματος της ομάδας, το πρόγραμμα τα τοποθετεί <b>αυτόματα την ίδια ώρα</b> (κάθε υποομάδα μαθητών σε διαφορετικό μάθημα ταυτόχρονα). Υποστηρίζονται ομάδες 2 ή περισσότερων μαθημάτων (π.χ. 3 ξένες γλώσσες). Γράψε τα ονόματα χωρισμένα με κόμμα.</p>
     <div class="row">
-      <input type="text" id="spGroup" placeholder="Ï.Ï. ÎÎ±Î»Î»Î¹ÎºÎ¬, ÎÎµÏÎ¼Î±Î½Î¹ÎºÎ¬, ÎÏÏÎ±Î½Î¹ÎºÎ¬" style="width:320px" onkeydown="ek(event,addSplitGroup)">
-      <button onclick="addSplitGroup()">+ ÎÎ¼Î¬Î´Î± ÏÏÎ¯ÏÎ·Ï</button>
+      <input type="text" id="spGroup" placeholder="π.χ. Γαλλικά, Γερμανικά, Ισπανικά" style="width:320px" onkeydown="ek(event,addSplitGroup)">
+      <button onclick="addSplitGroup()">+ Ομάδα σχίσης</button>
     </div>
     <div id="splitPairsBox"></div>
-    <p class="hint">Î Î±Î»Î»Î±Î³Î® Î·Î¼ÎµÏÏÎ½/ÏÏÏÎ½ ÎµÎ½Î·Î¼ÎµÏÏÎ½ÎµÎ¹ ÏÎ»Î± ÏÎ± ÏÎ»Î­Î³Î¼Î±ÏÎ±. Î¤Î± Î®Î´Î· ÏÎ¿ÏÎ¿Î¸ÎµÏÎ·Î¼Î­Î½Î± Î¼Î±Î¸Î®Î¼Î±ÏÎ± ÎµÎºÏÏÏ Î½Î­Î¿Ï ÎµÏÏÎ¿ÏÏ Î±ÏÎ±Î¹ÏÎ¿ÏÎ½ÏÎ±Î¹.</p>
+    <p class="hint">Η αλλαγή ημερών/ωρών ενημερώνει όλα τα πλέγματα. Τα ήδη τοποθετημένα μαθήματα εκτός νέου εύρους αφαιρούνται.</p>
   </section>
 
   <section id="tab-teachers" class="panel hidden">
-    <h2>ÎÎ±Î¸Î·Î³Î·ÏÎ­Ï</h2>
+    <h2>Καθηγητές</h2>
     <div class="row">
-      <input type="text" id="tName" placeholder="ÎÎ½Î¿Î¼Î±ÏÎµÏÏÎ½ÏÎ¼Î¿ ÎºÎ±Î¸Î·Î³Î·ÏÎ® (Enter)" style="width:280px" onkeydown="ek(event,addTeacher)">
-      <button class="primary" onclick="addTeacher()">+ Î ÏÎ¿ÏÎ¸Î®ÎºÎ·</button>
+      <input type="text" id="tName" placeholder="Ονοματεπώνυμο καθηγητή (Enter)" style="width:280px" onkeydown="ek(event,addTeacher)">
+      <button class="primary" onclick="addTeacher()">+ Προσθήκη</button>
     </div>
     <div id="teacherList"></div>
   </section>
 
   <section id="tab-classes" class="panel hidden">
-    <h2>Î¤Î¼Î®Î¼Î±ÏÎ± / Î¤Î¬Î¾ÎµÎ¹Ï</h2>
+    <h2>Τμήματα / Τάξεις</h2>
     <div class="row">
-      <input type="text" id="cName" placeholder="Ï.Ï. Î1, Î2 (Enter)" style="width:220px" onkeydown="ek(event,addClass)">
-      <button class="primary" onclick="addClass()">+ Î ÏÎ¿ÏÎ¸Î®ÎºÎ·</button>
+      <input type="text" id="cName" placeholder="π.χ. Α1, Β2 (Enter)" style="width:220px" onkeydown="ek(event,addClass)">
+      <button class="primary" onclick="addClass()">+ Προσθήκη</button>
     </div>
     <div id="classList"></div>
   </section>
 
   <section id="tab-rooms" class="panel hidden">
-    <h2>ÎÎ¯Î¸Î¿ÏÏÎµÏ</h2>
+    <h2>Αίθουσες</h2>
     <div class="row">
-      <input type="text" id="rName" placeholder="Ï.Ï. ÎÎ¯Î¸Î¿ÏÏÎ± 101 (Enter)" style="width:220px" onkeydown="ek(event,addRoom)">
-      <button class="primary" onclick="addRoom()">+ Î ÏÎ¿ÏÎ¸Î®ÎºÎ·</button>
+      <input type="text" id="rName" placeholder="π.χ. Αίθουσα 101 (Enter)" style="width:220px" onkeydown="ek(event,addRoom)">
+      <button class="primary" onclick="addRoom()">+ Προσθήκη</button>
     </div>
     <div id="roomList"></div>
-    <p class="hint">Î Î±Î½Î¬Î¸ÎµÏÎ· Î±Î¯Î¸Î¿ÏÏÎ±Ï Î±Î½Î¬ Î¼Î¬Î¸Î·Î¼Î± ÎµÎ¯Î½Î±Î¹ ÏÏÎ¿Î±Î¹ÏÎµÏÎ¹ÎºÎ®. ÎÏÎ¿Ï Î´Î·Î»ÏÎ¸ÎµÎ¯, ÏÎ¿ ÏÏÏÎ³ÏÎ±Î¼Î¼Î± Î´ÎµÎ½ Î¸Î± ÏÏÎ·ÏÎ¹Î¼Î¿ÏÎ¿Î¹ÎµÎ¯ ÏÎ·Î½ Î¯Î´Î¹Î± Î±Î¯Î¸Î¿ÏÏÎ± Î´ÏÎ¿ ÏÎ¿ÏÎ­Ï ÏÎ·Î½ Î¯Î´Î¹Î± ÏÏÎ±.</p>
+    <p class="hint">Η ανάθεση αίθουσας ανά μάθημα είναι προαιρετική. Όπου δηλωθεί, το πρόγραμμα δεν θα χρησιμοποιεί την ίδια αίθουσα δύο φορές την ίδια ώρα.</p>
   </section>
 
   <section id="tab-assign" class="panel hidden">
-    <h2>ÎÎ±Î¸Î®Î¼Î±ÏÎ± &amp; ÎÎ½Î±Î¸Î­ÏÎµÎ¹Ï</h2>
+    <h2>Μαθήματα &amp; Αναθέσεις</h2>
     <div class="row">
-      <input type="text" id="sName" placeholder="ÎÎ½Î¿Î¼Î± Î¼Î±Î¸Î®Î¼Î±ÏÎ¿Ï (Enter)" style="width:220px" onkeydown="ek(event,addSubject)">
-      <input type="color" id="sColor" value="#93c5fd" title="Î§ÏÏÎ¼Î±">
-      <label style="font-size:12px"><input type="checkbox" id="sDouble"> â± ÎÎ¹ÏÎ»Î® ÏÏÎ± (ÏÏÎ½ÎµÏÏÎ¼ÎµÎ½ÎµÏ)</label>
-      <button onclick="addSubject()">+ ÎÎ¬Î¸Î·Î¼Î±</button>
+      <input type="text" id="sName" placeholder="Όνομα μαθήματος (Enter)" style="width:220px" onkeydown="ek(event,addSubject)">
+      <input type="color" id="sColor" value="#93c5fd" title="Χρώμα">
+      <label style="font-size:12px"><input type="checkbox" id="sDouble"> ⏱ Διπλή ώρα (συνεχόμενες)</label>
+      <button onclick="addSubject()">+ Μάθημα</button>
     </div>
     <div id="subjectTags" style="margin:8px 0"></div>
     <hr style="border:none;border-top:1px solid var(--line);margin:14px 0">
-    <h2 style="font-size:14px">ÎÎ­Î± Î±Î½Î¬Î¸ÎµÏÎ· (ÏÎ¿Î¹Î¿Ï Î´Î¹Î´Î¬ÏÎºÎµÎ¹ ÏÎ¹, ÏÎµ ÏÎ¿Î¹Î¿ ÏÎ¼Î®Î¼Î±, ÏÏÏÎµÏ ÏÏÎµÏ)</h2>
+    <h2 style="font-size:14px">Νέα ανάθεση (ποιος διδάσκει τι, σε ποιο τμήμα, πόσες ώρες)</h2>
     <div class="row">
       <select id="aClass" onkeydown="ek(event,addAssignment)"></select>
       <select id="aSubject" onkeydown="ek(event,addAssignment)"></select>
       <select id="aTeacher" onkeydown="ek(event,addAssignment)"></select>
       <select id="aRoom" onkeydown="ek(event,addAssignment)"></select>
-      <label>ÎÏÎµÏ/ÎµÎ²Î´.: <input type="number" id="aHours" min="1" max="12" value="2" style="width:56px" onkeydown="ek(event,addAssignment)"></label>
-      <input type="text" id="aGroup" placeholder="ÎÎ¼Î¬Î´Î± ÏÏÎ¯ÏÎ·Ï (ÏÏÎ¿Î±Î¹Ï.)" style="width:170px" title="Î§ÎµÎ¹ÏÎ¿ÎºÎ¯Î½Î·ÏÎ· Î¿Î¼Î¬Î´Î± â ÏÏÎ½Î®Î¸ÏÏ Î´ÎµÎ½ ÏÏÎµÎ¹Î¬Î¶ÎµÏÎ±Î¹, Î· ÏÏÎ¯ÏÎ· Î³Î¯Î½ÎµÏÎ±Î¹ Î±ÏÏÏÎ¼Î±ÏÎ± Î±ÏÏ ÏÎ¹Ï Î¿Î¼Î¬Î´ÎµÏ ÏÏÎ¹Ï Î¡ÏÎ¸Î¼Î¯ÏÎµÎ¹Ï" onkeydown="ek(event,addAssignment)">
-      <button class="primary" onclick="addAssignment()">+ ÎÎ½Î¬Î¸ÎµÏÎ·</button>
+      <label>Ώρες/εβδ.: <input type="number" id="aHours" min="1" max="12" value="2" style="width:56px" onkeydown="ek(event,addAssignment)"></label>
+      <input type="text" id="aGroup" placeholder="Ομάδα σχίσης (προαιρ.)" style="width:170px" title="Χειροκίνητη ομάδα — συνήθως δεν χρειάζεται, η σχίση γίνεται αυτόματα από τις ομάδες στις Ρυθμίσεις" onkeydown="ek(event,addAssignment)">
+      <button class="primary" onclick="addAssignment()">+ Ανάθεση</button>
     </div>
     <div class="row" style="margin-top:6px">
-      <label style="font-size:12px">ÎÎ»ÎµÎ¯Î´ÏÎ¼Î± Î·Î¼Î­ÏÎ±Ï: <select id="aFixDay"><option value="-1">ÎÏÎ¿Î¹Î±Î´Î®ÏÎ¿ÏÎµ</option></select></label>
-      <label style="font-size:12px">ÎÎ»ÎµÎ¯Î´ÏÎ¼Î± ÏÏÎ±Ï: <select id="aFixPeriod"><option value="-1">ÎÏÎ¿Î¹Î±Î´Î®ÏÎ¿ÏÎµ</option></select></label>
-      <label class="abonly hidden" style="font-size:12px">ÎÎ²Î´Î¿Î¼Î¬Î´Î±: <select id="aWeek"><option value="both">ÎÎ¬Î¸Îµ ÎµÎ²Î´.</option><option value="A">ÎÎ²Î´. Î</option><option value="B">ÎÎ²Î´. Î</option></select></label>
+      <label style="font-size:12px">Κλείδωμα ημέρας: <select id="aFixDay"><option value="-1">Οποιαδήποτε</option></select></label>
+      <label style="font-size:12px">Κλείδωμα ώρας: <select id="aFixPeriod"><option value="-1">Οποιαδήποτε</option></select></label>
+      <label class="abonly hidden" style="font-size:12px">Εβδομάδα: <select id="aWeek"><option value="both">Κάθε εβδ.</option><option value="A">Εβδ. Α</option><option value="B">Εβδ. Β</option></select></label>
     </div>
-    <p class="hint">Î ÏÏÎ¯ÏÎ· ÏÎ¼Î®Î¼Î±ÏÎ¿Ï Î³Î¯Î½ÎµÏÎ±Î¹ <b>Î±ÏÏÏÎ¼Î±ÏÎ±</b> Î±ÏÏ ÏÎ¹Ï Î¿Î¼Î¬Î´ÎµÏ ÏÏÎ¹Ï Â«Î¡ÏÎ¸Î¼Î¯ÏÎµÎ¹ÏÂ». ÎÎ»ÎµÎ¯Î´ÏÎ¼Î± Î·Î¼Î­ÏÎ±Ï/ÏÏÎ±Ï = ÏÎ¿ ÏÏÏÎ³ÏÎ±Î¼Î¼Î± Î¸Î± ÏÏÎ¿ÏÏÎ±Î¸Î®ÏÎµÎ¹ Î½Î± ÏÎ¿ÏÎ¿Î¸ÎµÏÎ®ÏÎµÎ¹ (Î¼Î¯Î± ÏÏÎ± Î±ÏÏ) Î±ÏÏÎ® ÏÎ·Î½ Î±Î½Î¬Î¸ÎµÏÎ· ÎµÎºÎµÎ¯. Î Î¬ÏÎ± <b>Enter</b> ÏÎµ Î¿ÏÎ¿Î¹Î¿Î´Î®ÏÎ¿ÏÎµ ÏÎµÎ´Î¯Î¿ Î³Î¹Î± Î³ÏÎ®Î³Î¿ÏÎ· ÏÏÎ¿ÏÎ¸Î®ÎºÎ·.</p>
+    <p class="hint">Η σχίση τμήματος γίνεται <b>αυτόματα</b> από τις ομάδες στις «Ρυθμίσεις». Κλείδωμα ημέρας/ώρας = το πρόγραμμα θα προσπαθήσει να τοποθετήσει (μία ώρα από) αυτή την ανάθεση εκεί. Πάτα <b>Enter</b> σε οποιοδήποτε πεδίο για γρήγορη προσθήκη.</p>
     <hr style="border:none;border-top:1px solid var(--line);margin:14px 0">
     <div class="row">
-      <label><b>Î¦Î¯Î»ÏÏÎ¿ Î±Î½Î¬ ÏÎ¼Î®Î¼Î±:</b>
+      <label><b>Φίλτρο ανά τμήμα:</b>
         <select id="filterClass" onchange="renderAssignments()"></select>
       </label>
     </div>
@@ -243,13 +243,13 @@
   </section>
 
   <section id="tab-stats" class="panel hidden">
-    <h2>Î£ÏÎ±ÏÎ¹ÏÏÎ¹ÎºÎ¬ ÏÏÎ¿Î³ÏÎ¬Î¼Î¼Î±ÏÎ¿Ï</h2>
+    <h2>Στατιστικά προγράμματος</h2>
     <div id="statsBox"></div>
   </section>
 
   <section id="tab-coverage" class="panel hidden">
-    <h2>ÎÎ½Î±ÏÎ»Î·ÏÏÏÎµÎ¹Ï (Î±ÏÎ¿ÏÏÎ¯Î± ÎºÎ±Î¸Î·Î³Î·ÏÎ®)</h2>
-    <p class="hint" style="margin-top:0">ÎÏÎ¯Î»ÎµÎ¾Îµ ÎºÎ±Î¸Î·Î³Î·ÏÎ® ÎºÎ±Î¹ Î·Î¼Î­ÏÎ± Î³Î¹Î± Î½Î± Î´ÎµÎ¹Ï ÏÎ¿Î¹Î± Î¼Î±Î¸Î®Î¼Î±ÏÎ± Î­ÏÎµÎ¹ ÎºÎ±Î¹ ÏÎ¿Î¹Î¿Î¹ Î¬Î»Î»Î¿Î¹ ÎºÎ±Î¸Î·Î³Î·ÏÎ­Ï ÎµÎ¯Î½Î±Î¹ ÎµÎ»ÎµÏÎ¸ÎµÏÎ¿Î¹ ÎµÎºÎµÎ¯Î½Î· ÏÎ·Î½ ÏÏÎ±.</p>
+    <h2>Αναπληρώσεις (απουσία καθηγητή)</h2>
+    <p class="hint" style="margin-top:0">Επίλεξε καθηγητή και ημέρα για να δεις ποια μαθήματα έχει και ποιοι άλλοι καθηγητές είναι ελεύθεροι εκείνη την ώρα.</p>
     <div class="row">
       <select id="covTeacher" onchange="renderCoverage()"></select>
       <select id="covDay" onchange="renderCoverage()"></select>
@@ -258,45 +258,45 @@
   </section>
 
   <section id="tab-timetable" class="panel hidden">
-    <h2>Î©ÏÎ¿Î»ÏÎ³Î¹Î¿ Î ÏÏÎ³ÏÎ±Î¼Î¼Î±</h2>
+    <h2>Ωρολόγιο Πρόγραμμα</h2>
     <div class="row noprint">
-      <button class="primary" onclick="autoGenerate()">âï¸ ÎÏÏÏÎ¼Î±ÏÎ· Î´Î·Î¼Î¹Î¿ÏÏÎ³Î¯Î±</button>
-      <button onclick="suggestFixes()">ð§ Î ÏÎ¿ÏÎ¬ÏÎµÎ¹Ï Î»ÏÏÎµÏÎ½</button>
-      <button onclick="clearUnlocked()">ÎÎ±Î¸Î±ÏÎ¹ÏÎ¼ÏÏ (ÏÎ»Î·Î½ ÎºÎ»ÎµÎ¹Î´ÏÎ¼Î­Î½ÏÎ½)</button>
-      <button id="btnUndo" onclick="undoTT()" disabled>â¶ ÎÎ½Î±Î¯ÏÎµÏÎ·</button>
-      <button id="btnRedo" onclick="redoTT()" disabled>â· ÎÏÎ±Î½Î¬Î»Î·ÏÎ·</button>
-      <label>Î ÏÎ¿Î²Î¿Î»Î®:
+      <button class="primary" onclick="autoGenerate()">⚙️ Αυτόματη δημιουργία</button>
+      <button onclick="suggestFixes()">🔧 Προτάσεις λύσεων</button>
+      <button onclick="clearUnlocked()">Καθαρισμός (πλην κλειδωμένων)</button>
+      <button id="btnUndo" onclick="undoTT()" disabled>↶ Αναίρεση</button>
+      <button id="btnRedo" onclick="redoTT()" disabled>↷ Επανάληψη</button>
+      <label>Προβολή:
         <select id="viewMode" onchange="onViewModeChange()">
-          <option value="class">ÎÎ²Î´Î¿Î¼Î±Î´Î¹Î±Î¯Î¿ â Î±Î½Î¬ ÏÎ¼Î®Î¼Î±</option>
-          <option value="teacher">ÎÎ²Î´Î¿Î¼Î±Î´Î¹Î±Î¯Î¿ â Î±Î½Î¬ ÎºÎ±Î¸Î·Î³Î·ÏÎ®</option>
-          <option value="all">ÎÎ²Î´Î¿Î¼Î±Î´Î¹Î±Î¯Î¿ â ÏÎ»Î± ÏÎ± ÏÎ¼Î®Î¼Î±ÏÎ± (1 ÏÎµÎ»Î¯Î´Î±)</option>
-          <option value="day">ÎÎ¼ÎµÏÎ®ÏÎ¹Î¿ â ÏÎ»Î± ÏÎ± ÏÎ¼Î®Î¼Î±ÏÎ±</option>
+          <option value="class">Εβδομαδιαίο — ανά τμήμα</option>
+          <option value="teacher">Εβδομαδιαίο — ανά καθηγητή</option>
+          <option value="all">Εβδομαδιαίο — όλα τα τμήματα (1 σελίδα)</option>
+          <option value="day">Ημερήσιο — όλα τα τμήματα</option>
         </select>
       </label>
       <select id="viewTarget" onchange="renderTimetable()"></select>
       <select id="weekFilter" class="abonly hidden" onchange="renderTimetable()">
-        <option value="all">Î &amp; Î</option><option value="A">ÎÏÎ½Î¿ Î</option><option value="B">ÎÏÎ½Î¿ Î</option>
+        <option value="all">Α &amp; Β</option><option value="A">Μόνο Α</option><option value="B">Μόνο Β</option>
       </select>
-      <select id="hlTeacher" onchange="renderTimetable()"><option value="">â ÎÎ½Î¬Î´ÎµÎ¹Î¾Î· ÎºÎ±Î¸Î·Î³Î·ÏÎ® â</option></select>
+      <select id="hlTeacher" onchange="renderTimetable()"><option value="">— Ανάδειξη καθηγητή —</option></select>
       <span style="margin-left:auto"></span>
-      <button onclick="applyPageStyle();window.print()">ð¨ï¸ ÎÎºÏÏÏÏÏÎ· / PDF</button>
-      <button onclick="printAllTeachers()">ð¨ï¸ ÎÎ»Î¿Î¹ Î¿Î¹ ÎºÎ±Î¸Î·Î³Î·ÏÎ­Ï</button>
-      <button onclick="exportCSV()">â¬ï¸ ÎÎ¾Î±Î³ÏÎ³Î® CSV (Excel)</button>
+      <button onclick="applyPageStyle();window.print()">🖨️ Εκτύπωση / PDF</button>
+      <button onclick="printAllTeachers()">🖨️ Όλοι οι καθηγητές</button>
+      <button onclick="exportCSV()">⬇️ Εξαγωγή CSV (Excel)</button>
     </div>
     <div id="ttMessage"></div>
     <div id="ttStats" class="row" style="margin:6px 0"></div>
     <div id="ttContent" class="ttwrap"></div>
-    <p class="hint noprint">ÎÎµÏÎ±ÎºÎ¯Î½Î·ÏÎ· ÏÏÎ±Ï: ÏÏÏÎµ ÏÎ¿ ÎºÎ¿ÏÏÎ¬ÎºÎ¹ ÏÎµ Î¬Î»Î»Î¿ ÎºÎµÎ»Î¯ (ÎºÎ±Î¹ Â«Î±Î½Î¬ ÏÎ¼Î®Î¼Î±Â» ÎºÎ±Î¹ Â«Î·Î¼ÎµÏÎ®ÏÎ¹Î¿Â») â Î¿Î¹ ÏÏÎ³ÎºÏÎ¿ÏÏÎµÎ¹Ï ÎµÎ½Î·Î¼ÎµÏÏÎ½Î¿Î½ÏÎ±Î¹ Î±Î¼Î­ÏÏÏ (ÎºÏÎºÎºÎ¹Î½Î¿ â ). Â«ð§ Î ÏÎ¿ÏÎ¬ÏÎµÎ¹Ï Î»ÏÏÎµÏÎ½Â» = ÏÏÎ¿ÏÎµÎ¹Î½ÏÎ¼ÎµÎ½ÎµÏ Î¼ÎµÏÎ±ÎºÎ¹Î½Î®ÏÎµÎ¹Ï. Î Î»Î·ÎºÏÏÎ¿Î»ÏÎ³Î¹Î¿ (Â«Î±Î½Î¬ ÏÎ¼Î®Î¼Î±Â»): <b>Tab</b>/Î²ÎµÎ»Î¬ÎºÎ¹Î±, <b>Enter</b> ÎµÏÎ¹Î»Î¿Î³Î®, <b>Delete</b> Î´Î¹Î±Î³ÏÎ±ÏÎ®, <b>L</b> ÎºÎ»ÎµÎ¯Î´ÏÎ¼Î±, <b>Esc</b> Î¬ÎºÏÏÎ¿. <b>Ctrl+Z / Ctrl+Y</b> Î±Î½Î±Î¯ÏÎµÏÎ·/ÎµÏÎ±Î½Î¬Î»Î·ÏÎ·. ÎÏÎ±Î¼Î¼Î¿ÏÎºÎ¹Î±ÏÎ¼Î­Î½Î± = ÏÏÎµÏ ÎµÎºÏÏÏ Î»ÎµÎ¹ÏÎ¿ÏÏÎ³Î¯Î±Ï Î® Î´Î¹Î¬Î»ÎµÎ¹Î¼Î¼Î±.</p>
+    <p class="hint noprint">Μετακίνηση ώρας: σύρε το κουτάκι σε άλλο κελί, ή με πληκτρολόγιο. Πλοήγηση (και «ανά τμήμα» και «ημερήσιο»): <b>βελάκια</b> μετακίνηση εστίασης, <b>Tab</b> επόμενο κελί, <b>Home/End</b> πρώτη/τελευταία ώρα ημέρας, <b>Ctrl+Home/End</b> αρχή/τέλος εβδομάδας. Επεξεργασία: <b>Enter</b> επιλογή μαθήματος («ανά τμήμα»), <b>Delete</b> διαγραφή, <b>L</b> κλείδωμα/ξεκλείδωμα, <b>Ctrl+C / Ctrl+X / Ctrl+V</b> αντιγραφή/αποκοπή/επικόλληση («ανά τμήμα»), <b>Esc</b> αποεστίαση. <b>Ctrl+Z / Ctrl+Y</b> αναίρεση/επανάληψη οπουδήποτε. Οι συγκρούσεις ενημερώνονται αμέσως (κόκκινο ⚠) — «🔧 Προτάσεις λύσεων» προτείνει μετακινήσεις. Γραμμοσκιασμένα = ώρες εκτός λειτουργίας ή διάλειμμα.</p>
   </section>
 </main>
 
 <script>
-const ALLDAYS=["ÎÎµÏÏÎ­ÏÎ±","Î¤ÏÎ¯ÏÎ·","Î¤ÎµÏÎ¬ÏÏÎ·","Î Î­Î¼ÏÏÎ·","Î Î±ÏÎ±ÏÎºÎµÏÎ®","Î£Î¬Î²Î²Î±ÏÎ¿"];
+const ALLDAYS=["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή","Σάββατο"];
 const DAYTINTS=[["#e6efff","#cfe0ff"],["#e4f7ea","#ccecd6"],["#fdf3d8","#f8e3ac"],["#ece7fb","#dcd2f6"],["#fbe4ef","#f6cde0"],["#d9f5f2","#bfeae4"]];
 function dayTint(dayName){const i=Math.max(0,ALLDAYS.indexOf(dayName));const t=DAYTINTS[i%DAYTINTS.length];return `linear-gradient(135deg,${t[0]},${t[1]})`;}
-const DEFAULT_GROUPS=[["ÎÎ±Î»Î»Î¹ÎºÎ¬","ÎÎµÏÎ¼Î±Î½Î¹ÎºÎ¬"],["Î¤ÎµÏÎ½Î¿Î»Î¿Î³Î¯Î±","Î Î»Î·ÏÎ¿ÏÎ¿ÏÎ¹ÎºÎ®"]];
+const DEFAULT_GROUPS=[["Γαλλικά","Γερμανικά"],["Τεχνολογία","Πληροφορική"]];
 let S = {
-  settings:{ days:["ÎÎµÏÏÎ­ÏÎ±","Î¤ÏÎ¯ÏÎ·","Î¤ÎµÏÎ¬ÏÏÎ·","Î Î­Î¼ÏÏÎ·","Î Î±ÏÎ±ÏÎºÎµÏÎ®"], periodsPerDay:[7,7,7,7,7],
+  settings:{ days:["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή"], periodsPerDay:[7,7,7,7,7],
     splitGroups:JSON.parse(JSON.stringify(DEFAULT_GROUPS)), maxConsecutive:0, avoidSameDaySubject:true, abWeeks:false,
     breakPeriod:[-1,-1,-1,-1,-1] },
   teachers:[], classes:[], rooms:[], subjects:[], assignments:[],
@@ -304,8 +304,8 @@ let S = {
 };
 let uid = ()=>Math.random().toString(36).slice(2,9);
 const TABS=[
-  ["settings","Î¡ÏÎ¸Î¼Î¯ÏÎµÎ¹Ï"],["teachers","ÎÎ±Î¸Î·Î³Î·ÏÎ­Ï"],["classes","Î¤Î¼Î®Î¼Î±ÏÎ±"],
-  ["rooms","ÎÎ¯Î¸Î¿ÏÏÎµÏ"],["assign","ÎÎ±Î¸Î®Î¼Î±ÏÎ±/ÎÎ½Î±Î¸Î­ÏÎµÎ¹Ï"],["stats","Î£ÏÎ±ÏÎ¹ÏÏÎ¹ÎºÎ¬"],["coverage","ÎÎ½Î±ÏÎ»Î·ÏÏÏÎµÎ¹Ï"],["timetable","Î ÏÏÎ³ÏÎ±Î¼Î¼Î±"]
+  ["settings","Ρυθμίσεις"],["teachers","Καθηγητές"],["classes","Τμήματα"],
+  ["rooms","Αίθουσες"],["assign","Μαθήματα/Αναθέσεις"],["stats","Στατιστικά"],["coverage","Αναπληρώσεις"],["timetable","Πρόγραμμα"]
 ];
 
 function ek(e,fn){ if(e.key==='Enter'){ e.preventDefault(); fn(); } }
@@ -339,16 +339,16 @@ function totalAvailSlots(){
   return n;
 }
 
-/* ---- ÎµÎ²Î´Î¿Î¼Î¬Î´ÎµÏ Î/Î ---- */
+/* ---- εβδομάδες Α/Β ---- */
 function weekOf(a){ return (a&&a.week)||'both'; }
 function weeksCompatible(w1,w2){ return w1!==w2 && w1!=='both' && w2!=='both'; }
-function weekLabel(w){ return w==='A'?'Î':(w==='B'?'Î':''); }
+function weekLabel(w){ return w==='A'?'Α':(w==='B'?'Β':''); }
 function toggleABUi(){
   const on=!!S.settings.abWeeks;
   document.querySelectorAll('.abonly').forEach(el=>el.classList.toggle('hidden',!on));
 }
 
-/* ---- Î±ÏÏÏÎ¼Î±ÏÎ· ÏÏÎ¯ÏÎ· Î¿Î¼Î¬Î´ÏÎ½ Î¼Î±Î¸Î·Î¼Î¬ÏÏÎ½ (2 Î® ÏÎµÏÎ¹ÏÏÏÏÎµÏÎ±) ---- */
+/* ---- αυτόματη σχίση ομάδων μαθημάτων (2 ή περισσότερα) ---- */
 function subjNameEq(id,name){ return (nameOf('subjects',id)||'').trim().toLowerCase()===(name||'').trim().toLowerCase(); }
 function autoPairSplits(){
   const groups=S.settings.splitGroups||[];
@@ -357,28 +357,28 @@ function autoPairSplits(){
       const members=names.map(n=>S.assignments.filter(x=>x.classId===c.id && subjNameEq(x.subjectId,n)));
       if(members.some(arr=>arr.length!==1))return;
       const chosen=members.map(arr=>arr[0]);
-      const g='Î£Î§:'+names.join('/');
-      chosen.forEach(a=>{ if(!a.pgroup || a.pgroup.indexOf('Î£Î§:')===0) a.pgroup=g; });
+      const g='ΣΧ:'+names.join('/');
+      chosen.forEach(a=>{ if(!a.pgroup || a.pgroup.indexOf('ΣΧ:')===0) a.pgroup=g; });
     });
   });
 }
 function renderSplitPairs(){
   const el=document.getElementById('splitPairsBox'); if(!el)return;
   const gs=S.settings.splitGroups||[];
-  if(!gs.length){ el.innerHTML='<p class="hint">ÎÎ±Î¼Î¯Î± Î¿Î¼Î¬Î´Î±. Î ÏÏÏÎ¸ÎµÏÎµ Ï.Ï. ÎÎ±Î»Î»Î¹ÎºÎ¬, ÎÎµÏÎ¼Î±Î½Î¹ÎºÎ¬.</p>'; return; }
-  el.innerHTML='<div style="margin-top:8px">'+gs.map((g,i)=>`<span class="pairtag">â ${g.map(esc).join(' + ')} <span style="cursor:pointer" onclick="delSplitPair(${i})">â</span></span>`).join('')+'</div>';
+  if(!gs.length){ el.innerHTML='<p class="hint">Καμία ομάδα. Πρόσθεσε π.χ. Γαλλικά, Γερμανικά.</p>'; return; }
+  el.innerHTML='<div style="margin-top:8px">'+gs.map((g,i)=>`<span class="pairtag">⚌ ${g.map(esc).join(' + ')} <span style="cursor:pointer" onclick="delSplitPair(${i})">✕</span></span>`).join('')+'</div>';
 }
 function addSplitGroup(){
   const raw=document.getElementById('spGroup').value.trim();
   const names=raw.split(',').map(s=>s.trim()).filter(Boolean);
-  if(names.length<2){alert('ÎÏÎ¬ÏÎµ ÏÎ¿ÏÎ»Î¬ÏÎ¹ÏÏÎ¿Î½ 2 Î¼Î±Î¸Î®Î¼Î±ÏÎ± ÏÏÏÎ¹ÏÎ¼Î­Î½Î± Î¼Îµ ÎºÏÎ¼Î¼Î±.');return;}
+  if(names.length<2){alert('Γράψε τουλάχιστον 2 μαθήματα χωρισμένα με κόμμα.');return;}
   S.settings.splitGroups=S.settings.splitGroups||[]; S.settings.splitGroups.push(names);
   document.getElementById('spGroup').value='';
   autoPairSplits(); renderSplitPairs(); refreshAssignSelectors(); save();
 }
 function delSplitPair(i){
   const g=S.settings.splitGroups[i]; if(!g)return;
-  const gid='Î£Î§:'+g.join('/');
+  const gid='ΣΧ:'+g.join('/');
   S.assignments.forEach(a=>{ if(a.pgroup===gid) a.pgroup=''; });
   S.settings.splitGroups.splice(i,1);
   save(); renderSplitPairs(); refreshAssignSelectors();
@@ -410,6 +410,13 @@ function applyPageStyle(){
 }
 window.addEventListener('beforeprint',applyPageStyle);
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ const a=document.activeElement; if(a&&a.tagName==='INPUT'&&(a.type==='text'||a.type==='number')) a.blur(); } });
+document.addEventListener('keydown',e=>{
+  const a=document.activeElement;
+  const typing=a&&(a.tagName==='INPUT'||a.tagName==='SELECT'||a.tagName==='TEXTAREA');
+  if(typing)return;
+  if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key.toLowerCase()==='z'){ e.preventDefault(); undoTT(); }
+  else if((e.ctrlKey||e.metaKey)&&(e.key.toLowerCase()==='y'||(e.shiftKey&&e.key.toLowerCase()==='z'))){ e.preventDefault(); redoTT(); }
+});
 
 function buildTabs(){
   const nav=document.getElementById('tabs'); nav.innerHTML='';
@@ -439,13 +446,13 @@ function gotoTimetable(mode){
 
 function renderDaySettings(){
   const el=document.getElementById('daySettings'); if(!el)return;
-  let h='<tr><th>ÎÎ¼Î­ÏÎ±</th><th>ÎÎ½ÎµÏÎ³Î®</th><th>ÎÎ¹Î´Î±ÎºÏÎ¹ÎºÎ­Ï ÏÏÎµÏ</th><th>ÎÎ¹Î¬Î»ÎµÎ¹Î¼Î¼Î± Î¼ÎµÏÎ¬</th></tr>';
+  let h='<tr><th>Ημέρα</th><th>Ενεργή</th><th>Διδακτικές ώρες</th><th>Διάλειμμα μετά</th></tr>';
   ALLDAYS.forEach(day=>{
     const idx=S.settings.days.indexOf(day); const on=idx>=0;
     const hrs=on?S.settings.periodsPerDay[idx]:7;
     const brk=on?(S.settings.breakPeriod[idx]!==undefined?S.settings.breakPeriod[idx]:-1):-1;
-    let brkOpts='<option value="-1">ÎÎ±Î½Î­Î½Î±</option>';
-    for(let p=0;p<hrs;p++) brkOpts+=`<option value="${p}" ${brk===p?'selected':''}>Î¼ÎµÏÎ¬ ${p+1}Î·</option>`;
+    let brkOpts='<option value="-1">Κανένα</option>';
+    for(let p=0;p<hrs;p++) brkOpts+=`<option value="${p}" ${brk===p?'selected':''}>μετά ${p+1}η</option>`;
     h+=`<tr><td>${day}</td>
       <td style="text-align:center"><input type="checkbox" class="dayck" value="${day}" ${on?'checked':''}></td>
       <td><input type="number" class="dayhrs" data-day="${day}" min="1" max="12" value="${hrs}" style="width:64px" onkeydown="ek(event,applySettings)"></td>
@@ -466,13 +473,13 @@ function applySettings(){
       const bs=document.querySelector(`.daybrk[data-day="${day}"]`); brk.push(bs?parseInt(bs.value):-1);
     }
   });
-  if(!days.length){alert('ÎÏÎ¯Î»ÎµÎ¾Îµ ÏÎ¿ÏÎ»Î¬ÏÎ¹ÏÏÎ¿Î½ Î¼Î¯Î± Î·Î¼Î­ÏÎ±');return;}
+  if(!days.length){alert('Επίλεξε τουλάχιστον μία ημέρα');return;}
   S.settings.days=days; S.settings.periodsPerDay=per; S.settings.breakPeriod=brk;
   S.settings.maxConsecutive=Math.max(0,parseInt(document.getElementById('setMaxConsec').value)||0);
   S.settings.avoidSameDaySubject=document.getElementById('setAvoidSame').checked;
   S.settings.abWeeks=document.getElementById('setAB').checked;
   normalizeTimetable(); renderTeachers(); renderDaySettings(); toggleABUi(); refreshAssignSelectors(); save();
-  alert('ÎÎ¹ ÏÏÎ¸Î¼Î¯ÏÎµÎ¹Ï ÎµÏÎ±ÏÎ¼ÏÏÏÎ·ÎºÎ±Î½.');
+  alert('Οι ρυθμίσεις εφαρμόστηκαν.');
 }
 function migrateCell(cell){
   if(!cell) return null;
@@ -512,7 +519,7 @@ function addTeacher(){
   const el=document.getElementById('tName'); el.value=''; el.focus(); renderTeachers(); save();
 }
 function delTeacher(id){
-  if(S.assignments.some(a=>a.teacherId===id)){if(!confirm('Î ÎºÎ±Î¸Î·Î³Î·ÏÎ®Ï Î­ÏÎµÎ¹ Î±Î½Î±Î¸Î­ÏÎµÎ¹Ï. ÎÎ¹Î±Î³ÏÎ±ÏÎ® ÏÎ¿ÏÏ ÎµÏÎ¯ÏÎ·Ï;'))return;}
+  if(S.assignments.some(a=>a.teacherId===id)){if(!confirm('Ο καθηγητής έχει αναθέσεις. Διαγραφή τους επίσης;'))return;}
   S.teachers=S.teachers.filter(t=>t.id!==id);
   S.assignments=S.assignments.filter(a=>a.teacherId!==id);
   cleanGrid(); renderTeachers(); save();
@@ -531,29 +538,29 @@ function dayOff(id,d){
 function renderTeachers(){
   const D=S.settings.days.length,P=maxPeriods();
   const el=document.getElementById('teacherList'); el.innerHTML='';
-  if(!S.teachers.length){el.innerHTML='<p class="hint">ÎÎµÎ½ ÏÏÎ¬ÏÏÎ¿ÏÎ½ ÎºÎ±Î¸Î·Î³Î·ÏÎ­Ï Î±ÎºÏÎ¼Î·.</p>';return;}
+  if(!S.teachers.length){el.innerHTML='<p class="hint">Δεν υπάρχουν καθηγητές ακόμη.</p>';return;}
   S.teachers.forEach(t=>{
     const box=document.createElement('div'); box.className='panel'; box.style.margin='12px 0';box.style.padding='12px';
     let h=`<div class="row"><b>${esc(t.name)}</b>
-      <button class="small danger" onclick="delTeacher('${t.id}')">ÎÎ¹Î±Î³ÏÎ±ÏÎ®</button></div>
+      <button class="small danger" onclick="delTeacher('${t.id}')">Διαγραφή</button></div>
       <div class="row" style="margin:6px 0">
-        <label style="font-size:12px">ÎÎ­Î³. ÏÏÎµÏ/Î·Î¼Î­ÏÎ±: <input type="number" min="1" max="12" style="width:56px" value="${t.maxPerDay||''}" placeholder="â" onchange="setTeacherMax('${t.id}',this.value)"></label>
-        <label style="font-size:12px">Î ÏÎ¿ÏÎ¯Î¼Î·ÏÎ·: <select onchange="setTeacherPref('${t.id}',this.value)">
-          <option value="" ${!t.pref?'selected':''}>ÎÎ±Î¼Î¯Î±</option>
-          <option value="first" ${t.pref==='first'?'selected':''}>Î ÏÏÏÎ· ÏÏÎ±</option>
-          <option value="last" ${t.pref==='last'?'selected':''}>Î¤ÎµÎ»ÎµÏÏÎ±Î¯Î± ÏÏÎ±</option>
+        <label style="font-size:12px">Μέγ. ώρες/ημέρα: <input type="number" min="1" max="12" style="width:56px" value="${t.maxPerDay||''}" placeholder="—" onchange="setTeacherMax('${t.id}',this.value)"></label>
+        <label style="font-size:12px">Προτίμηση: <select onchange="setTeacherPref('${t.id}',this.value)">
+          <option value="" ${!t.pref?'selected':''}>Καμία</option>
+          <option value="first" ${t.pref==='first'?'selected':''}>Πρώτη ώρα</option>
+          <option value="last" ${t.pref==='last'?'selected':''}>Τελευταία ώρα</option>
         </select></label>
       </div>
-      <p class="subrow">ÎÎ»Î¹Îº ÏÏÎ± ÎºÎµÎ»Î¹Î¬ Î³Î¹Î± ÏÏÎµÏ Î¼Î· Î´Î¹Î±Î¸ÎµÏÎ¹Î¼ÏÏÎ·ÏÎ±Ï (ÎºÏÎºÎºÎ¹Î½Î¿ = Î¼Î· Î´Î¹Î±Î¸Î­ÏÎ¹Î¼Î¿Ï). Â«ÏÎµÏÏÂ» = ÏÎ»Î· Î· Î·Î¼Î­ÏÎ±:</p>`;
+      <p class="subrow">Κλικ στα κελιά για ώρες μη διαθεσιμότητας (κόκκινο = μη διαθέσιμος). «ρεπό» = όλη η ημέρα:</p>`;
     h+='<table class="avail"><tr><th></th>';
-    for(let d=0;d<D;d++) h+=`<th>${S.settings.days[d].slice(0,3)}<span class="dayoffbtn" onclick="dayOff('${t.id}',${d})">ÏÎµÏÏ</span></th>`;
+    for(let d=0;d<D;d++) h+=`<th>${S.settings.days[d].slice(0,3)}<span class="dayoffbtn" onclick="dayOff('${t.id}',${d})">ρεπό</span></th>`;
     h+='</tr>';
     for(let p=0;p<P;p++){
-      h+=`<tr><th>${p+1}Î·</th>`;
+      h+=`<tr><th>${p+1}η</th>`;
       for(let d=0;d<D;d++){
-        if(p>=periodsOn(d)){ h+=`<td class="blk">Â·</td>`; continue; }
+        if(p>=periodsOn(d)){ h+=`<td class="blk">·</td>`; continue; }
         const k=d+'-'+p; const off=(t.unavail||[]).includes(k);
-        h+=`<td class="${off?'off':'on'}" onclick="toggleAvail('${t.id}',${d},${p})">${off?'â':''}</td>`;
+        h+=`<td class="${off?'off':'on'}" onclick="toggleAvail('${t.id}',${d},${p})">${off?'✕':''}</td>`;
       }
       h+='</tr>';
     }
@@ -578,13 +585,13 @@ function delClass(id){
 }
 function renderClasses(){
   const el=document.getElementById('classList'); el.innerHTML='';
-  if(!S.classes.length){el.innerHTML='<p class="hint">ÎÎµÎ½ ÏÏÎ¬ÏÏÎ¿ÏÎ½ ÏÎ¼Î®Î¼Î±ÏÎ± Î±ÎºÏÎ¼Î·.</p>';return;}
-  let h='<table class="data"><tr><th>Î¤Î¼Î®Î¼Î±</th><th>ÎÎ½Î±Î¸Î­ÏÎµÎ¹Ï</th><th>ÎÏÎµÏ ÏÎ»Î­Î³Î¼Î±ÏÎ¿Ï</th><th></th></tr>';
+  if(!S.classes.length){el.innerHTML='<p class="hint">Δεν υπάρχουν τμήματα ακόμη.</p>';return;}
+  let h='<table class="data"><tr><th>Τμήμα</th><th>Αναθέσεις</th><th>Ώρες πλέγματος</th><th></th></tr>';
   S.classes.forEach(c=>{
     const as=S.assignments.filter(a=>a.classId===c.id);
     const slots=classSlotsNeeded(c.id);
     h+=`<tr><td><b>${esc(c.name)}</b></td><td>${as.length}</td><td>${slots} / ${totalAvailSlots()}</td>
-      <td><button class="small danger" onclick="delClass('${c.id}')">ÎÎ¹Î±Î³ÏÎ±ÏÎ®</button></td></tr>`;
+      <td><button class="small danger" onclick="delClass('${c.id}')">Διαγραφή</button></td></tr>`;
   });
   h+='</table>'; el.innerHTML=h;
 }
@@ -611,9 +618,9 @@ function delRoom(id){
 }
 function renderRooms(){
   const el=document.getElementById('roomList'); el.innerHTML='';
-  if(!S.rooms.length){el.innerHTML='<p class="hint">ÎÎµÎ½ ÏÏÎ¬ÏÏÎ¿ÏÎ½ Î±Î¯Î¸Î¿ÏÏÎµÏ Î±ÎºÏÎ¼Î·.</p>';return;}
-  let h='<table class="data"><tr><th>ÎÎ¯Î¸Î¿ÏÏÎ±</th><th></th></tr>';
-  S.rooms.forEach(r=>h+=`<tr><td>${esc(r.name)}</td><td><button class="small danger" onclick="delRoom('${r.id}')">ÎÎ¹Î±Î³ÏÎ±ÏÎ®</button></td></tr>`);
+  if(!S.rooms.length){el.innerHTML='<p class="hint">Δεν υπάρχουν αίθουσες ακόμη.</p>';return;}
+  let h='<table class="data"><tr><th>Αίθουσα</th><th></th></tr>';
+  S.rooms.forEach(r=>h+=`<tr><td>${esc(r.name)}</td><td><button class="small danger" onclick="delRoom('${r.id}')">Διαγραφή</button></td></tr>`);
   h+='</table>'; el.innerHTML=h;
 }
 
@@ -624,30 +631,30 @@ function addSubject(){
   const el=document.getElementById('sName'); el.value=''; document.getElementById('sDouble').checked=false; el.focus(); renderSubjects(); refreshAssignSelectors(); save();
 }
 function delSubject(id){
-  if(S.assignments.some(a=>a.subjectId===id)){if(!confirm('Î¤Î¿ Î¼Î¬Î¸Î·Î¼Î± Î­ÏÎµÎ¹ Î±Î½Î±Î¸Î­ÏÎµÎ¹Ï. ÎÎ¹Î±Î³ÏÎ±ÏÎ® ÏÎ¿ÏÏ ÎµÏÎ¯ÏÎ·Ï;'))return;}
+  if(S.assignments.some(a=>a.subjectId===id)){if(!confirm('Το μάθημα έχει αναθέσεις. Διαγραφή τους επίσης;'))return;}
   S.subjects=S.subjects.filter(s=>s.id!==id);
   S.assignments=S.assignments.filter(a=>a.subjectId!==id);
   cleanGrid(); renderSubjects(); refreshAssignSelectors(); save();
 }
 function renderSubjects(){
   const el=document.getElementById('subjectTags'); el.innerHTML='';
-  if(!S.subjects.length){el.innerHTML='<span class="hint">ÎÎµÎ½ ÏÏÎ¬ÏÏÎ¿ÏÎ½ Î¼Î±Î¸Î®Î¼Î±ÏÎ±.</span>';return;}
+  if(!S.subjects.length){el.innerHTML='<span class="hint">Δεν υπάρχουν μαθήματα.</span>';return;}
   S.subjects.forEach(s=>{
     const t=document.createElement('span'); t.className='tag';
     t.style.background=s.color; t.style.color=pickText(s.color);
-    t.innerHTML=`${s.double?'â± ':''}${esc(s.name)} <span style="cursor:pointer" onclick="delSubject('${s.id}')">â</span>`;
+    t.innerHTML=`${s.double?'⏱ ':''}${esc(s.name)} <span style="cursor:pointer" onclick="delSubject('${s.id}')">✕</span>`;
     el.appendChild(t);
   });
 }
 
 function refreshAssignSelectors(){
-  fillSel('aClass',S.classes,'â Î¤Î¼Î®Î¼Î± â');
-  fillSel('aSubject',S.subjects,'â ÎÎ¬Î¸Î·Î¼Î± â');
-  fillSel('aTeacher',S.teachers,'â ÎÎ±Î¸Î·Î³Î·ÏÎ®Ï â');
-  fillSel('aRoom',S.rooms,'â ÎÎ¯Î¸Î¿ÏÏÎ± (ÏÏÎ¿Î±Î¹Ï.) â');
+  fillSel('aClass',S.classes,'— Τμήμα —');
+  fillSel('aSubject',S.subjects,'— Μάθημα —');
+  fillSel('aTeacher',S.teachers,'— Καθηγητής —');
+  fillSel('aRoom',S.rooms,'— Αίθουσα (προαιρ.) —');
   fillFixSelectors();
   const fs=document.getElementById('filterClass');
-  if(fs){ const prev=fs.value||''; fs.innerHTML='<option value="">ÎÎ»Î± ÏÎ± ÏÎ¼Î®Î¼Î±ÏÎ±</option>'+S.classes.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join(''); if([...fs.options].some(o=>o.value===prev)) fs.value=prev; }
+  if(fs){ const prev=fs.value||''; fs.innerHTML='<option value="">Όλα τα τμήματα</option>'+S.classes.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join(''); if([...fs.options].some(o=>o.value===prev)) fs.value=prev; }
   toggleABUi();
   renderSubjects(); renderAssignments();
 }
@@ -658,9 +665,9 @@ function fillSel(id,arr,ph){
 }
 function fillFixSelectors(){
   const dSel=document.getElementById('aFixDay');
-  if(dSel){ const prev=dSel.value; dSel.innerHTML='<option value="-1">ÎÏÎ¿Î¹Î±Î´Î®ÏÎ¿ÏÎµ</option>'+S.settings.days.map((d,i)=>`<option value="${i}">${esc(d)}</option>`).join(''); if([...dSel.options].some(o=>o.value===prev))dSel.value=prev; }
+  if(dSel){ const prev=dSel.value; dSel.innerHTML='<option value="-1">Οποιαδήποτε</option>'+S.settings.days.map((d,i)=>`<option value="${i}">${esc(d)}</option>`).join(''); if([...dSel.options].some(o=>o.value===prev))dSel.value=prev; }
   const pSel=document.getElementById('aFixPeriod');
-  if(pSel){ const prev=pSel.value; const P=maxPeriods(); let o='<option value="-1">ÎÏÎ¿Î¹Î±Î´Î®ÏÎ¿ÏÎµ</option>'; for(let p=0;p<P;p++)o+=`<option value="${p}">${p+1}Î·</option>`; pSel.innerHTML=o; if([...pSel.options].some(op=>op.value===prev))pSel.value=prev; }
+  if(pSel){ const prev=pSel.value; const P=maxPeriods(); let o='<option value="-1">Οποιαδήποτε</option>'; for(let p=0;p<P;p++)o+=`<option value="${p}">${p+1}η</option>`; pSel.innerHTML=o; if([...pSel.options].some(op=>op.value===prev))pSel.value=prev; }
 }
 function addAssignment(){
   const classId=aVal('aClass'),subjectId=aVal('aSubject'),teacherId=aVal('aTeacher'),roomId=aVal('aRoom');
@@ -669,7 +676,7 @@ function addAssignment(){
   const fixDay=parseInt(document.getElementById('aFixDay')?.value ?? '-1');
   const fixPeriod=parseInt(document.getElementById('aFixPeriod')?.value ?? '-1');
   const week=document.getElementById('aWeek')?.value || 'both';
-  if(!classId||!subjectId||!teacherId){alert('Î£ÏÎ¼ÏÎ»Î®ÏÏÏÎµ ÏÎ¼Î®Î¼Î±, Î¼Î¬Î¸Î·Î¼Î± ÎºÎ±Î¹ ÎºÎ±Î¸Î·Î³Î·ÏÎ®.');return;}
+  if(!classId||!subjectId||!teacherId){alert('Συμπλήρωσε τμήμα, μάθημα και καθηγητή.');return;}
   S.assignments.push({id:uid(),classId,subjectId,teacherId,roomId,hours,pgroup,fixDay,fixPeriod,week});
   document.getElementById('aGroup').value='';
   autoPairSplits();
@@ -689,30 +696,30 @@ function renderAssignments(){
   const arr=S.assignments.filter(a=>!fc||a.classId===fc);
   if(!arr.length){
     el.innerHTML = S.assignments.length
-      ? '<p class="hint">ÎÎ±Î¼Î¯Î± Î±Î½Î¬Î¸ÎµÏÎ· Î³Î¹Î± ÏÎ¿ ÎµÏÎ¹Î»ÎµÎ³Î¼Î­Î½Î¿ ÏÎ¼Î®Î¼Î±.</p>'
-      : '<p class="hint">ÎÎµÎ½ ÏÏÎ¬ÏÏÎ¿ÏÎ½ Î±Î½Î±Î¸Î­ÏÎµÎ¹Ï Î±ÎºÏÎ¼Î·.</p>';
+      ? '<p class="hint">Καμία ανάθεση για το επιλεγμένο τμήμα.</p>'
+      : '<p class="hint">Δεν υπάρχουν αναθέσεις ακόμη.</p>';
     return;
   }
   const showClass = !fc;
-  let h='<table class="data"><tr>'+(showClass?'<th>Î¤Î¼Î®Î¼Î±</th>':'')+'<th>ÎÎ¬Î¸Î·Î¼Î±</th><th>ÎÎ±Î¸Î·Î³Î·ÏÎ®Ï</th><th>ÎÎ¯Î¸Î¿ÏÏÎ±</th><th>ÎÏÎµÏ</th><th>Î£ÏÎ¯ÏÎ·</th><th>ÎÎ»ÎµÎ¯Î´ÏÎ¼Î±</th><th>ÎÎ²Î´.</th><th></th></tr>';
+  let h='<table class="data"><tr>'+(showClass?'<th>Τμήμα</th>':'')+'<th>Μάθημα</th><th>Καθηγητής</th><th>Αίθουσα</th><th>Ώρες</th><th>Σχίση</th><th>Κλείδωμα</th><th>Εβδ.</th><th></th></tr>';
   arr.forEach(a=>{
-    let pg='<span class="hint">â</span>';
-    if(a.pgroup){ pg = a.pgroup.indexOf('Î£Î§:')===0 ? '<span class="pairtag" style="margin:0">â Î±ÏÏÏÎ¼Î±ÏÎ·</span>' : ('<span class="grouptag">'+esc(a.pgroup)+'</span>'); }
-    const lockTxt = (a.fixDay>=0&&a.fixPeriod>=0) ? `${esc(S.settings.days[a.fixDay]||'?')} ${a.fixPeriod+1}Î·` : '<span class="hint">â</span>';
-    const wkTxt = (a.week&&a.week!=='both') ? `<span class="wk ${a.week}">${weekLabel(a.week)}</span>` : '<span class="hint">â</span>';
+    let pg='<span class="hint">—</span>';
+    if(a.pgroup){ pg = a.pgroup.indexOf('ΣΧ:')===0 ? '<span class="pairtag" style="margin:0">⚌ αυτόματη</span>' : ('<span class="grouptag">'+esc(a.pgroup)+'</span>'); }
+    const lockTxt = (a.fixDay>=0&&a.fixPeriod>=0) ? `${esc(S.settings.days[a.fixDay]||'?')} ${a.fixPeriod+1}η` : '<span class="hint">—</span>';
+    const wkTxt = (a.week&&a.week!=='both') ? `<span class="wk ${a.week}">${weekLabel(a.week)}</span>` : '<span class="hint">—</span>';
     h+='<tr>'+(showClass?`<td>${esc(nameOf('classes',a.classId))}</td>`:'')+
       `<td>${esc(nameOf('subjects',a.subjectId))}</td>
       <td>${esc(nameOf('teachers',a.teacherId))}</td>
-      <td>${a.roomId?esc(nameOf('rooms',a.roomId)):'<span class="hint">â</span>'}</td>
+      <td>${a.roomId?esc(nameOf('rooms',a.roomId)):'<span class="hint">—</span>'}</td>
       <td>${a.hours}</td>
       <td>${pg}</td>
       <td>${lockTxt}</td>
       <td>${wkTxt}</td>
-      <td><button class="small danger" onclick="delAssignment('${a.id}')">â</button></td></tr>`;
+      <td><button class="small danger" onclick="delAssignment('${a.id}')">✕</button></td></tr>`;
   });
   h+='</table>';
   const total=arr.reduce((s,a)=>s+a.hours,0);
-  h+=`<p class="hint">${arr.length} Î±Î½Î±Î¸Î­ÏÎµÎ¹Ï${fc?(' Î³Î¹Î± '+esc(nameOf('classes',fc))):''} Â· ÏÏÎ½Î¿Î»Î¿ ${total} ÏÏÎµÏ/ÎµÎ²Î´.</p>`;
+  h+=`<p class="hint">${arr.length} αναθέσεις${fc?(' για '+esc(nameOf('classes',fc))):''} · σύνολο ${total} ώρες/εβδ.</p>`;
   el.innerHTML=h;
 }
 
@@ -778,7 +785,7 @@ function computeQuality(){
       Object.entries(seenSubj).forEach(([sid,n])=>{
         if(n<=1)return;
         const subj=S.subjects.find(s=>s.id===sid);
-        if(subj&&subj.double)return; // Î´Î¹ÏÎ»Î® ÏÏÎ± = ÏÏÏÎ¹Î¿Î»Î¿Î³Î¹ÎºÎ¬ ÏÏÎ½ÎµÏÏÎ¼ÎµÎ½Î·, Î´ÎµÎ½ ÎµÎ¯Î½Î±Î¹ ÎµÏÎ±Î½Î¬Î»Î·ÏÎ·
+        if(subj&&subj.double)return; // διπλή ώρα = φυσιολογικά συνεχόμενη, δεν είναι επανάληψη
         sameDayPenalty+=(n-1);
       });
     }
@@ -791,11 +798,11 @@ function computeQuality(){
 function autoGenerate(){
   autoPairSplits();
   const D=S.settings.days.length,P=maxPeriods(), key=(d,p)=>d+'-'+p;
-  if(!S.classes.length||!S.assignments.length){showMsg('Î§ÏÎµÎ¹Î¬Î¶Î¿Î½ÏÎ±Î¹ ÏÎ¼Î®Î¼Î±ÏÎ± ÎºÎ±Î¹ Î±Î½Î±Î¸Î­ÏÎµÎ¹Ï ÏÏÏÏÎ±.','err');return;}
+  if(!S.classes.length||!S.assignments.length){showMsg('Χρειάζονται τμήματα και αναθέσεις πρώτα.','err');return;}
   const avail=totalAvailSlots();
   for(const c of S.classes){
     const need=classSlotsNeeded(c.id);
-    if(need>avail){showMsg(`Î¤Î¿ ÏÎ¼Î®Î¼Î± "${c.name}" ÏÏÎµÎ¹Î¬Î¶ÎµÏÎ±Î¹ ${need} ÏÏÎµÏ ÏÎ»Î­Î³Î¼Î±ÏÎ¿Ï Î±Î»Î»Î¬ ÏÏÎ¬ÏÏÎ¿ÏÎ½ Î¼ÏÎ½Î¿ ${avail} Î´Î¹Î±Î¸Î­ÏÎ¹Î¼ÎµÏ.`,'err');return;}
+    if(need>avail){showMsg(`Το τμήμα "${c.name}" χρειάζεται ${need} ώρες πλέγματος αλλά υπάρχουν μόνο ${avail} διαθέσιμες.`,'err');return;}
   }
   const teacherBusy={}, roomBusy={}, grid={};
   S.classes.forEach(c=>{grid[c.id]=[];for(let d=0;d<D;d++){grid[c.id][d]=[];for(let p=0;p<P;p++)grid[c.id][d][p]=null;}});
@@ -949,12 +956,12 @@ function autoGenerate(){
   if(ok){
     S.timetable=grid; save(); renderTimetable();
     const q=computeQuality();
-    showMsg(`â Î¤Î¿ ÏÏÏÎ³ÏÎ±Î¼Î¼Î± Î´Î·Î¼Î¹Î¿ÏÏÎ³Î®Î¸Î·ÎºÎµ ÏÏÏÎ¯Ï ÏÏÎ³ÎºÏÎ¿ÏÏÎµÎ¹Ï. Î Î¿Î¹ÏÏÎ·ÏÎ±: ${q}%`+(fixedFail.length?` (â  ${fixedFail.length} ÎºÎ»ÎµÎ¹Î´ÏÎ¼Î±ÏÎ± Î´ÎµÎ½ ÎµÏÎ±ÏÎ¼ÏÏÏÎ·ÎºÎ±Î½ Î±ÎºÏÎ¹Î²ÏÏ ÏÏÏÏ Î¶Î·ÏÎ®Î¸Î·ÎºÎµ)`:''),'ok');
+    showMsg(`✅ Το πρόγραμμα δημιουργήθηκε χωρίς συγκρούσεις. Ποιότητα: ${q}%`+(fixedFail.length?` (⚠ ${fixedFail.length} κλειδώματα δεν εφαρμόστηκαν ακριβώς όπως ζητήθηκε)`:''),'ok');
     pushHistory();
   } else {
     greedyFill(grid,teacherBusy,roomBusy,teacherUnavail);
     S.timetable=grid; save(); renderTimetable();
-    showMsg('â ï¸ ÎÎµÎ½ Î²ÏÎ­Î¸Î·ÎºÎµ ÏÎ»Î®ÏÎ·Ï Î»ÏÏÎ· ÏÏÏÎ¯Ï ÏÏÎ³ÎºÏÎ¿ÏÏÎµÎ¹Ï. Î¤Î¿ÏÎ¿Î¸ÎµÏÎ®Î¸Î·ÎºÎ±Î½ ÏÏÎ± Î®ÏÎ±Î½ ÎµÏÎ¹ÎºÏÎ¬ â ÏÎ¬ÏÎ·ÏÎµ Â«ð§ Î ÏÎ¿ÏÎ¬ÏÎµÎ¹Ï Î»ÏÏÎµÏÎ½Â» Î® ÏÎ±Î»Î¬ÏÏÏÎµ ÏÎµÏÎ¹Î¿ÏÎ¹ÏÎ¼Î¿ÏÏ.','err');
+    showMsg('⚠️ Δεν βρέθηκε πλήρης λύση χωρίς συγκρούσεις. Τοποθετήθηκαν όσα ήταν εφικτά — πάτησε «🔧 Προτάσεις λύσεων» ή χαλάρωσε περιορισμούς.','err');
     pushHistory();
   }
 }
@@ -1012,16 +1019,16 @@ function computeConflicts(){
         const a=S.assignments.find(x=>x.id===aid); if(!a)return;
         const w=weekOf(a);
         const t=S.teachers.find(x=>x.id===a.teacherId);
-        if(t&&(t.unavail||[]).includes(d+'-'+p))(conf[ck]=conf[ck]||[]).push('ÎÎ±Î¸Î·Î³Î·ÏÎ®Ï Î¼Î· Î´Î¹Î±Î¸Î­ÏÎ¹Î¼Î¿Ï');
+        if(t&&(t.unavail||[]).includes(d+'-'+p))(conf[ck]=conf[ck]||[]).push('Καθηγητής μη διαθέσιμος');
         if(tSeen[a.teacherId]){
           const clash=tSeen[a.teacherId].filter(o=>!weeksCompatible(o.w,w));
-          if(clash.length){ (conf[ck]=conf[ck]||[]).push('ÎÎ¹ÏÎ»Î® ÏÏÎ­ÏÏÎ· ÎºÎ±Î¸Î·Î³Î·ÏÎ®'); clash.forEach(o=>(conf[o.ck]=conf[o.ck]||[]).push('ÎÎ¹ÏÎ»Î® ÏÏÎ­ÏÏÎ· ÎºÎ±Î¸Î·Î³Î·ÏÎ®')); }
+          if(clash.length){ (conf[ck]=conf[ck]||[]).push('Διπλή χρέωση καθηγητή'); clash.forEach(o=>(conf[o.ck]=conf[o.ck]||[]).push('Διπλή χρέωση καθηγητή')); }
           tSeen[a.teacherId].push({ck,w});
         } else tSeen[a.teacherId]=[{ck,w}];
         if(a.roomId){
           if(rSeen[a.roomId]){
             const clash=rSeen[a.roomId].filter(o=>!weeksCompatible(o.w,w));
-            if(clash.length){ (conf[ck]=conf[ck]||[]).push('ÎÎ¹ÏÎ»Î® ÏÏÎ®ÏÎ· Î±Î¯Î¸Î¿ÏÏÎ±Ï'); clash.forEach(o=>(conf[o.ck]=conf[o.ck]||[]).push('ÎÎ¹ÏÎ»Î® ÏÏÎ®ÏÎ· Î±Î¯Î¸Î¿ÏÏÎ±Ï')); }
+            if(clash.length){ (conf[ck]=conf[ck]||[]).push('Διπλή χρήση αίθουσας'); clash.forEach(o=>(conf[o.ck]=conf[o.ck]||[]).push('Διπλή χρήση αίθουσας')); }
             rSeen[a.roomId].push({ck,w});
           } else rSeen[a.roomId]=[{ck,w}];
         }
@@ -1032,7 +1039,7 @@ function computeConflicts(){
     const idx=k.lastIndexOf('-',k.lastIndexOf('-')-1);
     const cid=k.slice(0,idx); const rest=k.slice(idx+1); const [d,p]=rest.split('-');
     const c=S.classes.find(x=>x.id===cid);
-    list.push(`${c?c.name:''} Â· ${S.settings.days[d]} ${(+p)+1}Î·: ${[...new Set(conf[k])].join(', ')}`);
+    list.push(`${c?c.name:''} · ${S.settings.days[d]} ${(+p)+1}η: ${[...new Set(conf[k])].join(', ')}`);
   });
   return {conf,list:[...new Set(list)]};
 }
@@ -1065,14 +1072,14 @@ function unitFitsAt(cid,members,nd,np,maps,week){
 }
 function suggestFixes(){
   const {conf,list}=computeConflicts();
-  if(!list.length){ showMsg('â ÎÎµÎ½ ÏÏÎ¬ÏÏÎ¿ÏÎ½ ÏÏÎ³ÎºÏÎ¿ÏÏÎµÎ¹Ï.','ok'); return; }
+  if(!list.length){ showMsg('✅ Δεν υπάρχουν συγκρούσεις.','ok'); return; }
   const seen=new Set(); const sugg=[];
   Object.keys(conf).forEach(k=>{
     const idx=k.lastIndexOf('-',k.lastIndexOf('-')-1);
     const cid=k.slice(0,idx); const [d,p]=k.slice(idx+1).split('-').map(Number);
     const cell=S.timetable[cid]?.[d]?.[p]; if(!cell) return;
     const sig=cid+'-'+d+'-'+p; if(seen.has(sig))return; seen.add(sig);
-    if(cell.locked){ sugg.push(`<li><b>${esc(nameOf('classes',cid))}</b> (${esc(S.settings.days[d])} ${p+1}Î·): <span class="hint">ÎºÎ»ÎµÎ¹Î´ÏÎ¼Î­Î½Î¿ â Î¾ÎµÎºÎ»ÎµÎ¯Î´ÏÏÎ­ ÏÎ¿ Î³Î¹Î± Î¼ÎµÏÎ±ÎºÎ¯Î½Î·ÏÎ·.</span></li>`); return; }
+    if(cell.locked){ sugg.push(`<li><b>${esc(nameOf('classes',cid))}</b> (${esc(S.settings.days[d])} ${p+1}η): <span class="hint">κλειδωμένο — ξεκλείδωσέ το για μετακίνηση.</span></li>`); return; }
     const members=cell.assignmentIds.map(id=>S.assignments.find(x=>x.id===id)).filter(Boolean);
     const memWeeks=[...new Set(members.map(weekOf))]; const week=memWeeks.length===1?memWeeks[0]:'both';
     const maps=slotBusyMaps(cid,d,p);
@@ -1083,20 +1090,20 @@ function suggestFixes(){
     }
     const cname=nameOf('classes',cid); const subj=members.map(m=>nameOf('subjects',m.subjectId)).join(' / ');
     if(cands.length){
-      sugg.push(`<li><b>${esc(cname)}</b> Â· ${esc(subj)} <span class="hint">(${esc(S.settings.days[d])} ${p+1}Î·)</span> â `+
-        cands.map(c=>`<button class="small" onclick="applyFix('${cid}',${d},${p},${c.nd},${c.np})">${esc(S.settings.days[c.nd])} ${c.np+1}Î·</button>`).join(' ')+`</li>`);
+      sugg.push(`<li><b>${esc(cname)}</b> · ${esc(subj)} <span class="hint">(${esc(S.settings.days[d])} ${p+1}η)</span> → `+
+        cands.map(c=>`<button class="small" onclick="applyFix('${cid}',${d},${p},${c.nd},${c.np})">${esc(S.settings.days[c.nd])} ${c.np+1}η</button>`).join(' ')+`</li>`);
     } else {
-      sugg.push(`<li><b>${esc(cname)}</b> Â· ${esc(subj)} <span class="hint">(${esc(S.settings.days[d])} ${p+1}Î·): Î´ÎµÎ½ Î²ÏÎ­Î¸Î·ÎºÎµ ÎµÎ»ÎµÏÎ¸ÎµÏÎ· Î¸Î­ÏÎ· ÏÏÏÎ¯Ï ÏÏÎ³ÎºÏÎ¿ÏÏÎ· â Î´Î¿ÎºÎ¯Î¼Î±ÏÎµ Î½Î± Î¼ÎµÏÎ±ÎºÎ¹Î½Î®ÏÎµÎ¹Ï Î¬Î»Î»Î¿ Î¼Î¬Î¸Î·Î¼Î± Î® ÏÎ±Î»Î¬ÏÏÏÎµ ÏÎµÏÎ¹Î¿ÏÎ¹ÏÎ¼Ï.</span></li>`);
+      sugg.push(`<li><b>${esc(cname)}</b> · ${esc(subj)} <span class="hint">(${esc(S.settings.days[d])} ${p+1}η): δεν βρέθηκε ελεύθερη θέση χωρίς σύγκρουση — δοκίμασε να μετακινήσεις άλλο μάθημα ή χαλάρωσε περιορισμό.</span></li>`);
     }
   });
   document.getElementById('ttMessage').innerHTML=
-    `<div class="msg err"><b>â  Î£ÏÎ³ÎºÏÎ¿ÏÏÎµÎ¹Ï (${list.length}):</b><ul class="conflict-list">${list.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul>`+
-    `<b>ð§ Î ÏÎ¿ÏÎµÎ¹Î½ÏÎ¼ÎµÎ½ÎµÏ Î¼ÎµÏÎ±ÎºÎ¹Î½Î®ÏÎµÎ¹Ï:</b><ul class="fix-list">${sugg.join('')}</ul></div>`;
+    `<div class="msg err"><b>⚠ Συγκρούσεις (${list.length}):</b><ul class="conflict-list">${list.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul>`+
+    `<b>🔧 Προτεινόμενες μετακινήσεις:</b><ul class="fix-list">${sugg.join('')}</ul></div>`;
 }
 function applyFix(cid,d,p,nd,np){
   const src=S.timetable[cid][d][p]; if(!src)return;
-  if(src.locked){alert('Î¤Î¿ Î¼Î¬Î¸Î·Î¼Î± ÎµÎ¯Î½Î±Î¹ ÎºÎ»ÎµÎ¹Î´ÏÎ¼Î­Î½Î¿.');return;}
-  if(S.timetable[cid][nd][np]){alert('Î Î¸Î­ÏÎ· Î´ÎµÎ½ ÎµÎ¯Î½Î±Î¹ ÏÎ»Î­Î¿Î½ ÎºÎµÎ½Î®.');return;}
+  if(src.locked){alert('Το μάθημα είναι κλειδωμένο.');return;}
+  if(S.timetable[cid][nd][np]){alert('Η θέση δεν είναι πλέον κενή.');return;}
   S.timetable[cid][nd][np]=src; S.timetable[cid][d][p]=null;
   save(); pushHistory(); renderTimetable(); suggestFixes();
 }
@@ -1108,7 +1115,7 @@ function refreshViewTargets(){
   if(mode==='all'){sel.style.display='none';return;}
   sel.style.display='';
   if(mode==='day'){
-    sel.innerHTML='<option value="all">ÎÎ»ÎµÏ Î¿Î¹ Î·Î¼Î­ÏÎµÏ</option>'+S.settings.days.map((d,i)=>`<option value="${i}">${esc(d)}</option>`).join('');
+    sel.innerHTML='<option value="all">Όλες οι ημέρες</option>'+S.settings.days.map((d,i)=>`<option value="${i}">${esc(d)}</option>`).join('');
     return;
   }
   const arr= mode==='class'?S.classes:S.teachers;
@@ -1116,7 +1123,7 @@ function refreshViewTargets(){
 }
 function refreshTTExtras(){
   const hl=document.getElementById('hlTeacher');
-  if(hl){ const prev=hl.value; hl.innerHTML='<option value="">â ÎÎ½Î¬Î´ÎµÎ¹Î¾Î· ÎºÎ±Î¸Î·Î³Î·ÏÎ® â</option>'+S.teachers.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join(''); if([...hl.options].some(o=>o.value===prev))hl.value=prev; }
+  if(hl){ const prev=hl.value; hl.innerHTML='<option value="">— Ανάδειξη καθηγητή —</option>'+S.teachers.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join(''); if([...hl.options].some(o=>o.value===prev))hl.value=prev; }
   toggleABUi();
 }
 function weekFilterVal(){ const el=document.getElementById('weekFilter'); return (el && !el.classList.contains('hidden')) ? el.value : 'all'; }
@@ -1136,14 +1143,14 @@ function renderTimetable(){
   let placed=0;S.classes.forEach(c=>S.timetable[c.id]?.forEach(day=>day.forEach(cl=>{if(cl)placed++;})));
   const q=computeQuality();
   document.getElementById('ttStats').innerHTML=
-    `<span class="stat">Î¤Î¿ÏÎ¿Î¸ÎµÏÎ·Î¼Î­Î½ÎµÏ ÏÏÎµÏ ÏÎ»Î­Î³Î¼Î±ÏÎ¿Ï: <b>${placed}</b>/${totalSlots}</span>`+
-    `<span class="stat">Î£ÏÎ³ÎºÏÎ¿ÏÏÎµÎ¹Ï: <b style="color:${list.length?'#dc2626':'#16a34a'}">${list.length}</b></span>`+
-    `<span class="stat">Î Î¿Î¹ÏÏÎ·ÏÎ±: <b>${q}%</b><span class="qtybar"><i style="width:${q}%"></i></span></span>`+
-    (list.length?`<button class="small" onclick="suggestFixes()">ð§ Î ÏÎ¿ÏÎ¬ÏÎµÎ¹Ï Î»ÏÏÎµÏÎ½</button>`:'');
+    `<span class="stat">Τοποθετημένες ώρες πλέγματος: <b>${placed}</b>/${totalSlots}</span>`+
+    `<span class="stat">Συγκρούσεις: <b style="color:${list.length?'#dc2626':'#16a34a'}">${list.length}</b></span>`+
+    `<span class="stat">Ποιότητα: <b>${q}%</b><span class="qtybar"><i style="width:${q}%"></i></span></span>`+
+    (list.length?`<button class="small" onclick="suggestFixes()">🔧 Προτάσεις λύσεων</button>`:'');
   document.getElementById('ttMessage').innerHTML = list.length?
-    `<div class="msg err"><b>â  Î£ÏÎ³ÎºÏÎ¿ÏÏÎµÎ¹Ï (${list.length}):</b><ul class="conflict-list">${list.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul></div>`:'';
+    `<div class="msg err"><b>⚠ Συγκρούσεις (${list.length}):</b><ul class="conflict-list">${list.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul></div>`:'';
 
-  if(!S.classes.length){wrap.innerHTML='<p class="hint">Î ÏÏÏÎ¸ÎµÏÎµ ÏÎ¼Î®Î¼Î±ÏÎ± ÎºÎ±Î¹ Î±Î½Î±Î¸Î­ÏÎµÎ¹Ï, Î¼ÎµÏÎ¬ ÏÎ¬ÏÎ·ÏÎµ Â«ÎÏÏÏÎ¼Î±ÏÎ· Î´Î·Î¼Î¹Î¿ÏÏÎ³Î¯Î±Â».</p>';return;}
+  if(!S.classes.length){wrap.innerHTML='<p class="hint">Πρόσθεσε τμήματα και αναθέσεις, μετά πάτησε «Αυτόματη δημιουργία».</p>';return;}
   if(mode==='all'){ wrap.innerHTML='<div class="master">'+renderMasterWeekly(conf)+'</div>'; wrap.onkeydown=null; return; }
   if(mode==='day'){
     const tgt=document.getElementById('viewTarget').value;
@@ -1158,17 +1165,17 @@ function renderTimetable(){
   wrap.innerHTML=renderClassGrid(cid,conf,true);
   attachDnD();
 }
-function periodLabel(p){return (p+1)+'Î·';}
+function periodLabel(p){return (p+1)+'η';}
 function renderClassGrid(cid,conf,editable){
   const D=S.settings.days.length,P=maxPeriods();
   const c=S.classes.find(x=>x.id===cid); if(!c)return'';
-  let h=`<h3 style="margin:6px 0">Î¤Î¼Î®Î¼Î±: ${esc(c.name)}</h3><table class="tt"><tr><th>ÎÏÎ±</th>`;
+  let h=`<h3 style="margin:6px 0">Τμήμα: ${esc(c.name)}</h3><table class="tt"><tr><th>Ώρα</th>`;
   for(let d=0;d<D;d++)h+=`<th class="dtint" style="--g:${dayTint(S.settings.days[d])}">${esc(S.settings.days[d])}</th>`; h+='</tr>';
   for(let p=0;p<P;p++){
     h+=`<tr><th>${periodLabel(p)}</th>`;
     for(let d=0;d<D;d++){
       if(p>=periodsOn(d)){ h+=`<td class="blocked"></td>`; continue; }
-      if(isBreak(d,p)){ h+=`<td class="blocked" title="ÎÎ¹Î¬Î»ÎµÎ¹Î¼Î¼Î±"></td>`; continue; }
+      if(isBreak(d,p)){ h+=`<td class="blocked" title="Διάλειμμα"></td>`; continue; }
       const cell=S.timetable[cid]?.[d]?.[p];
       const ck=cid+'-'+d+'-'+p; const bad=conf[ck];
       h+=`<td ${editable?'tabindex="0"':''} data-cid="${cid}" data-d="${d}" data-p="${p}" class="${bad?'conflict':''}">${cellHTML(cell,cid,d,p,editable)}</td>`;
@@ -1180,7 +1187,7 @@ function renderClassGrid(cid,conf,editable){
 function memberBox(a){
   const subj=S.subjects.find(s=>s.id===a.subjectId);
   const col=subj?subj.color:'#e5e7eb';
-  const rName=a.roomId?('Â· '+nameOf('rooms',a.roomId)):'';
+  const rName=a.roomId?('· '+nameOf('rooms',a.roomId)):'';
   const wk=(a.week&&a.week!=='both')?`<span class="wk ${a.week}">${weekLabel(a.week)}</span>`:'';
   return `<div class="subcell ${hlClassFor(a)}" style="background:${col};color:${pickText(col)}">
     <div class="subj">${wk}${esc(subj?subj.name:'?')}</div>
@@ -1192,11 +1199,11 @@ function cellHTML(cell,cid,d,p,editable){
   const drag=editable?'draggable="true"':'';
   const lockCls=cell.locked?'locked':'';
   const btns=editable?
-    `<span class="lk noprint" style="position:absolute;top:2px;left:3px;cursor:pointer;font-size:10px" onclick="toggleLock('${cid}',${d},${p});event.stopPropagation()">${cell.locked?'ð':'ð'}</span>
-     <span class="noprint" style="position:absolute;bottom:2px;right:3px;cursor:pointer;font-size:11px" onclick="removeCell('${cid}',${d},${p});event.stopPropagation()">â</span>`:'';
+    `<span class="lk noprint" style="position:absolute;top:2px;left:3px;cursor:pointer;font-size:10px" onclick="toggleLock('${cid}',${d},${p});event.stopPropagation()">${cell.locked?'🔒':'🔓'}</span>
+     <span class="noprint" style="position:absolute;bottom:2px;right:3px;cursor:pointer;font-size:11px" onclick="removeCell('${cid}',${d},${p});event.stopPropagation()">✕</span>`:'';
   if(members.length===1){
     const a=members[0]; const subj=S.subjects.find(s=>s.id===a.subjectId); const col=subj?subj.color:'#e5e7eb';
-    const rName=a.roomId?('Â· '+nameOf('rooms',a.roomId)):'';
+    const rName=a.roomId?('· '+nameOf('rooms',a.roomId)):'';
     const wk=(a.week&&a.week!=='both')?`<span class="wk ${a.week}">${weekLabel(a.week)}</span>`:'';
     return `<div class="cell ${lockCls} ${hlClassFor(a)}" ${drag} style="background:${col};color:${pickText(col)}" data-cid="${cid}" data-d="${d}" data-p="${p}">
       <div class="subj">${wk}${esc(subj?subj.name:'?')}</div>
@@ -1207,21 +1214,21 @@ function cellHTML(cell,cid,d,p,editable){
 }
 function renderTeacherView(tid,conf){
   const D=S.settings.days.length,P=maxPeriods();
-  const t=S.teachers.find(x=>x.id===tid); if(!t)return'<p class="hint">ÎÏÎ¯Î»ÎµÎ¾Îµ ÎºÎ±Î¸Î·Î³Î·ÏÎ®.</p>';
-  let h=`<h3 style="margin:6px 0">ÎÎ±Î¸Î·Î³Î·ÏÎ®Ï: ${esc(t.name)}</h3><table class="tt"><tr><th>ÎÏÎ±</th>`;
+  const t=S.teachers.find(x=>x.id===tid); if(!t)return'<p class="hint">Επίλεξε καθηγητή.</p>';
+  let h=`<h3 style="margin:6px 0">Καθηγητής: ${esc(t.name)}</h3><table class="tt"><tr><th>Ώρα</th>`;
   for(let d=0;d<D;d++)h+=`<th class="dtint" style="--g:${dayTint(S.settings.days[d])}">${esc(S.settings.days[d])}</th>`;h+='</tr>';
   for(let p=0;p<P;p++){
     h+=`<tr><th>${periodLabel(p)}</th>`;
     for(let d=0;d<D;d++){
       if(p>=periodsOn(d)){ h+=`<td class="blocked"></td>`; continue; }
-      if(isBreak(d,p)){ h+=`<td class="blocked" title="ÎÎ¹Î¬Î»ÎµÎ¹Î¼Î¼Î±"></td>`; continue; }
+      if(isBreak(d,p)){ h+=`<td class="blocked" title="Διάλειμμα"></td>`; continue; }
       let found=null,fcid=null;
       for(const c of S.classes){const cell=S.timetable[c.id]?.[d]?.[p];if(cell){const found2=visibleMembers(cell).find(a=>a.teacherId===tid);if(found2){found=found2;fcid=c.id;break;}}}
       const unav=(t.unavail||[]).includes(d+'-'+p);
       if(found){const subj=S.subjects.find(s=>s.id===found.subjectId);const col=subj?subj.color:'#eee';
         const wk=(found.week&&found.week!=='both')?`<span class="wk ${found.week}">${weekLabel(found.week)}</span>`:'';
         h+=`<td style="background:${col};color:${pickText(col)}"><div class="cell"><div class="subj">${wk}${esc(subj?subj.name:'')}</div><div class="meta">${esc(nameOf('classes',fcid))}</div></div></td>`;
-      } else h+=`<td style="${unav?'background:#fee2e2':''}">${unav?'<div class="cell meta" style="color:#dc2626">Î¼Î· Î´Î¹Î±Î¸.</div>':''}</td>`;
+      } else h+=`<td style="${unav?'background:#fee2e2':''}">${unav?'<div class="cell meta" style="color:#dc2626">μη διαθ.</div>':''}</td>`;
     }
     h+='</tr>';
   }
@@ -1240,9 +1247,9 @@ function masterCellHTML(cell){
 }
 function renderMasterWeekly(conf){
   const D=S.settings.days.length;
-  if(!S.classes.length) return '<p class="hint">ÎÎµÎ½ ÏÏÎ¬ÏÏÎ¿ÏÎ½ ÏÎ¼Î®Î¼Î±ÏÎ±.</p>';
-  let h=`<h3 style="margin:6px 0">ÎÎ²Î´Î¿Î¼Î±Î´Î¹Î±Î¯Î¿ Î©ÏÎ¿Î»ÏÎ³Î¹Î¿ Î ÏÏÎ³ÏÎ±Î¼Î¼Î± â ÎÎ»Î± ÏÎ± ÏÎ¼Î®Î¼Î±ÏÎ±</h3>`;
-  h+='<table class="tt master-tbl"><tr><th class="rowh" rowspan="2">Î¤Î¼Î®Î¼Î±</th>';
+  if(!S.classes.length) return '<p class="hint">Δεν υπάρχουν τμήματα.</p>';
+  let h=`<h3 style="margin:6px 0">Εβδομαδιαίο Ωρολόγιο Πρόγραμμα — Όλα τα τμήματα</h3>`;
+  h+='<table class="tt master-tbl"><tr><th class="rowh" rowspan="2">Τμήμα</th>';
   for(let d=0;d<D;d++) h+=`<th colspan="${periodsOn(d)}" class="dayhead dtint" style="--g:${dayTint(S.settings.days[d])}">${esc(S.settings.days[d])}</th>`;
   h+='</tr><tr>';
   for(let d=0;d<D;d++) for(let p=0;p<periodsOn(d);p++) h+=`<th>${p+1}</th>`;
@@ -1250,42 +1257,42 @@ function renderMasterWeekly(conf){
   S.classes.forEach(c=>{
     h+=`<tr><th class="rowh">${esc(c.name)}</th>`;
     for(let d=0;d<D;d++) for(let p=0;p<periodsOn(d);p++){
-      if(isBreak(d,p)){ h+=`<td class="mcell blocked" title="ÎÎ¹Î¬Î»ÎµÎ¹Î¼Î¼Î±"></td>`; continue; }
+      if(isBreak(d,p)){ h+=`<td class="mcell blocked" title="Διάλειμμα"></td>`; continue; }
       const ck=c.id+'-'+d+'-'+p; const bad=conf[ck];
       h+=`<td class="mcell ${bad?'conflict':''}">${masterCellHTML(S.timetable[c.id]?.[d]?.[p])}</td>`;
     }
     h+='</tr>';
   });
   h+='</table>';
-  h+='<p class="hint noprint">Î£ÏÎ·Î½ ÎµÎºÏÏÏÏÏÎ· ÏÎ¿ ÎµÎ²Î´Î¿Î¼Î±Î´Î¹Î±Î¯Î¿ ÏÏÏÎ¬ÎµÎ¹ Î±ÏÏÏÎ¼Î±ÏÎ± ÏÎµ Î¼Î¯Î± ÏÎµÎ»Î¯Î´Î± A3 (Î¿ÏÎ¹Î¶ÏÎ½ÏÎ¹Î±). ÎÎ½ Î¿ ÎµÎºÏÏÏÏÏÎ®Ï ÏÎ¿Ï ÎµÎ¯Î½Î±Î¹ A4, Î´Î¹Î¬Î»ÎµÎ¾Îµ ÏÎ±ÏÏÎ¯ A3 Î¼Îµ Â«Fit / Î ÏÎ¿ÏÎ±ÏÎ¼Î¿Î³Î® ÏÏÎ· ÏÎµÎ»Î¯Î´Î±Â» Î® ÏÎ¼Î¯ÎºÏÏÎ½ÏÎ·.</p>';
+  h+='<p class="hint noprint">Στην εκτύπωση το εβδομαδιαίο χωράει αυτόματα σε μία σελίδα A3 (οριζόντια). Αν ο εκτυπωτής σου είναι A4, διάλεξε χαρτί A3 με «Fit / Προσαρμογή στη σελίδα» ή σμίκρυνση.</p>';
   return h;
 }
 function renderDayView(d,conf){
   const P=periodsOn(d);
-  if(!S.teachers.length) return '<p class="hint">ÎÎµÎ½ ÏÏÎ¬ÏÏÎ¿ÏÎ½ ÎºÎ±Î¸Î·Î³Î·ÏÎ­Ï.</p>';
+  if(!S.teachers.length) return '<p class="hint">Δεν υπάρχουν καθηγητές.</p>';
   const grad=dayTint(S.settings.days[d]);
-  let h=`<h3 style="margin:6px 0;padding:5px 12px;border-radius:6px;background:${grad};color:#1f2937">ÎÎ¼ÎµÏÎ®ÏÎ¹Î¿ ÏÏÏÎ³ÏÎ±Î¼Î¼Î± â ${esc(S.settings.days[d])}</h3><table class="tt"><tr><th class="rowh dtint" style="--g:${grad}">ÎÎ±Î¸Î·Î³Î·ÏÎ®Ï \\ ÎÏÎ±</th>`;
+  let h=`<h3 style="margin:6px 0;padding:5px 12px;border-radius:6px;background:${grad};color:#1f2937">Ημερήσιο πρόγραμμα — ${esc(S.settings.days[d])}</h3><table class="tt"><tr><th class="rowh dtint" style="--g:${grad}">Καθηγητής \\ Ώρα</th>`;
   for(let p=0;p<P;p++) h+=`<th class="dtint" style="--g:${grad}">${periodLabel(p)}</th>`;
   h+='</tr>';
   S.teachers.forEach(t=>{
     h+=`<tr><th class="rowh">${esc(t.name)}</th>`;
     for(let p=0;p<P;p++){
-      if(isBreak(d,p)){ h+='<td class="blocked" title="ÎÎ¹Î¬Î»ÎµÎ¹Î¼Î¼Î±"></td>'; continue; }
+      if(isBreak(d,p)){ h+='<td class="blocked" title="Διάλειμμα"></td>'; continue; }
       const items=[];
       S.classes.forEach(c=>{const cell=S.timetable[c.id]?.[d]?.[p]; if(!cell)return; visibleMembers(cell).forEach(a=>{ if(a.teacherId===t.id) items.push({a,c}); });});
       const unav=(t.unavail||[]).includes(d+'-'+p);
       const conflict=items.length>1 || items.some(({c})=>conf[c.id+'-'+d+'-'+p]);
       if(items.length){
-        h+=`<td data-daycell="1" data-d="${d}" data-p="${p}" class="${conflict?'conflict':''}">`+items.map(({a,c})=>{
+        h+=`<td tabindex="0" data-daycell="1" data-t="${t.id}" data-d="${d}" data-p="${p}" class="${conflict?'conflict':''}">`+items.map(({a,c})=>{
           const subj=S.subjects.find(s=>s.id===a.subjectId); const col=subj?subj.color:'#e5e7eb';
-          const rn=a.roomId?('Â· '+nameOf('rooms',a.roomId)):'';
+          const rn=a.roomId?('· '+nameOf('rooms',a.roomId)):'';
           const wk=(a.week&&a.week!=='both')?`<span class="wk ${a.week}">${weekLabel(a.week)}</span>`:'';
           return `<div class="cell dcell ${hlClassFor(a)}" draggable="true" data-cid="${c.id}" data-d="${d}" data-p="${p}" style="background:${col};color:${pickText(col)}">
             <div class="subj">${wk}${esc(c.name)}</div>
             <div class="meta">${esc(subj?subj.name:'')} ${esc(rn)}</div></div>`;
         }).join('')+`</td>`;
       } else {
-        h+=`<td data-daycell="1" data-d="${d}" data-p="${p}" style="${unav?'background:#f3f4f6':''}">${unav?'<div class="cell meta" style="color:#9ca3af">â</div>':''}</td>`;
+        h+=`<td tabindex="0" data-daycell="1" data-t="${t.id}" data-d="${d}" data-p="${p}" style="${unav?'background:#f3f4f6':''}">${unav?'<div class="cell meta" style="color:#9ca3af">—</div>':''}</td>`;
       }
     }
     h+='</tr>';
@@ -1324,15 +1331,56 @@ function attachDayDnD(){
       moveCell(dragSrc.cid,dragSrc.d,dragSrc.p,dragSrc.cid,nd,np); dragSrc=null;
     });
   });
+  wrap.onkeydown=dayCellKeyHandler;
+}
+function focusDayCell(tid,d,p){ const td=document.querySelector(`td[data-daycell][data-t="${tid}"][data-d="${d}"][data-p="${p}"]`); if(td) td.focus(); }
+function daySingleTarget(tid,d,p){
+  const items=[];
+  S.classes.forEach(c=>{const cell=S.timetable[c.id]?.[d]?.[p]; if(!cell)return; visibleMembers(cell).forEach(a=>{ if(a.teacherId===tid) items.push(c.id); });});
+  return items.length===1?items[0]:null;
+}
+function dayCellKeyHandler(e){
+  const td=e.target.closest?e.target.closest('td[data-daycell]'):null;
+  if(!td) return;
+  const tid=td.dataset.t, d=+td.dataset.d, p=+td.dataset.p;
+  const teachers=S.teachers; const idx=teachers.findIndex(t=>t.id===tid);
+  const P=periodsOn(d);
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+    e.preventDefault();
+    const ni=idx+(e.key==='ArrowDown'?1:-1);
+    if(ni<0||ni>=teachers.length)return;
+    focusDayCell(teachers[ni].id,d,p);
+  }
+  else if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
+    e.preventDefault();
+    let np=p+(e.key==='ArrowRight'?1:-1);
+    while(np>=0&&np<P&&isBreak(d,np)) np+=(e.key==='ArrowRight'?1:-1);
+    if(np<0||np>=P)return;
+    focusDayCell(tid,d,np);
+  }
+  else if(e.key==='Home'){ e.preventDefault(); let np=0; while(np<P&&isBreak(d,np))np++; focusDayCell(tid,d,np); }
+  else if(e.key==='End'){ e.preventDefault(); let np=P-1; while(np>=0&&isBreak(d,np))np--; focusDayCell(tid,d,np); }
+  else if(e.key==='Escape'){ e.preventDefault(); td.blur(); }
+  else if(e.key==='Delete'||e.key==='Backspace'){
+    e.preventDefault();
+    const cid=daySingleTarget(tid,d,p); if(!cid)return;
+    const cur=S.timetable[cid][d][p]; if(cur&&cur.locked)return;
+    S.timetable[cid][d][p]=null; save(); pushHistory(); renderTimetable(); focusDayCell(tid,d,p);
+  }
+  else if(e.key==='l'||e.key==='L'){
+    e.preventDefault();
+    const cid=daySingleTarget(tid,d,p); if(!cid)return;
+    toggleLock(cid,d,p); focusDayCell(tid,d,p);
+  }
 }
 function focusCell(cid,d,p){ const td=document.querySelector(`td[data-cid="${cid}"][data-d="${d}"][data-p="${p}"]`); if(td) td.focus(); }
 function classPlaceables(cid){
   const out=[]; const groups={};
   S.assignments.filter(a=>a.classId===cid).forEach(a=>{
     if(a.pgroup){ (groups[a.pgroup]=groups[a.pgroup]||[]).push(a); }
-    else out.push({label:nameOf('subjects',a.subjectId)+' â '+shortTeacher(nameOf('teachers',a.teacherId)),members:[a]});
+    else out.push({label:nameOf('subjects',a.subjectId)+' — '+shortTeacher(nameOf('teachers',a.teacherId)),members:[a]});
   });
-  Object.entries(groups).forEach(([g,mem])=>out.push({label:'Î£ÏÎ¯ÏÎ·: '+mem.map(m=>nameOf('subjects',m.subjectId)).join(' / '),members:mem}));
+  Object.entries(groups).forEach(([g,mem])=>out.push({label:'Σχίση: '+mem.map(m=>nameOf('subjects',m.subjectId)).join(' / '),members:mem}));
   return out;
 }
 function openCellPicker(cid,d,p){
@@ -1341,7 +1389,7 @@ function openCellPicker(cid,d,p){
   const cur=S.timetable[cid]?.[d]?.[p]; if(cur&&cur.locked){ return; }
   pickerOpen=true;
   const items=classPlaceables(cid);
-  let opts='<option value="">â (ÎºÎµÎ½Ï) â</option>';
+  let opts='<option value="">— (κενό) —</option>';
   items.forEach((it,idx)=>opts+=`<option value="${idx}">${esc(it.label)}</option>`);
   td.innerHTML=`<select class="cellpick">${opts}</select>`;
   const sel=td.querySelector('select'); sel.focus();
@@ -1362,22 +1410,79 @@ function openCellPicker(cid,d,p){
   });
   sel.addEventListener('blur',()=>{ if(pickerOpen) finish(false); });
 }
+let cellClipboard=null;
+function nearestValidPeriod(d,p){
+  const max=periodsOn(d)-1;
+  if(p>max)p=max; if(p<0)p=0;
+  if(isBreak(d,p)){
+    for(let q=p+1;q<=max;q++) if(!isBreak(d,q)) return q;
+    for(let q=p-1;q>=0;q--) if(!isBreak(d,q)) return q;
+  }
+  return p;
+}
 function cellKeyHandler(e){
   if(pickerOpen) return;
   const td=e.target.closest?e.target.closest('td[data-cid]'):null;
   if(!td) return;
   const cid=td.dataset.cid,d=+td.dataset.d,p=+td.dataset.p;
+  const D=S.settings.days.length;
   if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openCellPicker(cid,d,p); }
   else if(e.key==='Delete'||e.key==='Backspace'){ e.preventDefault();
     const cur=S.timetable[cid][d][p]; if(cur&&cur.locked)return;
-    S.timetable[cid][d][p]=null; save(); renderTimetable(); focusCell(cid,d,p);
+    S.timetable[cid][d][p]=null; save(); pushHistory(); renderTimetable(); focusCell(cid,d,p);
   }
   else if(e.key==='l'||e.key==='L'){ e.preventDefault(); toggleLock(cid,d,p); focusCell(cid,d,p); }
+  else if(e.key==='Escape'){ e.preventDefault(); td.blur(); }
+  else if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+    e.preventDefault();
+    let np=p+(e.key==='ArrowDown'?1:-1);
+    while(np>=0 && np<periodsOn(d) && isBreak(d,np)) np+=(e.key==='ArrowDown'?1:-1);
+    if(np<0||np>=periodsOn(d))return;
+    focusCell(cid,d,np);
+  }
+  else if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
+    e.preventDefault();
+    let nd=d+(e.key==='ArrowRight'?1:-1);
+    if(nd<0||nd>=D)return;
+    const np=nearestValidPeriod(nd,p);
+    focusCell(cid,nd,np);
+  }
+  else if(e.key==='Home'){
+    e.preventDefault();
+    if(e.ctrlKey){ const np=nearestValidPeriod(0,0); focusCell(cid,0,np); }
+    else { const np=nearestValidPeriod(d,0); focusCell(cid,d,np); }
+  }
+  else if(e.key==='End'){
+    e.preventDefault();
+    if(e.ctrlKey){ const nd=D-1; const np=nearestValidPeriod(nd,periodsOn(nd)-1); focusCell(cid,nd,np); }
+    else { const np=nearestValidPeriod(d,periodsOn(d)-1); focusCell(cid,d,np); }
+  }
+  else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='c'){
+    e.preventDefault();
+    const cur=S.timetable[cid][d][p];
+    cellClipboard = cur ? {classId:cid,assignmentIds:[...cur.assignmentIds]} : null;
+  }
+  else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='x'){
+    e.preventDefault();
+    const cur=S.timetable[cid][d][p];
+    if(cur&&cur.locked)return;
+    cellClipboard = cur ? {classId:cid,assignmentIds:[...cur.assignmentIds]} : null;
+    if(cur){ S.timetable[cid][d][p]=null; save(); pushHistory(); renderTimetable(); focusCell(cid,d,p); }
+  }
+  else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'){
+    e.preventDefault();
+    if(!cellClipboard)return;
+    if(cellClipboard.classId!==cid){ alert('Η αντιγραφή αφορά διαφορετικό τμήμα.'); return; }
+    const cur=S.timetable[cid][d][p]; if(cur&&cur.locked)return;
+    if(isBreak(d,p))return;
+    S.timetable[cid][d][p]={assignmentIds:[...cellClipboard.assignmentIds],locked:false};
+    save(); pushHistory(); renderTimetable(); focusCell(cid,d,p);
+  }
 }
 function moveCell(scid,sd,sp,dcid,dd,dp){
   const g=S.timetable; const src=g[scid][sd][sp]; const dst=g[dcid][dd][dp];
-  if(src&&src.locked){alert('Î¤Î¿ Î¼Î¬Î¸Î·Î¼Î± ÎµÎ¯Î½Î±Î¹ ÎºÎ»ÎµÎ¹Î´ÏÎ¼Î­Î½Î¿.');return;}
-  if(dst&&dst.locked){alert('Î Î¸Î­ÏÎ· ÏÏÎ¿Î¿ÏÎ¹ÏÎ¼Î¿Ï ÎµÎ¯Î½Î±Î¹ ÎºÎ»ÎµÎ¹Î´ÏÎ¼Î­Î½Î·.');return;}
+  if(src&&src.locked){alert('Το μάθημα είναι κλειδωμένο.');return;}
+  if(dst&&dst.locked){alert('Η θέση προορισμού είναι κλειδωμένη.');return;}
   if(dp>=periodsOn(dd)) return;
   if(isBreak(dd,dp)) return;
   g[dcid][dd][dp]=src; g[scid][sd][sp]=dst||null;
@@ -1421,18 +1526,18 @@ function printAllTeachers(){
   const wrap=document.getElementById('ttContent');
   const {conf}=computeConflicts();
   let inner=''; S.teachers.forEach(t=>{ inner+='<div class="print-block">'+renderTeacherView(t.id,conf)+'</div>'; });
-  wrap.innerHTML=inner||'<p class="hint">ÎÎµÎ½ ÏÏÎ¬ÏÏÎ¿ÏÎ½ ÎºÎ±Î¸Î·Î³Î·ÏÎ­Ï.</p>'; wrap.onkeydown=null;
+  wrap.innerHTML=inner||'<p class="hint">Δεν υπάρχουν καθηγητές.</p>'; wrap.onkeydown=null;
   const vm=document.getElementById('viewMode'); if(vm) vm.value='teacher';
   applyPageStyle(); window.print();
   renderTimetable();
 }
 
-/* ---- ÏÏÎ±ÏÎ¹ÏÏÎ¹ÎºÎ¬ ---- */
+/* ---- στατιστικά ---- */
 function renderStats(){
   const el=document.getElementById('statsBox'); if(!el)return;
-  if(!S.teachers.length && !S.classes.length){ el.innerHTML='<p class="hint">ÎÎµÎ½ ÏÏÎ¬ÏÏÎ¿ÏÎ½ Î´ÎµÎ´Î¿Î¼Î­Î½Î± Î±ÎºÏÎ¼Î·.</p>'; return; }
+  if(!S.teachers.length && !S.classes.length){ el.innerHTML='<p class="hint">Δεν υπάρχουν δεδομένα ακόμη.</p>'; return; }
   const D=S.settings.days.length;
-  let h='<h3 style="font-size:14px;margin:4px 0">ÎÎ½Î¬ ÎºÎ±Î¸Î·Î³Î·ÏÎ®</h3><table class="data"><tr><th>ÎÎ±Î¸Î·Î³Î·ÏÎ®Ï</th><th>ÎÎ½Î±ÏÎµÎ¸ÎµÎ¹Î¼Î­Î½ÎµÏ ÏÏÎµÏ</th><th>Î¤Î¿ÏÎ¿Î¸ÎµÏÎ·Î¼Î­Î½ÎµÏ</th><th>ÎÎµÎ½Î¬ (gaps)</th><th>ÎÎ­Î³. ÏÏÎ½ÎµÏÏÎ¼ÎµÎ½ÎµÏ</th></tr>';
+  let h='<h3 style="font-size:14px;margin:4px 0">Ανά καθηγητή</h3><table class="data"><tr><th>Καθηγητής</th><th>Ανατεθειμένες ώρες</th><th>Τοποθετημένες</th><th>Κενά (gaps)</th><th>Μέγ. συνεχόμενες</th></tr>';
   S.teachers.forEach(t=>{
     const assigned=S.assignments.filter(a=>a.teacherId===t.id).reduce((s,a)=>s+a.hours,0);
     let placed=0,gaps=0,maxRun=0;
@@ -1445,7 +1550,7 @@ function renderStats(){
     h+=`<tr><td>${esc(t.name)}</td><td>${assigned}</td><td>${placed}</td><td>${gaps}</td><td>${maxRun}</td></tr>`;
   });
   h+='</table>';
-  h+='<h3 style="font-size:14px;margin:14px 0 4px">ÎÎ½Î¬ ÏÎ¼Î®Î¼Î±</h3><table class="data"><tr><th>Î¤Î¼Î®Î¼Î±</th><th>ÎÏÎ±Î¹ÏÎ¿ÏÎ¼ÎµÎ½ÎµÏ ÏÏÎµÏ</th><th>Î¤Î¿ÏÎ¿Î¸ÎµÏÎ·Î¼Î­Î½ÎµÏ</th><th>ÎÎµÎ½Î¬ (gaps)</th></tr>';
+  h+='<h3 style="font-size:14px;margin:14px 0 4px">Ανά τμήμα</h3><table class="data"><tr><th>Τμήμα</th><th>Απαιτούμενες ώρες</th><th>Τοποθετημένες</th><th>Κενά (gaps)</th></tr>';
   S.classes.forEach(c=>{
     const need=classSlotsNeeded(c.id);
     let placed=0,gaps=0;
@@ -1457,13 +1562,13 @@ function renderStats(){
     h+=`<tr><td>${esc(c.name)}</td><td>${need}</td><td>${placed}</td><td>${gaps}</td></tr>`;
   });
   h+='</table>';
-  h+=`<p class="hint">Î£ÏÎ½Î¿Î»Î¹ÎºÎ® ÏÎ¿Î¹ÏÏÎ·ÏÎ± ÏÏÎ¿Î³ÏÎ¬Î¼Î¼Î±ÏÎ¿Ï: <b>${computeQuality()}%</b></p>`;
+  h+=`<p class="hint">Συνολική ποιότητα προγράμματος: <b>${computeQuality()}%</b></p>`;
   el.innerHTML=h;
 }
 
-/* ---- Î±Î½Î±ÏÎ»Î·ÏÏÏÎµÎ¹Ï ---- */
+/* ---- αναπληρώσεις ---- */
 function refreshCoverageSelectors(){
-  fillSel('covTeacher',S.teachers,'â ÎÎ±Î¸Î·Î³Î·ÏÎ®Ï â');
+  fillSel('covTeacher',S.teachers,'— Καθηγητής —');
   const sel=document.getElementById('covDay');
   if(sel){ const prev=sel.value; sel.innerHTML=S.settings.days.map((d,i)=>`<option value="${i}">${esc(d)}</option>`).join(''); if([...sel.options].some(o=>o.value===prev))sel.value=prev; }
 }
@@ -1471,9 +1576,9 @@ function renderCoverage(){
   const el=document.getElementById('coverageBox'); if(!el)return;
   const tid=document.getElementById('covTeacher')?.value;
   const d=parseInt(document.getElementById('covDay')?.value);
-  if(!tid||isNaN(d)){ el.innerHTML='<p class="hint">ÎÏÎ¯Î»ÎµÎ¾Îµ ÎºÎ±Î¸Î·Î³Î·ÏÎ® ÎºÎ±Î¹ Î·Î¼Î­ÏÎ±.</p>'; return; }
+  if(!tid||isNaN(d)){ el.innerHTML='<p class="hint">Επίλεξε καθηγητή και ημέρα.</p>'; return; }
   const t=S.teachers.find(x=>x.id===tid); if(!t){ el.innerHTML=''; return; }
-  let h=`<h3 style="font-size:14px">${esc(t.name)} â ${esc(S.settings.days[d])}</h3><table class="data"><tr><th>ÎÏÎ±</th><th>Î¤Î¼Î®Î¼Î±</th><th>ÎÎ¬Î¸Î·Î¼Î±</th><th>Î ÏÎ¿ÏÎµÎ¹Î½ÏÎ¼ÎµÎ½Î¿Î¹ Î±Î½Î±ÏÎ»Î·ÏÏÏÎ­Ï</th></tr>`;
+  let h=`<h3 style="font-size:14px">${esc(t.name)} — ${esc(S.settings.days[d])}</h3><table class="data"><tr><th>Ώρα</th><th>Τμήμα</th><th>Μάθημα</th><th>Προτεινόμενοι αναπληρωτές</th></tr>`;
   let any=false;
   for(let p=0;p<periodsOn(d);p++){
     let found=null,fcid=null;
@@ -1489,14 +1594,14 @@ function renderCoverage(){
     const ideal=subs.filter(x=>S.assignments.some(a=>a.teacherId===x.id && a.subjectId===found.subjectId));
     const others=subs.filter(x=>!ideal.includes(x));
     const listTxt = ideal.map(x=>`<b>${esc(x.name)}</b>`).concat(others.map(x=>esc(x.name)));
-    h+=`<tr><td>${p+1}Î·</td><td>${esc(nameOf('classes',fcid))}</td><td>${esc(subjName)}</td><td>${listTxt.length?listTxt.join(', '):'<span class="hint">ÎºÎ±Î½Î­Î½Î±Ï Î´Î¹Î±Î¸Î­ÏÎ¹Î¼Î¿Ï</span>'}</td></tr>`;
+    h+=`<tr><td>${p+1}η</td><td>${esc(nameOf('classes',fcid))}</td><td>${esc(subjName)}</td><td>${listTxt.length?listTxt.join(', '):'<span class="hint">κανένας διαθέσιμος</span>'}</td></tr>`;
   }
   h+='</table>';
-  if(!any) h='<p class="hint">Î/Î ÎºÎ±Î¸Î·Î³Î·ÏÎ®Ï/ÏÏÎ¹Î± Î´ÎµÎ½ Î­ÏÎµÎ¹ Î¼Î±Î¸Î®Î¼Î±ÏÎ± Î±ÏÏÎ® ÏÎ·Î½ Î·Î¼Î­ÏÎ±.</p>';
+  if(!any) h='<p class="hint">Ο/Η καθηγητής/τρια δεν έχει μαθήματα αυτή την ημέρα.</p>';
   el.innerHTML=h;
 }
 
-/* ---- ÎµÎ¹ÏÎ±Î³ÏÎ³Î® CSV ---- */
+/* ---- εισαγωγή CSV ---- */
 function findOrCreate(coll,name){
   if(!name) return '';
   let x=S[coll].find(o=>o.name.trim().toLowerCase()===name.trim().toLowerCase());
@@ -1513,12 +1618,12 @@ function importAssignmentsCSV(e){
   const r=new FileReader();
   r.onload=()=>{
     try{
-      let text=r.result.replace(/^ï»¿/,'');
+      let text=r.result.replace(/^﻿/,'');
       const firstLine=text.split(/\r?\n/)[0]||'';
       const delim = firstLine.includes(';') ? ';' : ',';
       const lines=text.split(/\r?\n/).filter(l=>l.trim().length);
       let start=0;
-      if(/ÏÎ¼[Î·Î®]Î¼Î±/i.test(lines[0])) start=1;
+      if(/τμ[ηή]μα/i.test(lines[0])) start=1;
       let count=0;
       for(let i=start;i<lines.length;i++){
         const cols=lines[i].split(delim).map(c=>c.replace(/^"|"$/g,'').trim());
@@ -1535,25 +1640,25 @@ function importAssignmentsCSV(e){
         count++;
       }
       autoPairSplits(); normalizeTimetable(); renderAll(); save(); ttHistory=[]; ttHistoryIdx=-1; pushHistory();
-      alert(`ÎÎ¹ÏÎ®ÏÎ¸Î·ÏÎ±Î½ ${count} Î±Î½Î±Î¸Î­ÏÎµÎ¹Ï.`);
-    }catch(err){ alert('Î£ÏÎ¬Î»Î¼Î± Î±Î½Î¬Î³Î½ÏÏÎ·Ï CSV. Î£ÏÎ®Î»ÎµÏ: Î¤Î¼Î®Î¼Î±;ÎÎ¬Î¸Î·Î¼Î±;ÎÎ±Î¸Î·Î³Î·ÏÎ®Ï;ÎÎ¯Î¸Î¿ÏÏÎ±;ÎÏÎµÏ;ÎÎ¹ÏÎ»Î®(0/1);ÎÎ²Î´Î¿Î¼Î¬Î´Î±(A/B/ÎºÎµÎ½Ï)'); }
+      alert(`Εισήχθησαν ${count} αναθέσεις.`);
+    }catch(err){ alert('Σφάλμα ανάγνωσης CSV. Στήλες: Τμήμα;Μάθημα;Καθηγητής;Αίθουσα;Ώρες;Διπλή(0/1);Εβδομάδα(A/B/κενό)'); }
   };
   r.readAsText(f,'UTF-8'); e.target.value='';
 }
 function exportCSV(){
   const D=S.settings.days.length,P=maxPeriods(); let rows=[];
   S.classes.forEach(c=>{
-    rows.push(['Î¤Î¼Î®Î¼Î±: '+c.name]); rows.push(['ÎÏÎ±',...S.settings.days]);
-    for(let p=0;p<P;p++){ const r=[periodLabel(p)]; for(let d=0;d<D;d++) r.push(p>=periodsOn(d)?'â':cellText(S.timetable[c.id]?.[d]?.[p])); rows.push(r); }
+    rows.push(['Τμήμα: '+c.name]); rows.push(['Ώρα',...S.settings.days]);
+    for(let p=0;p<P;p++){ const r=[periodLabel(p)]; for(let d=0;d<D;d++) r.push(p>=periodsOn(d)?'—':cellText(S.timetable[c.id]?.[d]?.[p])); rows.push(r); }
     rows.push([]);
   });
-  const csv='ï»¿'+rows.map(r=>r.map(c=>`"${(c||'').toString().replace(/"/g,'""')}"`).join(';')).join('\n');
+  const csv='﻿'+rows.map(r=>r.map(c=>`"${(c||'').toString().replace(/"/g,'""')}"`).join(';')).join('\n');
   download('Orologio_Programma.csv',csv,'text/csv');
 }
 function saveProject(){ download('Orologio_Programma.json',JSON.stringify(S,null,2),'application/json'); }
 function loadProject(e){
   const f=e.target.files[0]; if(!f)return;
-  const r=new FileReader(); r.onload=()=>{try{S=JSON.parse(r.result);normalizeTimetable();renderAll();ttHistory=[];ttHistoryIdx=-1;pushHistory();alert('Î¤Î¿ Î­ÏÎ³Î¿ ÏÎ¿ÏÏÏÎ¸Î·ÎºÎµ.');}catch(err){alert('Î£ÏÎ¬Î»Î¼Î± Î±Î½Î¬Î³Î½ÏÏÎ·Ï Î±ÏÏÎµÎ¯Î¿Ï.');}};
+  const r=new FileReader(); r.onload=()=>{try{S=JSON.parse(r.result);normalizeTimetable();renderAll();ttHistory=[];ttHistoryIdx=-1;pushHistory();alert('Το έργο φορτώθηκε.');}catch(err){alert('Σφάλμα ανάγνωσης αρχείου.');}};
   r.readAsText(f); e.target.value='';
 }
 function download(name,content,type){
@@ -1563,7 +1668,7 @@ function download(name,content,type){
 
 function save(){try{localStorage.setItem('ttSchool',JSON.stringify(S));}catch(e){}}
 function load(){try{const d=localStorage.getItem('ttSchool');if(d){S=JSON.parse(d);normalizeTimetable();}}catch(e){}}
-function resetAll(){if(confirm('ÎÎ¹Î±Î³ÏÎ±ÏÎ® ÏÎ»ÏÎ½ ÏÏÎ½ Î´ÎµÎ´Î¿Î¼Î­Î½ÏÎ½;')){localStorage.removeItem('ttSchool');S={settings:{days:["ÎÎµÏÏÎ­ÏÎ±","Î¤ÏÎ¯ÏÎ·","Î¤ÎµÏÎ¬ÏÏÎ·","Î Î­Î¼ÏÏÎ·","Î Î±ÏÎ±ÏÎºÎµÏÎ®"],periodsPerDay:[7,7,7,7,7],splitGroups:JSON.parse(JSON.stringify(DEFAULT_GROUPS)),maxConsecutive:0,avoidSameDaySubject:true,abWeeks:false,breakPeriod:[-1,-1,-1,-1,-1]},teachers:[],classes:[],rooms:[],subjects:[],assignments:[],timetable:{}};ttHistory=[];ttHistoryIdx=-1;renderAll();pushHistory();}}
+function resetAll(){if(confirm('Διαγραφή όλων των δεδομένων;')){localStorage.removeItem('ttSchool');S={settings:{days:["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή"],periodsPerDay:[7,7,7,7,7],splitGroups:JSON.parse(JSON.stringify(DEFAULT_GROUPS)),maxConsecutive:0,avoidSameDaySubject:true,abWeeks:false,breakPeriod:[-1,-1,-1,-1,-1]},teachers:[],classes:[],rooms:[],subjects:[],assignments:[],timetable:{}};ttHistory=[];ttHistoryIdx=-1;renderAll();pushHistory();}}
 
 function esc(s){return (s||'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function aVal(id){return document.getElementById(id).value;}
@@ -1576,33 +1681,33 @@ function renderAll(){
   renderTeachers();renderClasses();renderRooms();renderSubjects();refreshAssignSelectors();refreshViewTargets();refreshTTExtras();renderTimetable();
 }
 
-/* ---- demo (6 ÏÎ¼Î®Î¼Î±ÏÎ±) ---- */
+/* ---- demo (6 τμήματα) ---- */
 function buildDemoData(){
-  S={settings:{days:["ÎÎµÏÏÎ­ÏÎ±","Î¤ÏÎ¯ÏÎ·","Î¤ÎµÏÎ¬ÏÏÎ·","Î Î­Î¼ÏÏÎ·","Î Î±ÏÎ±ÏÎºÎµÏÎ®"],periodsPerDay:[7,7,7,7,6],splitGroups:JSON.parse(JSON.stringify(DEFAULT_GROUPS)),maxConsecutive:0,avoidSameDaySubject:true,abWeeks:false,breakPeriod:[-1,-1,-1,-1,-1]},teachers:[],classes:[],rooms:[],subjects:[],assignments:[],timetable:{}};
+  S={settings:{days:["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή"],periodsPerDay:[7,7,7,7,6],splitGroups:JSON.parse(JSON.stringify(DEFAULT_GROUPS)),maxConsecutive:0,avoidSameDaySubject:true,abWeeks:false,breakPeriod:[-1,-1,-1,-1,-1]},teachers:[],classes:[],rooms:[],subjects:[],assignments:[],timetable:{}};
   const T=(n,un=[])=>{const id=uid();S.teachers.push({id,name:n,unavail:un,maxPerDay:null,pref:''});return id;};
   const C=(n)=>{const id=uid();S.classes.push({id,name:n});return id;};
   const R=(n)=>{const id=uid();S.rooms.push({id,name:n});return id;};
   const SB=(n,col,dbl=false)=>{const id=uid();S.subjects.push({id,name:n,color:col,double:dbl});return id;};
   const A=(c,s,t,h,r='',pg='')=>S.assignments.push({id:uid(),classId:c,subjectId:s,teacherId:t,roomId:r,hours:h,pgroup:pg});
-  const tMathA=T('Î Î±ÏÎ±Î´ÏÏÎ¿ÏÎ»Î¿Ï (ÎÎ±Î¸.)'),tMathB=T('ÎÎ®Î¼Î¿Ï (ÎÎ±Î¸.)');
-  const tP1=T('ÎÏÎ¬Î½Î½Î¿Ï (Î¦Î¹Î»ÏÎ»Î¿Î³Î¿Ï)'),tP2=T('ÎÎ±ÏÎ¹Î»ÎµÎ¯Î¿Ï (Î¦Î¹Î»ÏÎ»Î¿Î³Î¿Ï)'),tP3=T('ÎÏÎ½ÏÏÎ±Î½ÏÎ¯Î½Î¿Ï (Î¦Î¹Î»ÏÎ»Î¿Î³Î¿Ï)');
-  const tEn=T('Smith (ÎÎ³Î³Î»Î¹ÎºÎ¬)'),tSci1=T('ÎÎµÏÏÎ³Î¯Î¿Ï (Î¦ÏÏÎ¹ÎºÎ­Ï ÎÏ.)'),tSci2=T('ÎÎ±ÎºÏÎ® (Î¦ÏÏÎ¹ÎºÎ­Ï ÎÏ.)');
-  const tRel=T('Î Î±ÏÎ±Î³Î¹Î¬Î½Î½Î· (ÎÏÎ·ÏÎºÎµÏÏÎ¹ÎºÎ¬)'),tPe1=T('ÎÎ¹ÎºÎ¿Î»Î¬Î¿Ï (ÎÏÎ¼Î½Î±ÏÏÎ®Ï)'),tPe2=T('Î¡Î¬ÏÏÎ· (ÎÏÎ¼Î½Î¬ÏÏÏÎ¹Î±)');
-  const tMus=T('ÎÎ»ÎµÎ¾Î¯Î¿Ï (ÎÎ¿ÏÏÎ¹ÎºÎ®)'),tArt=T('Î£ÏÎµÏÎ¬Î½Î¿Ï (ÎÎ±Î»Î»Î¹ÏÎµÏÎ½Î¹ÎºÎ¬)');
-  const tFr=T('Dubois (ÎÎ±Î»Î»Î¹ÎºÎ¬)'),tDe=T('MÃ¼ller (ÎÎµÏÎ¼Î±Î½Î¹ÎºÎ¬)'),tTech=T('ÎÎ½ÏÏÎ½Î¯Î¿Ï (Î¤ÎµÏÎ½Î¿Î»Î¿Î³Î¯Î±)'),tInfo=T('Î Î±ÏÎ»Î¿Ï (Î Î»Î·ÏÎ¿ÏÎ¿ÏÎ¹ÎºÎ®)');
-  const cls=[C('Î1'),C('Î2'),C('Î1'),C('Î2'),C('Î1'),C('Î2')];
-  const r1=R('ÎÎ¯Î¸Î¿ÏÏÎ± Î.ÎÎ». 1'),r2=R('ÎÎ¯Î¸Î¿ÏÏÎ± Î.ÎÎ». 2'),rTech=R('ÎÎ¯Î¸Î¿ÏÏÎ± Î¤ÎµÏÎ½Î¿Î»Î¿Î³Î¯Î±Ï'),rComp=R('ÎÏÎ³Î±ÏÏÎ®ÏÎ¹Î¿ Î/Î¥');
-  const sNea=SB('ÎÎ­Î± ÎÎ»Î»Î·Î½Î¹ÎºÎ¬','#fca5a5'),sArx=SB('ÎÏÏÎ±Î¯Î±','#fcd34d'),sIst=SB('ÎÏÏÎ¿ÏÎ¯Î±','#f9a8d4'),
-        sMath=SB('ÎÎ±Î¸Î·Î¼Î±ÏÎ¹ÎºÎ¬','#93c5fd',true),sSci=SB('Î¦ÏÏÎ¹ÎºÎ­Ï ÎÏÎ¹ÏÏÎ®Î¼ÎµÏ','#86efac'),sEn=SB('ÎÎ³Î³Î»Î¹ÎºÎ¬','#fdba74'),
-        sRel=SB('ÎÏÎ·ÏÎºÎµÏÏÎ¹ÎºÎ¬','#d9f99d'),sPe=SB('ÎÏÎ¼Î½Î±ÏÏÎ¹ÎºÎ®','#c4b5fd'),sMus=SB('ÎÎ¿ÏÏÎ¹ÎºÎ®','#a5f3fc'),sArt=SB('ÎÎ±Î»Î»Î¹ÏÎµÏÎ½Î¹ÎºÎ¬','#f5d0fe'),
-        sFr=SB('ÎÎ±Î»Î»Î¹ÎºÎ¬','#67e8f9'),sDe=SB('ÎÎµÏÎ¼Î±Î½Î¹ÎºÎ¬','#fde047'),sTech=SB('Î¤ÎµÏÎ½Î¿Î»Î¿Î³Î¯Î±','#fda4af'),sInfo=SB('Î Î»Î·ÏÎ¿ÏÎ¿ÏÎ¹ÎºÎ®','#a5b4fc');
+  const tMathA=T('Παπαδόπουλος (Μαθ.)'),tMathB=T('Δήμου (Μαθ.)');
+  const tP1=T('Ιωάννου (Φιλόλογος)'),tP2=T('Βασιλείου (Φιλόλογος)'),tP3=T('Κωνσταντίνου (Φιλόλογος)');
+  const tEn=T('Smith (Αγγλικά)'),tSci1=T('Γεωργίου (Φυσικές Επ.)'),tSci2=T('Μακρή (Φυσικές Επ.)');
+  const tRel=T('Παπαγιάννη (Θρησκευτικά)'),tPe1=T('Νικολάου (Γυμναστής)'),tPe2=T('Ράπτη (Γυμνάστρια)');
+  const tMus=T('Αλεξίου (Μουσική)'),tArt=T('Στεφάνου (Καλλιτεχνικά)');
+  const tFr=T('Dubois (Γαλλικά)'),tDe=T('Müller (Γερμανικά)'),tTech=T('Αντωνίου (Τεχνολογία)'),tInfo=T('Παύλου (Πληροφορική)');
+  const cls=[C('Α1'),C('Α2'),C('Β1'),C('Β2'),C('Γ1'),C('Γ2')];
+  const r1=R('Αίθουσα Ξ.Γλ. 1'),r2=R('Αίθουσα Ξ.Γλ. 2'),rTech=R('Αίθουσα Τεχνολογίας'),rComp=R('Εργαστήριο Η/Υ');
+  const sNea=SB('Νέα Ελληνικά','#fca5a5'),sArx=SB('Αρχαία','#fcd34d'),sIst=SB('Ιστορία','#f9a8d4'),
+        sMath=SB('Μαθηματικά','#93c5fd',true),sSci=SB('Φυσικές Επιστήμες','#86efac'),sEn=SB('Αγγλικά','#fdba74'),
+        sRel=SB('Θρησκευτικά','#d9f99d'),sPe=SB('Γυμναστική','#c4b5fd'),sMus=SB('Μουσική','#a5f3fc'),sArt=SB('Καλλιτεχνικά','#f5d0fe'),
+        sFr=SB('Γαλλικά','#67e8f9'),sDe=SB('Γερμανικά','#fde047'),sTech=SB('Τεχνολογία','#fda4af'),sInfo=SB('Πληροφορική','#a5b4fc');
   const phil=[tP1,tP1,tP2,tP2,tP3,tP3], math=[tMathA,tMathA,tMathA,tMathB,tMathB,tMathB],
         sci=[tSci1,tSci1,tSci1,tSci2,tSci2,tSci2], pe=[tPe1,tPe1,tPe1,tPe2,tPe2,tPe2];
   cls.forEach((c,i)=>{
     A(c,sNea,phil[i],4); A(c,sArx,phil[i],3); A(c,sIst,phil[i],2);
     A(c,sMath,math[i],4); A(c,sSci,sci[i],3); A(c,sEn,tEn,2);
     A(c,sRel,tRel,1); A(c,sPe,pe[i],2); A(c,sMus,tMus,1); A(c,sArt,tArt,1);
-    // ÎÎ±Î»Î»Î¹ÎºÎ¬/ÎÎµÏÎ¼Î±Î½Î¹ÎºÎ¬ ÎºÎ±Î¹ Î¤ÎµÏÎ½Î¿Î»Î¿Î³Î¯Î±/Î Î»Î·ÏÎ¿ÏÎ¿ÏÎ¹ÎºÎ® ÏÏÏÎ¯Ï ÏÎµÎ¹ÏÎ¿ÎºÎ¯Î½Î·ÏÎ· Î¿Î¼Î¬Î´Î± â ÏÏÎ¯Î¶Î¿Î½ÏÎ±Î¹ Î±ÏÏÏÎ¼Î±ÏÎ±
+    // Γαλλικά/Γερμανικά και Τεχνολογία/Πληροφορική χωρίς χειροκίνητη ομάδα — σχίζονται αυτόματα
     A(c,sFr,tFr,2,r1); A(c,sDe,tDe,2,r2);
     A(c,sTech,tTech,2,rTech); A(c,sInfo,tInfo,2,rComp);
   });
@@ -1610,7 +1715,7 @@ function buildDemoData(){
   normalizeTimetable();
 }
 function loadSample(){
-  if((S.classes.length||S.teachers.length) && !confirm('Î¦ÏÏÏÏÏÎ· demo Î¼Îµ 6 ÏÎ¼Î®Î¼Î±ÏÎ±; ÎÎ± Î±Î½ÏÎ¹ÎºÎ±ÏÎ±ÏÏÎ®ÏÎµÎ¹ ÏÎ± ÏÏÎ­ÏÎ¿Î½ÏÎ± Î´ÎµÎ´Î¿Î¼Î­Î½Î±.'))return;
+  if((S.classes.length||S.teachers.length) && !confirm('Φόρτωση demo με 6 τμήματα; Θα αντικαταστήσει τα τρέχοντα δεδομένα.'))return;
   buildDemoData(); renderAll(); autoGenerate(); gotoTimetable('all');
 }
 
