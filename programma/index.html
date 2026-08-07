@@ -88,6 +88,60 @@
   .fixcard .fcbtns button{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8;font-weight:600}
   .fixcard .fcbtns button:hover{background:#dbeafe}
   .fixcard .fcnone{color:var(--muted);font-size:12px}
+  /* ---- ημερήσια προβολή: πυκνότητα + sticky ---- */
+  .daily .ttscroll{overflow:auto;max-height:78vh;border:1px solid var(--line);border-radius:8px;background:#fff}
+  .daily table.tt{margin-top:0;border-collapse:separate;border-spacing:0}
+  .daily table.tt th,.daily table.tt td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);border-top:none;border-left:none}
+  .daily table.tt tr th:first-child{border-left:1px solid var(--line)}
+  .daily table.tt thead th{position:sticky;top:0;z-index:3}
+  .daily table.tt th.rowh{position:sticky;left:0;z-index:2;background:#eef2ff;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .daily table.tt thead th.rowh{z-index:4}
+  .daily td{transition:none}
+  /* Άνετη */
+  .daily.dz-comfort td{width:120px;height:48px}
+  .daily.dz-comfort th.rowh{min-width:160px;max-width:160px;font-size:12px}
+  .daily.dz-comfort .cell .subj{font-size:12px}
+  .daily.dz-comfort .cell .meta{font-size:10px}
+  /* Συμπαγής */
+  .daily.dz-compact td{width:86px;height:38px}
+  .daily.dz-compact th.rowh{min-width:118px;max-width:118px;font-size:11px;padding:3px 6px}
+  .daily.dz-compact thead th{font-size:12px;padding:4px 3px}
+  .daily.dz-compact .cell{padding:2px;min-height:34px}
+  .daily.dz-compact .cell .subj{font-size:11px;line-height:1.1}
+  .daily.dz-compact .cell .meta{font-size:9px;line-height:1.05}
+  /* Πολύ πυκνή */
+  .daily.dz-dense td{width:62px;height:30px}
+  .daily.dz-dense th.rowh{min-width:96px;max-width:96px;font-size:10px;padding:2px 5px}
+  .daily.dz-dense thead th{font-size:11px;padding:3px 2px}
+  .daily.dz-dense .cell{padding:1px;min-height:26px;gap:0}
+  .daily.dz-dense .cell .subj{font-size:10px;line-height:1.05;font-weight:700}
+  .daily.dz-dense .cell .meta{font-size:8.5px;line-height:1;opacity:.85}
+  /* Να χωράει όλο — table-layout fixed, ελαστικά κελιά */
+  .daily.dz-fit .ttscroll{max-height:none;overflow:visible}
+  .daily.dz-fit table.tt{width:100%;table-layout:fixed}
+  .daily.dz-fit th.rowh{min-width:0;width:88px;max-width:88px;font-size:9.5px;padding:2px 4px}
+  .daily.dz-fit thead th{font-size:10px;padding:2px 1px}
+  .daily.dz-fit td{width:auto;height:26px}
+  .daily.dz-fit .cell{padding:1px;min-height:22px;gap:0}
+  .daily.dz-fit .cell .subj{font-size:9px;line-height:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .daily.dz-fit .cell .meta{font-size:8px;line-height:1;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .daily .dayttl{display:flex;align-items:center;gap:10px;margin:8px 0 5px;padding:5px 12px;border-radius:6px}
+  .daily .dayttl .cnt{font-size:11px;font-weight:400;opacity:.75;margin-left:auto}
+  /* ---- σήμανση αλλαγών: πριν (από) / μετά (προς) ---- */
+  @keyframes flashTo{0%{box-shadow:inset 0 0 0 9999px rgba(22,163,74,.45)}100%{box-shadow:inset 0 0 0 9999px rgba(22,163,74,0)}}
+  td.chg-to,.chg-to{outline:3px solid #16a34a!important;outline-offset:-3px;position:relative;z-index:1;animation:flashTo 1.6s ease-out 1}
+  td.chg-to::after{content:"ΝΕΟ";position:absolute;top:-1px;right:1px;background:#16a34a;color:#fff;font-size:8px;font-weight:800;border-radius:0 0 0 4px;padding:0 3px;line-height:11px;z-index:5}
+  td.chg-from{outline:3px dashed #f59e0b!important;outline-offset:-3px;background:repeating-linear-gradient(45deg,#fffbeb,#fffbeb 5px,#fef3c7 5px,#fef3c7 10px)!important;position:relative}
+  td.chg-from::after{content:"ΗΤΑΝ ΕΔΩ";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#b45309;font-size:8px;font-weight:800;letter-spacing:.3px;white-space:nowrap;z-index:5;pointer-events:none}
+  .master-tbl td.chg-from::after{content:"↤";font-size:11px}
+  .daily td.chg-from::after{content:"↤";font-size:11px}
+  .chgbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#f0fdf4;border:1px solid #86efac;border-left:4px solid #16a34a;border-radius:7px;padding:7px 11px;margin:8px 0;font-size:12px}
+  .chgbar .lg{display:inline-flex;align-items:center;gap:5px}
+  .chgbar .sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+  .chgbar .sw.to{border:2px solid #16a34a;background:#dcfce7}
+  .chgbar .sw.from{border:2px dashed #f59e0b;background:#fef3c7}
+  .chgbar button{margin-left:auto}
+  @media print{ td.chg-to,td.chg-from,.chg-to{outline:none!important;animation:none!important;background-image:none!important} td.chg-to::after,td.chg-from::after{display:none!important} .chgbar{display:none!important} }
   .subrow{font-size:11px;color:var(--muted)}
   .grouptag{display:inline-block;background:#ede9fe;color:#5b21b6;border-radius:4px;padding:1px 6px;font-size:11px}
   .pairtag{display:inline-block;background:#dcfce7;color:#166534;border-radius:5px;padding:3px 8px;margin:3px;font-size:12px}
@@ -290,10 +344,11 @@
         <option value="all">Α &amp; Β</option><option value="A">Μόνο Α</option><option value="B">Μόνο Β</option>
       </select>
       <select id="hlTeacher" onchange="renderTimetable()"><option value="">— Ανάδειξη καθηγητή —</option></select>
-      <label id="dayZoomWrap" class="hidden" style="font-size:12px">🔍 Ζουμ: <select id="dayZoom" onchange="renderTimetable()">
-        <option value="100">100%</option><option value="90">90%</option><option value="80">80%</option>
-        <option value="70">70%</option><option value="60">60%</option><option value="50">50%</option>
-        <option value="40">40%</option><option value="30">30%</option>
+      <label id="dayZoomWrap" class="hidden" style="font-size:12px">🔍 Πυκνότητα: <select id="dayZoom" onchange="renderTimetable()">
+        <option value="comfort">Άνετη</option>
+        <option value="compact" selected>Συμπαγής</option>
+        <option value="dense">Πολύ πυκνή</option>
+        <option value="fit">Να χωράει όλο</option>
       </select></label>
       <span style="margin-left:auto"></span>
       <button onclick="applyPageStyle();window.print()">🖨️ Εκτύπωση / PDF</button>
@@ -814,6 +869,7 @@ function computeQuality(){
 
 function autoGenerate(){
   autoPairSplits();
+  lastChanges=[];
   const D=S.settings.days.length,P=maxPeriods(), key=(d,p)=>d+'-'+p;
   if(!S.classes.length||!S.assignments.length){showMsg('Χρειάζονται τμήματα και αναθέσεις πρώτα.','err');return;}
   const avail=totalAvailSlots();
@@ -1015,7 +1071,7 @@ function greedyFill(grid,teacherBusy,roomBusy,teacherUnavail){
 }
 function clearUnlocked(){
   Object.values(S.timetable).forEach(g=>g.forEach(day=>day.forEach((c,i)=>{if(c&&!c.locked)day[i]=null;})));
-  save(); pushHistory(); renderTimetable();
+  lastChanges=[]; save(); pushHistory(); renderTimetable();
 }
 function cleanGrid(){
   const valid=new Set(S.assignments.map(a=>a.id));
@@ -1130,7 +1186,9 @@ function applyFix(cid,d,p,nd,np){
   const src=S.timetable[cid][d][p]; if(!src)return;
   if(src.locked){alert('Το μάθημα είναι κλειδωμένο.');return;}
   if(S.timetable[cid][nd][np]){alert('Η θέση δεν είναι πλέον κενή.');return;}
+  const mark=changeEntry(cid,src,{d,p},{d:nd,p:np});
   S.timetable[cid][nd][np]=src; S.timetable[cid][d][p]=null;
+  markChanges([mark]);
   save(); pushHistory(); renderTimetable(); suggestFixes();
 }
 
@@ -1149,7 +1207,6 @@ function refreshViewTargets(){
   const arr= mode==='class'?S.classes:S.teachers;
   sel.innerHTML=arr.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');
 }
-function dayZoomVal(){ const el=document.getElementById('dayZoom'); return el?(parseInt(el.value)||100):100; }
 function refreshTTExtras(){
   const hl=document.getElementById('hlTeacher');
   if(hl){ const prev=hl.value; hl.innerHTML='<option value="">— Ανάδειξη καθηγητή —</option>'+S.teachers.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join(''); if([...hl.options].some(o=>o.value===prev))hl.value=prev; }
@@ -1164,6 +1221,36 @@ function visibleMembers(cell){
   });
 }
 function hlClassFor(a){ const sel=document.getElementById('hlTeacher'); return (sel&&sel.value&&a&&sel.value===a.teacherId)?'hlTeacher':''; }
+
+/* ---- σήμανση αλλαγών (πριν/μετά) ---- */
+let lastChanges=[];   // [{cid,cname,label,teach,from:{d,p},to:{d,p}}]
+function markChanges(list){ lastChanges=(list||[]).filter(x=>x&&x.from&&x.to); }
+function clearChanges(){ lastChanges=[]; renderTimetable(); }
+function changeClassFor(cid,d,p,teacherId){
+  if(!lastChanges.length) return '';
+  for(const ch of lastChanges){
+    if(cid!==null && ch.cid!==cid) continue;
+    if(cid===null){
+      // κενό κελί στο ημερήσιο: μαρκάρουμε την «παλιά θέση» μόνο αν αφορά αυτόν τον καθηγητή
+      if(!teacherId) continue;
+      if(!(ch.teacherIds||[]).includes(teacherId)) continue;
+      if(ch.from.d===d && ch.from.p===p) return 'chg-from';
+      continue;
+    }
+    if(ch.to.d===d && ch.to.p===p) return 'chg-to';
+    if(ch.from.d===d && ch.from.p===p) return 'chg-from';
+  }
+  return '';
+}
+function changesBarHTML(){
+  if(!lastChanges.length) return '';
+  return `<div class="chgbar">
+    <b>Αλλαγές που έγιναν (${lastChanges.length}):</b>
+    <span class="lg"><span class="sw to"></span> νέα θέση</span>
+    <span class="lg"><span class="sw from"></span> παλιά θέση</span>
+    <button class="small" onclick="clearChanges()">✕ Καθαρισμός σήμανσης</button>
+  </div>`;
+}
 function renderTimetable(){
   const wrap=document.getElementById('ttContent');
   const mode=document.getElementById('viewMode').value;
@@ -1176,8 +1263,9 @@ function renderTimetable(){
     `<span class="stat">Συγκρούσεις: <b style="color:${list.length?'#dc2626':'#16a34a'}">${list.length}</b></span>`+
     `<span class="stat">Ποιότητα: <b>${q}%</b><span class="qtybar"><i style="width:${q}%"></i></span></span>`+
     (list.length?`<button class="small" onclick="suggestFixes()">🔧 Προτάσεις λύσεων</button>`:'');
-  document.getElementById('ttMessage').innerHTML = list.length?
-    `<div class="msg err"><b>⚠ Συγκρούσεις (${list.length}):</b><ul class="conflict-list">${list.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul></div>`:'';
+  document.getElementById('ttMessage').innerHTML = (list.length?
+    `<div class="msg err"><b>⚠ Συγκρούσεις (${list.length}):</b><ul class="conflict-list">${list.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul></div>`:'')
+    + changesBarHTML();
 
   if(!S.classes.length){wrap.innerHTML='<p class="hint">Πρόσθεσε τμήματα και αναθέσεις, μετά πάτησε «Αυτόματη δημιουργία».</p>';return;}
   if(mode==='all'){ wrap.innerHTML='<div class="master">'+renderMasterWeekly(conf)+'</div>'; attachMasterDnD(); return; }
@@ -1186,8 +1274,7 @@ function renderTimetable(){
     let inner='';
     if(tgt==='all'){ for(let d=0;d<S.settings.days.length;d++) inner+='<div class="print-block">'+renderDayView(d,conf)+'</div>'; }
     else inner=renderDayView(+tgt||0,conf);
-    const z=dayZoomVal();
-    wrap.innerHTML=`<div class="daily" style="${z!==100?'zoom:'+(z/100)+';':''}">`+inner+'</div>'; wrap.onkeydown=null; attachDayDnD();
+    wrap.innerHTML=`<div class="daily dz-${dayDensity()}">`+inner+'</div>'; wrap.onkeydown=null; attachDayDnD();
     return;
   }
   if(mode==='teacher'){ wrap.innerHTML=renderTeacherView(document.getElementById('viewTarget').value,conf); wrap.onkeydown=null; return; }
@@ -1208,7 +1295,7 @@ function renderClassGrid(cid,conf,editable){
       if(isBreak(d,p)){ h+=`<td class="blocked" title="Διάλειμμα"></td>`; continue; }
       const cell=S.timetable[cid]?.[d]?.[p];
       const ck=cid+'-'+d+'-'+p; const bad=conf[ck];
-      h+=`<td ${editable?'tabindex="0"':''} data-cid="${cid}" data-d="${d}" data-p="${p}" class="${bad?'conflict':''}">${cellHTML(cell,cid,d,p,editable)}</td>`;
+      h+=`<td ${editable?'tabindex="0"':''} data-cid="${cid}" data-d="${d}" data-p="${p}" class="${bad?'conflict':''} ${changeClassFor(cid,d,p)}">${cellHTML(cell,cid,d,p,editable)}</td>`;
     }
     h+='</tr>';
   }
@@ -1291,7 +1378,7 @@ function renderMasterWeekly(conf){
       const ck=c.id+'-'+d+'-'+p; const bad=conf[ck];
       const cell=S.timetable[c.id]?.[d]?.[p];
       const drag=(cell&&!cell.locked)?'draggable="true"':'';
-      h+=`<td tabindex="0" class="mcell ${bad?'conflict':''}" ${drag} data-cid="${c.id}" data-d="${d}" data-p="${p}">${masterCellHTML(cell)}</td>`;
+      h+=`<td tabindex="0" class="mcell ${bad?'conflict':''} ${changeClassFor(c.id,d,p)}" ${drag} data-cid="${c.id}" data-d="${d}" data-p="${p}">${masterCellHTML(cell)}</td>`;
     }
     h+='</tr>';
   });
@@ -1299,15 +1386,29 @@ function renderMasterWeekly(conf){
   h+='<p class="hint noprint">Στην εκτύπωση το εβδομαδιαίο χωράει αυτόματα σε μία σελίδα A3 (οριζόντια). Αν ο εκτυπωτής σου είναι A4, διάλεξε χαρτί A3 με «Fit / Προσαρμογή στη σελίδα» ή σμίκρυνση. Μπορείς να σύρεις τα κουτάκια ή να τα μετακινήσεις με πληκτρολόγιο (βελάκια, Enter, Delete, L) — προσοχή, τα κελιά είναι μικρά.</p>';
   return h;
 }
+function dayDensity(){ const el=document.getElementById('dayZoom'); return el?el.value:'compact'; }
+function teacherShortLabel(name,mode){
+  name=name||'';
+  if(mode==='comfort') return name;
+  // «Παπαδόπουλος (Μαθ.)» -> «Παπαδόπουλος» ή σε πολύ πυκνή «Παπαδόπ.»
+  let base=name.split('(')[0].trim();
+  if(mode==='compact') return base;
+  if(base.length>10) base=base.slice(0,9)+'.';
+  return base;
+}
 function renderDayView(d,conf){
   const P=periodsOn(d);
   if(!S.teachers.length) return '<p class="hint">Δεν υπάρχουν καθηγητές.</p>';
+  const mode=dayDensity();
   const grad=dayTint(S.settings.days[d]);
-  let h=`<h3 style="margin:6px 0;padding:5px 12px;border-radius:6px;background:${grad};color:#1f2937">Ημερήσιο πρόγραμμα — ${esc(S.settings.days[d])}</h3><table class="tt"><tr><th class="rowh dtint" style="--g:${grad}">Καθηγητής \\ Ώρα</th>`;
-  for(let p=0;p<P;p++) h+=`<th class="dtint" style="--g:${grad}">${periodLabel(p)}</th>`;
-  h+='</tr>';
+  let lessons=0;
+  S.classes.forEach(c=>{ for(let p=0;p<P;p++){ const cell=S.timetable[c.id]?.[d]?.[p]; if(cell) lessons+=visibleMembers(cell).length; } });
+  let h=`<div class="dayttl" style="background:${grad};color:#1f2937"><b>Ημερήσιο πρόγραμμα — ${esc(S.settings.days[d])}</b><span class="cnt">${S.teachers.length} καθηγητές · ${P} ώρες · ${lessons} μαθήματα</span></div>`;
+  h+=`<div class="ttscroll"><table class="tt"><thead><tr><th class="rowh dtint" style="--g:${grad}">Καθηγητής</th>`;
+  for(let p=0;p<P;p++) h+=`<th class="dtint" style="--g:${grad}" title="${p+1}η ώρα">${mode==='comfort'?periodLabel(p):(p+1)}</th>`;
+  h+='</tr></thead><tbody>';
   S.teachers.forEach(t=>{
-    h+=`<tr><th class="rowh">${esc(t.name)}</th>`;
+    h+=`<tr><th class="rowh" title="${esc(t.name)}">${esc(teacherShortLabel(t.name,mode))}</th>`;
     for(let p=0;p<P;p++){
       if(isBreak(d,p)){ h+='<td class="blocked" title="Διάλειμμα"></td>'; continue; }
       const items=[];
@@ -1319,17 +1420,20 @@ function renderDayView(d,conf){
           const subj=S.subjects.find(s=>s.id===a.subjectId); const col=subj?subj.color:'#e5e7eb';
           const rn=a.roomId?('· '+nameOf('rooms',a.roomId)):'';
           const wk=(a.week&&a.week!=='both')?`<span class="wk ${a.week}">${weekLabel(a.week)}</span>`:'';
-          return `<div class="cell dcell ${hlClassFor(a)}" draggable="true" data-cid="${c.id}" data-d="${d}" data-p="${p}" style="background:${col};color:${pickText(col)}">
+          const sname=subj?subj.name:'';
+          const meta=(mode==='dense'||mode==='fit')?esc(sname):`${esc(sname)} ${esc(rn)}`;
+          const tip=`${c.name} · ${sname}${a.roomId?(' · '+nameOf('rooms',a.roomId)):''}`;
+          return `<div class="cell dcell ${hlClassFor(a)} ${changeClassFor(c.id,d,p)}" draggable="true" title="${esc(tip)}" data-cid="${c.id}" data-d="${d}" data-p="${p}" style="background:${col};color:${pickText(col)}">
             <div class="subj">${wk}${esc(c.name)}</div>
-            <div class="meta">${esc(subj?subj.name:'')} ${esc(rn)}</div></div>`;
+            <div class="meta">${meta}</div></div>`;
         }).join('')+`</td>`;
       } else {
-        h+=`<td tabindex="0" data-daycell="1" data-t="${t.id}" data-d="${d}" data-p="${p}" style="${unav?'background:#f3f4f6':''}">${unav?'<div class="cell meta" style="color:#9ca3af">—</div>':''}</td>`;
+        h+=`<td tabindex="0" data-daycell="1" data-t="${t.id}" data-d="${d}" data-p="${p}" class="${changeClassFor(null,d,p,t.id)}" style="${unav?'background:#f3f4f6':''}">${unav?'<div class="cell meta" style="color:#9ca3af">—</div>':''}</td>`;
       }
     }
     h+='</tr>';
   });
-  h+='</table>'; return h;
+  h+='</tbody></table></div>'; return h;
 }
 
 let dragSrc=null;
@@ -1379,6 +1483,7 @@ function attachDayDnD(){
       moveCell(dragSrc.cid,dragSrc.d,dragSrc.p,dragSrc.cid,nd,np);
       const fixed=autoResolveConflicts(4);
       if(fixed.length){
+        markChanges(lastChanges.concat(fixed));
         save(); pushHistory(); renderTimetable();
         const after=computeConflicts().list.length;
         const el=document.getElementById('ttMessage');
@@ -1423,7 +1528,7 @@ function autoResolveConflicts(maxIter){
           const cname=nameOf('classes',cid);
           const label=members.map(m=>nameOf('subjects',m.subjectId)).join(' / ');
           const teach=members.map(m=>shortTeacher(nameOf('teachers',m.teacherId))).join(', ');
-          fixed.push({cid,cname,label,teach,from:{d,p},to:{d:nd,p:np}});
+          fixed.push({cid,cname,label,teach,teacherIds:members.map(m=>m.teacherId),from:{d,p},to:{d:nd,p:np}});
           done=true;
         }
       }
@@ -1442,6 +1547,7 @@ function runAutoFix(){
   const before=computeConflicts().list.length;
   if(!before){ showMsg('✅ Δεν υπάρχουν συγκρούσεις προς διόρθωση.','ok'); return; }
   const fixed=autoResolveConflicts(30);
+  markChanges(fixed);
   save(); if(fixed.length) pushHistory();
   renderTimetable();
   const after=computeConflicts().list.length;
@@ -1602,13 +1708,24 @@ function cellKeyHandler(e){
     save(); pushHistory(); renderTimetable(); focusCell(cid,d,p);
   }
 }
+function changeEntry(cid,src,from,to){
+  const members=(src?src.assignmentIds:[]).map(id=>S.assignments.find(x=>x.id===id)).filter(Boolean);
+  return {cid,cname:nameOf('classes',cid),
+    label:members.map(m=>nameOf('subjects',m.subjectId)).join(' / '),
+    teach:members.map(m=>shortTeacher(nameOf('teachers',m.teacherId))).join(', '),
+    teacherIds:members.map(m=>m.teacherId), from, to};
+}
 function moveCell(scid,sd,sp,dcid,dd,dp){
   const g=S.timetable; const src=g[scid][sd][sp]; const dst=g[dcid][dd][dp];
   if(src&&src.locked){alert('Το μάθημα είναι κλειδωμένο.');return;}
   if(dst&&dst.locked){alert('Η θέση προορισμού είναι κλειδωμένη.');return;}
   if(dp>=periodsOn(dd)) return;
   if(isBreak(dd,dp)) return;
+  const marks=[];
+  if(src) marks.push(changeEntry(scid,src,{d:sd,p:sp},{d:dd,p:dp}));
+  if(dst) marks.push(changeEntry(dcid,dst,{d:dd,p:dp},{d:sd,p:sp}));
   g[dcid][dd][dp]=src; g[scid][sd][sp]=dst||null;
+  markChanges(marks);
   save(); pushHistory(); renderTimetable();
 }
 function toggleLock(cid,d,p){const c=S.timetable[cid][d][p];if(c){c.locked=!c.locked;save();pushHistory();renderTimetable();}}
@@ -1634,11 +1751,11 @@ function pushHistory(){
 }
 function undoTT(){
   if(ttHistoryIdx<=0)return;
-  ttHistoryIdx--; S.timetable=JSON.parse(ttHistory[ttHistoryIdx]); save(); renderTimetable(); updateUndoBtns();
+  ttHistoryIdx--; S.timetable=JSON.parse(ttHistory[ttHistoryIdx]); lastChanges=[]; save(); renderTimetable(); updateUndoBtns();
 }
 function redoTT(){
   if(ttHistoryIdx>=ttHistory.length-1)return;
-  ttHistoryIdx++; S.timetable=JSON.parse(ttHistory[ttHistoryIdx]); save(); renderTimetable(); updateUndoBtns();
+  ttHistoryIdx++; S.timetable=JSON.parse(ttHistory[ttHistoryIdx]); lastChanges=[]; save(); renderTimetable(); updateUndoBtns();
 }
 function updateUndoBtns(){
   const u=document.getElementById('btnUndo'), r=document.getElementById('btnRedo');
