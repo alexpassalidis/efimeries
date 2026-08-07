@@ -65,6 +65,8 @@
   .master-tbl td.mcell{width:66px;height:44px;padding:0;position:relative}
   .master-tbl .m{font-size:9px;line-height:1.06;padding:2px 3px;height:100%;display:flex;flex-direction:column;justify-content:center;gap:1px}
   .master-tbl .m b{font-size:10px;font-weight:700}
+  .master-tbl td.mcell[draggable=true]{cursor:grab}
+  .master-tbl td.mcell:focus{outline:3px solid var(--accent);outline-offset:-3px;z-index:1}
   .master-tbl .m span{opacity:.9}
   @keyframes pulseConf{0%,100%{box-shadow:inset 0 0 0 9999px rgba(220,38,38,.12)}50%{box-shadow:inset 0 0 0 9999px rgba(220,38,38,.34)}}
   td.conflict{outline:3px solid #dc2626!important;outline-offset:-3px;position:relative;animation:pulseConf 1.1s ease-in-out infinite}
@@ -262,6 +264,7 @@
     <div class="row noprint">
       <button class="primary" onclick="autoGenerate()">⚙️ Αυτόματη δημιουργία</button>
       <button onclick="suggestFixes()">🔧 Προτάσεις λύσεων</button>
+      <button onclick="runAutoFix()">🪄 Αυτόματη διόρθωση</button>
       <button onclick="clearUnlocked()">Καθαρισμός (πλην κλειδωμένων)</button>
       <button id="btnUndo" onclick="undoTT()" disabled>↶ Αναίρεση</button>
       <button id="btnRedo" onclick="redoTT()" disabled>↷ Επανάληψη</button>
@@ -286,7 +289,7 @@
     <div id="ttMessage"></div>
     <div id="ttStats" class="row" style="margin:6px 0"></div>
     <div id="ttContent" class="ttwrap"></div>
-    <p class="hint noprint">Μετακίνηση ώρας: σύρε το κουτάκι σε άλλο κελί, ή με πληκτρολόγιο. Πλοήγηση (και «ανά τμήμα» και «ημερήσιο»): <b>βελάκια</b> μετακίνηση εστίασης, <b>Tab</b> επόμενο κελί, <b>Home/End</b> πρώτη/τελευταία ώρα ημέρας, <b>Ctrl+Home/End</b> αρχή/τέλος εβδομάδας. Επεξεργασία: <b>Enter</b> επιλογή μαθήματος («ανά τμήμα»), <b>Delete</b> διαγραφή, <b>L</b> κλείδωμα/ξεκλείδωμα, <b>Ctrl+C / Ctrl+X / Ctrl+V</b> αντιγραφή/αποκοπή/επικόλληση («ανά τμήμα»), <b>Esc</b> αποεστίαση. <b>Ctrl+Z / Ctrl+Y</b> αναίρεση/επανάληψη οπουδήποτε. Οι συγκρούσεις ενημερώνονται αμέσως (κόκκινο ⚠) — «🔧 Προτάσεις λύσεων» προτείνει μετακινήσεις. Γραμμοσκιασμένα = ώρες εκτός λειτουργίας ή διάλειμμα.</p>
+    <p class="hint noprint">Μετακίνηση ώρας: σύρε το κουτάκι σε άλλο κελί, ή με πληκτρολόγιο. Πλοήγηση (και «ανά τμήμα» και «ημερήσιο»): <b>βελάκια</b> μετακίνηση εστίασης, <b>Tab</b> επόμενο κελί, <b>Home/End</b> πρώτη/τελευταία ώρα ημέρας, <b>Ctrl+Home/End</b> αρχή/τέλος εβδομάδας. Επεξεργασία: <b>Enter</b> επιλογή μαθήματος («ανά τμήμα»), <b>Delete</b> διαγραφή, <b>L</b> κλείδωμα/ξεκλείδωμα, <b>Ctrl+C / Ctrl+X / Ctrl+V</b> αντιγραφή/αποκοπή/επικόλληση («ανά τμήμα»), <b>Esc</b> αποεστίαση. <b>Ctrl+Z / Ctrl+Y</b> αναίρεση/επανάληψη οπουδήποτε. Οι συγκρούσεις ενημερώνονται αμέσως (κόκκινο ⚠) — «🔧 Προτάσεις λύσεων» προτείνει μετακινήσεις («ανά τμήμα»). Στο <b>ημερήσιο</b> η μετακίνηση με σύρσιμο διορθώνει αυτόματα τυχόν σύγκρουση, μετακινώντας το μάθημα που εκτοπίστηκε στην πρώτη ελεύθερη συμβατή θέση. Γραμμοσκιασμένα = ώρες εκτός λειτουργίας ή διάλειμμα.</p>
   </section>
 </main>
 
@@ -1151,7 +1154,7 @@ function renderTimetable(){
     `<div class="msg err"><b>⚠ Συγκρούσεις (${list.length}):</b><ul class="conflict-list">${list.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul></div>`:'';
 
   if(!S.classes.length){wrap.innerHTML='<p class="hint">Πρόσθεσε τμήματα και αναθέσεις, μετά πάτησε «Αυτόματη δημιουργία».</p>';return;}
-  if(mode==='all'){ wrap.innerHTML='<div class="master">'+renderMasterWeekly(conf)+'</div>'; wrap.onkeydown=null; return; }
+  if(mode==='all'){ wrap.innerHTML='<div class="master">'+renderMasterWeekly(conf)+'</div>'; attachMasterDnD(); return; }
   if(mode==='day'){
     const tgt=document.getElementById('viewTarget').value;
     let inner='';
@@ -1259,12 +1262,14 @@ function renderMasterWeekly(conf){
     for(let d=0;d<D;d++) for(let p=0;p<periodsOn(d);p++){
       if(isBreak(d,p)){ h+=`<td class="mcell blocked" title="Διάλειμμα"></td>`; continue; }
       const ck=c.id+'-'+d+'-'+p; const bad=conf[ck];
-      h+=`<td class="mcell ${bad?'conflict':''}">${masterCellHTML(S.timetable[c.id]?.[d]?.[p])}</td>`;
+      const cell=S.timetable[c.id]?.[d]?.[p];
+      const drag=(cell&&!cell.locked)?'draggable="true"':'';
+      h+=`<td tabindex="0" class="mcell ${bad?'conflict':''}" ${drag} data-cid="${c.id}" data-d="${d}" data-p="${p}">${masterCellHTML(cell)}</td>`;
     }
     h+='</tr>';
   });
   h+='</table>';
-  h+='<p class="hint noprint">Στην εκτύπωση το εβδομαδιαίο χωράει αυτόματα σε μία σελίδα A3 (οριζόντια). Αν ο εκτυπωτής σου είναι A4, διάλεξε χαρτί A3 με «Fit / Προσαρμογή στη σελίδα» ή σμίκρυνση.</p>';
+  h+='<p class="hint noprint">Στην εκτύπωση το εβδομαδιαίο χωράει αυτόματα σε μία σελίδα A3 (οριζόντια). Αν ο εκτυπωτής σου είναι A4, διάλεξε χαρτί A3 με «Fit / Προσαρμογή στη σελίδα» ή σμίκρυνση. Μπορείς να σύρεις τα κουτάκια ή να τα μετακινήσεις με πληκτρολόγιο (βελάκια, Enter, Delete, L) — προσοχή, τα κελιά είναι μικρά.</p>';
   return h;
 }
 function renderDayView(d,conf){
@@ -1317,6 +1322,22 @@ function attachDnD(){
   });
   wrap.onkeydown=cellKeyHandler;
 }
+function attachMasterDnD(){
+  const wrap=document.getElementById('ttContent');
+  wrap.querySelectorAll('td.mcell[draggable=true]').forEach(td=>{
+    td.addEventListener('dragstart',e=>{dragSrc={cid:td.dataset.cid,d:+td.dataset.d,p:+td.dataset.p};e.dataTransfer.effectAllowed='move';});
+  });
+  wrap.querySelectorAll('td.mcell[data-cid]').forEach(td=>{
+    td.addEventListener('dragover',e=>{e.preventDefault();td.classList.add('dragover');});
+    td.addEventListener('dragleave',()=>td.classList.remove('dragover'));
+    td.addEventListener('drop',e=>{e.preventDefault();td.classList.remove('dragover');
+      if(!dragSrc)return;
+      if(dragSrc.cid!==td.dataset.cid){ alert('Δεν μπορείς να μετακινήσεις μάθημα σε άλλο τμήμα.'); dragSrc=null; return; }
+      moveCell(dragSrc.cid,dragSrc.d,dragSrc.p,td.dataset.cid,+td.dataset.d,+td.dataset.p); dragSrc=null;
+    });
+  });
+  wrap.onkeydown=cellKeyHandler;
+}
 function attachDayDnD(){
   const wrap=document.getElementById('ttContent');
   wrap.querySelectorAll('.dcell[draggable=true]').forEach(el=>{
@@ -1328,10 +1349,63 @@ function attachDayDnD(){
     td.addEventListener('drop',e=>{e.preventDefault();td.classList.remove('dragover');
       if(!dragSrc)return;
       const nd=+td.dataset.d, np=+td.dataset.p;
-      moveCell(dragSrc.cid,dragSrc.d,dragSrc.p,dragSrc.cid,nd,np); dragSrc=null;
+      moveCell(dragSrc.cid,dragSrc.d,dragSrc.p,dragSrc.cid,nd,np);
+      const fixed=autoResolveConflicts(4);
+      if(fixed.length){
+        save(); pushHistory(); renderTimetable();
+        showMsg(`🔧 Αυτόματη διόρθωση: μετακινήθηκαν αυτόματα ${fixed.length} μάθημα${fixed.length>1?'τα':''} για να λυθούν οι συγκρούσεις.`,'ok');
+      }
+      dragSrc=null;
     });
   });
   wrap.onkeydown=dayCellKeyHandler;
+}
+function autoResolveConflicts(maxIter){
+  maxIter=maxIter||3;
+  const fixed=[];
+  for(let iter=0; iter<maxIter; iter++){
+    const {conf,list}=computeConflicts();
+    if(!list.length) break;
+    let target=null;
+    for(const k of Object.keys(conf)){
+      const idx=k.lastIndexOf('-',k.lastIndexOf('-')-1);
+      const cid=k.slice(0,idx); const [d,p]=k.slice(idx+1).split('-').map(Number);
+      const cell=S.timetable[cid]?.[d]?.[p];
+      if(cell && !cell.locked){ target={cid,d,p}; break; }
+    }
+    if(!target) break;
+    const {cid,d,p}=target;
+    const cell=S.timetable[cid][d][p];
+    const members=cell.assignmentIds.map(id=>S.assignments.find(x=>x.id===id)).filter(Boolean);
+    const memWeeks=[...new Set(members.map(weekOf))]; const week=memWeeks.length===1?memWeeks[0]:'both';
+    const maps=slotBusyMaps(cid,d,p);
+    let done=false;
+    for(let nd=0; nd<S.settings.days.length && !done; nd++){
+      for(let np=0; np<periodsOn(nd) && !done; np++){
+        if(nd===d&&np===p) continue;
+        if(S.timetable[cid][nd][np]) continue;
+        if(unitFitsAt(cid,members,nd,np,maps,week)){
+          S.timetable[cid][nd][np]=cell;
+          S.timetable[cid][d][p]=null;
+          fixed.push({cid,from:{d,p},to:{d:nd,p:np}});
+          done=true;
+        }
+      }
+    }
+    if(!done) break;
+  }
+  return fixed;
+}
+function runAutoFix(){
+  const before=computeConflicts().list.length;
+  if(!before){ showMsg('✅ Δεν υπάρχουν συγκρούσεις προς διόρθωση.','ok'); return; }
+  const fixed=autoResolveConflicts(30);
+  save(); if(fixed.length) pushHistory();
+  renderTimetable();
+  const after=computeConflicts().list.length;
+  if(fixed.length && !after) showMsg(`🪄 Αυτόματη διόρθωση: μετακινήθηκαν αυτόματα ${fixed.length} μάθημα${fixed.length>1?'τα':''}. Όλες οι συγκρούσεις λύθηκαν.`,'ok');
+  else if(fixed.length) showMsg(`🪄 Αυτόματη διόρθωση: μετακινήθηκαν αυτόματα ${fixed.length} μάθημα${fixed.length>1?'τα':''}. Απομένουν ${after} που δεν βρέθηκε ελεύθερη θέση — δοκίμασε «🔧 Προτάσεις λύσεων» ή χαλάρωσε περιορισμούς.`,'err');
+  else showMsg(`⚠️ Δεν βρέθηκε αυτόματη λύση για καμία από τις ${before} συγκρούσεις (πιθανόν κλειδωμένα κελιά ή έλλειψη ελεύθερων θέσεων). Δοκίμασε «🔧 Προτάσεις λύσεων».`,'err');
 }
 function focusDayCell(tid,d,p){ const td=document.querySelector(`td[data-daycell][data-t="${tid}"][data-d="${d}"][data-p="${p}"]`); if(td) td.focus(); }
 function daySingleTarget(tid,d,p){
