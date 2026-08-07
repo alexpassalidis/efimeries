@@ -80,6 +80,14 @@
   .conflict-list{margin:8px 0 0;padding-left:18px;color:var(--warn);font-size:13px}
   .fix-list{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--ink)}
   .fix-list li{margin:3px 0}
+  .fixwrap{margin-top:6px}
+  .fixcard{border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:7px;padding:8px 10px;margin:7px 0;background:#fff}
+  .fixcard .fchead{font-size:13px;margin-bottom:6px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .fixcard .fcnow{color:var(--warn);font-weight:600;font-size:12px;margin-left:auto}
+  .fixcard .fcbtns{display:flex;flex-wrap:wrap;gap:6px}
+  .fixcard .fcbtns button{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8;font-weight:600}
+  .fixcard .fcbtns button:hover{background:#dbeafe}
+  .fixcard .fcnone{color:var(--muted);font-size:12px}
   .subrow{font-size:11px;color:var(--muted)}
   .grouptag{display:inline-block;background:#ede9fe;color:#5b21b6;border-radius:4px;padding:1px 6px;font-size:11px}
   .pairtag{display:inline-block;background:#dcfce7;color:#166534;border-radius:5px;padding:3px 8px;margin:3px;font-size:12px}
@@ -112,6 +120,7 @@
   .abonly.hidden{display:none!important}
   @media print{
     .hlTeacher{outline:none!important}
+    .daily{zoom:1!important}
     @page{size:A4 landscape;margin:9mm}
     *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
     header,nav,.topbtns,.noprint,#ttMessage,#ttStats{display:none!important}
@@ -281,6 +290,11 @@
         <option value="all">Α &amp; Β</option><option value="A">Μόνο Α</option><option value="B">Μόνο Β</option>
       </select>
       <select id="hlTeacher" onchange="renderTimetable()"><option value="">— Ανάδειξη καθηγητή —</option></select>
+      <label id="dayZoomWrap" class="hidden" style="font-size:12px">🔍 Ζουμ: <select id="dayZoom" onchange="renderTimetable()">
+        <option value="100">100%</option><option value="90">90%</option><option value="80">80%</option>
+        <option value="70">70%</option><option value="60">60%</option><option value="50">50%</option>
+        <option value="40">40%</option><option value="30">30%</option>
+      </select></label>
       <span style="margin-left:auto"></span>
       <button onclick="applyPageStyle();window.print()">🖨️ Εκτύπωση / PDF</button>
       <button onclick="printAllTeachers()">🖨️ Όλοι οι καθηγητές</button>
@@ -1076,13 +1090,19 @@ function unitFitsAt(cid,members,nd,np,maps,week){
 function suggestFixes(){
   const {conf,list}=computeConflicts();
   if(!list.length){ showMsg('✅ Δεν υπάρχουν συγκρούσεις.','ok'); return; }
-  const seen=new Set(); const sugg=[];
+  const seen=new Set(); const cards=[];
   Object.keys(conf).forEach(k=>{
     const idx=k.lastIndexOf('-',k.lastIndexOf('-')-1);
     const cid=k.slice(0,idx); const [d,p]=k.slice(idx+1).split('-').map(Number);
     const cell=S.timetable[cid]?.[d]?.[p]; if(!cell) return;
     const sig=cid+'-'+d+'-'+p; if(seen.has(sig))return; seen.add(sig);
-    if(cell.locked){ sugg.push(`<li><b>${esc(nameOf('classes',cid))}</b> (${esc(S.settings.days[d])} ${p+1}η): <span class="hint">κλειδωμένο — ξεκλείδωσέ το για μετακίνηση.</span></li>`); return; }
+    const cname=nameOf('classes',cid);
+    const nowLabel=`${esc(S.settings.days[d])} ${p+1}η`;
+    if(cell.locked){
+      cards.push(`<div class="fixcard"><div class="fchead"><b>${esc(cname)}</b> <span class="fcnow">τώρα: ${nowLabel}</span></div>`+
+        `<div class="fcnone">🔒 Το κελί είναι κλειδωμένο — ξεκλείδωσέ το (πλήκτρο <b>L</b> ή το εικονίδιο 🔒) για να προταθεί μετακίνηση.</div></div>`);
+      return;
+    }
     const members=cell.assignmentIds.map(id=>S.assignments.find(x=>x.id===id)).filter(Boolean);
     const memWeeks=[...new Set(members.map(weekOf))]; const week=memWeeks.length===1?memWeeks[0]:'both';
     const maps=slotBusyMaps(cid,d,p);
@@ -1091,17 +1111,20 @@ function suggestFixes(){
       if(nd===d&&np===p)continue;
       if(unitFitsAt(cid,members,nd,np,maps,week)) cands.push({nd,np});
     }
-    const cname=nameOf('classes',cid); const subj=members.map(m=>nameOf('subjects',m.subjectId)).join(' / ');
+    const subj=members.map(m=>nameOf('subjects',m.subjectId)).join(' / ');
+    const teach=members.map(m=>shortTeacher(nameOf('teachers',m.teacherId))).join(', ');
     if(cands.length){
-      sugg.push(`<li><b>${esc(cname)}</b> · ${esc(subj)} <span class="hint">(${esc(S.settings.days[d])} ${p+1}η)</span> → `+
-        cands.map(c=>`<button class="small" onclick="applyFix('${cid}',${d},${p},${c.nd},${c.np})">${esc(S.settings.days[c.nd])} ${c.np+1}η</button>`).join(' ')+`</li>`);
+      const btns=cands.map(c=>`<button class="small" onclick="applyFix('${cid}',${d},${p},${c.nd},${c.np})">➜ ${esc(S.settings.days[c.nd])} ${c.np+1}η</button>`).join('');
+      cards.push(`<div class="fixcard"><div class="fchead"><b>${esc(cname)}</b> · ${esc(subj)} <span class="hint">(${esc(teach)})</span> <span class="fcnow">τώρα: ${nowLabel}</span></div>`+
+        `<div class="fcbtns">${btns}</div></div>`);
     } else {
-      sugg.push(`<li><b>${esc(cname)}</b> · ${esc(subj)} <span class="hint">(${esc(S.settings.days[d])} ${p+1}η): δεν βρέθηκε ελεύθερη θέση χωρίς σύγκρουση — δοκίμασε να μετακινήσεις άλλο μάθημα ή χαλάρωσε περιορισμό.</span></li>`);
+      cards.push(`<div class="fixcard"><div class="fchead"><b>${esc(cname)}</b> · ${esc(subj)} <span class="hint">(${esc(teach)})</span> <span class="fcnow">τώρα: ${nowLabel}</span></div>`+
+        `<div class="fcnone">Δεν βρέθηκε ελεύθερη θέση χωρίς σύγκρουση — δοκίμασε να μετακινήσεις πρώτα κάποιο άλλο μάθημα, ή χαλάρωσε κάποιον περιορισμό.</div></div>`);
     }
   });
   document.getElementById('ttMessage').innerHTML=
-    `<div class="msg err"><b>⚠ Συγκρούσεις (${list.length}):</b><ul class="conflict-list">${list.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul>`+
-    `<b>🔧 Προτεινόμενες μετακινήσεις:</b><ul class="fix-list">${sugg.join('')}</ul></div>`;
+    `<div class="msg err"><b>⚠ Συγκρούσεις (${list.length}):</b><ul class="conflict-list">${list.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul></div>`+
+    `<div class="fixwrap"><b style="display:block;margin:10px 0 4px">🔧 Προτεινόμενες αλλαγές — πάτα μια θέση για να τη μετακινήσεις εκεί:</b>${cards.join('')}</div>`;
 }
 function applyFix(cid,d,p,nd,np){
   const src=S.timetable[cid][d][p]; if(!src)return;
@@ -1115,6 +1138,8 @@ function onViewModeChange(){ refreshViewTargets(); renderTimetable(); }
 function refreshViewTargets(){
   const mode=document.getElementById('viewMode').value;
   const sel=document.getElementById('viewTarget');
+  const dz=document.getElementById('dayZoomWrap');
+  if(dz) dz.classList.toggle('hidden', mode!=='day');
   if(mode==='all'){sel.style.display='none';return;}
   sel.style.display='';
   if(mode==='day'){
@@ -1124,6 +1149,7 @@ function refreshViewTargets(){
   const arr= mode==='class'?S.classes:S.teachers;
   sel.innerHTML=arr.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');
 }
+function dayZoomVal(){ const el=document.getElementById('dayZoom'); return el?(parseInt(el.value)||100):100; }
 function refreshTTExtras(){
   const hl=document.getElementById('hlTeacher');
   if(hl){ const prev=hl.value; hl.innerHTML='<option value="">— Ανάδειξη καθηγητή —</option>'+S.teachers.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join(''); if([...hl.options].some(o=>o.value===prev))hl.value=prev; }
@@ -1160,7 +1186,8 @@ function renderTimetable(){
     let inner='';
     if(tgt==='all'){ for(let d=0;d<S.settings.days.length;d++) inner+='<div class="print-block">'+renderDayView(d,conf)+'</div>'; }
     else inner=renderDayView(+tgt||0,conf);
-    wrap.innerHTML='<div class="daily">'+inner+'</div>'; wrap.onkeydown=null; attachDayDnD();
+    const z=dayZoomVal();
+    wrap.innerHTML=`<div class="daily" style="${z!==100?'zoom:'+(z/100)+';':''}">`+inner+'</div>'; wrap.onkeydown=null; attachDayDnD();
     return;
   }
   if(mode==='teacher'){ wrap.innerHTML=renderTeacherView(document.getElementById('viewTarget').value,conf); wrap.onkeydown=null; return; }
@@ -1353,7 +1380,13 @@ function attachDayDnD(){
       const fixed=autoResolveConflicts(4);
       if(fixed.length){
         save(); pushHistory(); renderTimetable();
-        showMsg(`🔧 Αυτόματη διόρθωση: μετακινήθηκαν αυτόματα ${fixed.length} μάθημα${fixed.length>1?'τα':''} για να λυθούν οι συγκρούσεις.`,'ok');
+        const after=computeConflicts().list.length;
+        const el=document.getElementById('ttMessage');
+        const cls=after?'err':'ok';
+        const title=after
+          ? `🔧 Η μετακίνηση δημιούργησε σύγκρουση — μετακινήθηκαν αυτόματα ${fixed.length} μάθημα${fixed.length>1?'τα':''} για διόρθωση, αλλά απομένουν ${after}:`
+          : `🔧 Η μετακίνηση δημιούργησε σύγκρουση — μετακινήθηκαν αυτόματα ${fixed.length} μάθημα${fixed.length>1?'τα':''} για να λυθεί:`;
+        el.innerHTML=`<div class="msg ${cls}"><b>${title}</b>${fixSummaryHTML(fixed)}</div>`;
       }
       dragSrc=null;
     });
@@ -1387,7 +1420,10 @@ function autoResolveConflicts(maxIter){
         if(unitFitsAt(cid,members,nd,np,maps,week)){
           S.timetable[cid][nd][np]=cell;
           S.timetable[cid][d][p]=null;
-          fixed.push({cid,from:{d,p},to:{d:nd,p:np}});
+          const cname=nameOf('classes',cid);
+          const label=members.map(m=>nameOf('subjects',m.subjectId)).join(' / ');
+          const teach=members.map(m=>shortTeacher(nameOf('teachers',m.teacherId))).join(', ');
+          fixed.push({cid,cname,label,teach,from:{d,p},to:{d:nd,p:np}});
           done=true;
         }
       }
@@ -1396,6 +1432,12 @@ function autoResolveConflicts(maxIter){
   }
   return fixed;
 }
+function fixSummaryHTML(fixed){
+  return '<ul class="fix-list">'+fixed.map(f=>
+    `<li><b>${esc(f.cname)}</b> · ${esc(f.label)} <span class="hint">(${esc(f.teach)})</span>: `+
+    `${esc(S.settings.days[f.from.d])} ${f.from.p+1}η → <b>${esc(S.settings.days[f.to.d])} ${f.to.p+1}η</b></li>`
+  ).join('')+'</ul>';
+}
 function runAutoFix(){
   const before=computeConflicts().list.length;
   if(!before){ showMsg('✅ Δεν υπάρχουν συγκρούσεις προς διόρθωση.','ok'); return; }
@@ -1403,9 +1445,16 @@ function runAutoFix(){
   save(); if(fixed.length) pushHistory();
   renderTimetable();
   const after=computeConflicts().list.length;
-  if(fixed.length && !after) showMsg(`🪄 Αυτόματη διόρθωση: μετακινήθηκαν αυτόματα ${fixed.length} μάθημα${fixed.length>1?'τα':''}. Όλες οι συγκρούσεις λύθηκαν.`,'ok');
-  else if(fixed.length) showMsg(`🪄 Αυτόματη διόρθωση: μετακινήθηκαν αυτόματα ${fixed.length} μάθημα${fixed.length>1?'τα':''}. Απομένουν ${after} που δεν βρέθηκε ελεύθερη θέση — δοκίμασε «🔧 Προτάσεις λύσεων» ή χαλάρωσε περιορισμούς.`,'err');
-  else showMsg(`⚠️ Δεν βρέθηκε αυτόματη λύση για καμία από τις ${before} συγκρούσεις (πιθανόν κλειδωμένα κελιά ή έλλειψη ελεύθερων θέσεων). Δοκίμασε «🔧 Προτάσεις λύσεων».`,'err');
+  const el=document.getElementById('ttMessage');
+  if(fixed.length){
+    const cls=after?'err':'ok';
+    const title=after
+      ? `🪄 Μετακινήθηκαν αυτόματα ${fixed.length} μάθημα${fixed.length>1?'τα':''}. Απομένουν ${after} συγκρούσεις που δεν βρέθηκε ελεύθερη θέση — δοκίμασε «🔧 Προτάσεις λύσεων» ή χαλάρωσε περιορισμούς.`
+      : `🪄 Μετακινήθηκαν αυτόματα ${fixed.length} μάθημα${fixed.length>1?'τα':''}. Όλες οι συγκρούσεις λύθηκαν:`;
+    el.innerHTML=`<div class="msg ${cls}"><b>${title}</b>${fixSummaryHTML(fixed)}</div>`;
+  } else {
+    showMsg(`⚠️ Δεν βρέθηκε αυτόματη λύση για καμία από τις ${before} συγκρούσεις (πιθανόν κλειδωμένα κελιά ή έλλειψη ελεύθερων θέσεων). Δοκίμασε «🔧 Προτάσεις λύσεων».`,'err');
+  }
 }
 function focusDayCell(tid,d,p){ const td=document.querySelector(`td[data-daycell][data-t="${tid}"][data-d="${d}"][data-p="${p}"]`); if(td) td.focus(); }
 function daySingleTarget(tid,d,p){
