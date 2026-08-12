@@ -101,6 +101,12 @@
   .pos{color:var(--ok);font-weight:700;}
 
   .savebar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+  .holrow{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:9px;}
+  .holrow .fld{display:flex;flex-direction:column;gap:3px;}
+  .holrow .fld > span{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6B7789;}
+  .holrow .fld.grow{flex:1 1 190px;min-width:150px;}
+  .holrow input{margin:0;}
+  .holrow .del{flex:0 0 auto;}
   #status{font-size:13px;font-weight:600;}
   #status.ok{color:var(--ok);}
   #status.err{color:var(--warn);}
@@ -184,6 +190,17 @@
   </div>
 
   <div class="panel">
+    <h2>Αργίες &amp; διακοπές</h2>
+    <div class="hint" style="margin-top:0;margin-bottom:12px;">
+      Ημέρες που δεν λειτουργεί το σχολείο. Στη δημόσια σελίδα δεν εμφανίζεται εφημερία, και δεν μετρούν
+      στο ισοζύγιο δικαιοσύνης ούτε στις μηνιαίες αναφορές. Για μία μόνο ημέρα, άφησε το «έως» κενό.
+      Η κυκλική εναλλαγή <b>δεν</b> επηρεάζεται — συνεχίζει κανονικά μετά τις διακοπές.
+    </div>
+    <div id="holidays"></div>
+    <button class="btn ghost" id="addHoliday">+ Προσθήκη αργίας</button>
+  </div>
+
+  <div class="panel">
     <h2>Έλεγχος δικαιοσύνης</h2>
     <ul class="checks" id="checks"></ul>
     <div style="overflow-x:auto;margin-top:12px;">
@@ -225,9 +242,18 @@
 
   <div class="panel">
     <h2>Αποθήκευση</h2>
-    <label>GitHub token (το βάζεις μία φορά, μένει αποθηκευμένο σε αυτή τη συσκευή)</label>
+    <label>GitHub token</label>
     <input type="password" id="token" placeholder="github_pat_...">
+    <div class="savebar" style="margin-top:8px;">
+      <label style="display:flex;align-items:center;gap:7px;font-weight:600;margin:0;cursor:pointer;">
+        <input type="checkbox" id="rememberToken" style="width:auto;margin:0;"> Να το θυμάται αυτή η συσκευή
+      </label>
+      <button type="button" class="btn ghost" id="forgetToken">Διαγραφή αποθηκευμένου token</button>
+    </div>
     <div class="hint">
+      <b>Προσοχή:</b> αν επιλέξεις «να το θυμάται», το token αποθηκεύεται σε καθαρό κείμενο στον browser και
+      μπορεί να το δει όποιος χρησιμοποιεί το ίδιο προφίλ σε αυτόν τον υπολογιστή. Σε κοινόχρηστο μηχάνημα
+      άφησέ το ξεμαρκάριστο — τότε το κρατά μόνο μέχρι να κλείσεις την καρτέλα.<br>
       Δημιουργία: github.com → Settings → Developer settings → Fine-grained tokens → Generate new token.
       Repository access: μόνο το <b>efimeries</b>. Permissions: Contents → <b>Read and write</b>. Τίποτα άλλο.
     </div>
@@ -296,6 +322,10 @@
     return b;
   }
   function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  /* Κανονικοποίηση μόνο για συγκρίσεις (τόνοι, πεζά/κεφαλαία, διπλά κενά). Η εμφάνιση μένει ως έχει. */
+  function stripAccents(x){ return String(x).normalize("NFD").replace(/[\u0300-\u036f]/g,"").normalize("NFC"); }
+  function normKey(x){ return stripAccents(x).toUpperCase().replace(/\s+/g,""); }
+  function normName(x){ return stripAccents(x).toUpperCase().replace(/\s+/g," ").trim(); }
   function detectRepo(){
     const host = location.hostname;
     const m = host.match(/^([^.]+)\.github\.io$/);
@@ -306,13 +336,14 @@
   function cycleLabel(ck){ return CYCLE_TITLES[ck] + " (" + (state.cycleTimes[ck]||DEFAULT_CYCLE_TIMES[ck]) + ")"; }
 
   // ---------- day/cycle key parsing ----------
+  const DAY_UP_N = DAY_UP.map(normKey);
   function parseCycleKey(keyUp){
-    const parts = keyUp.split("_");
+    const parts = normKey(keyUp).split("_");
     let kind="base", rest=parts;
-    if(parts[0]==="ΑΝΑΠΛ"){ kind="backup"; rest=parts.slice(1); }
+    if(rest[0]==="ΑΝΑΠΛ"){ kind="backup"; rest=rest.slice(1); }
     if(rest.length!==2) return null;
     let [dayUp,cyc]=rest;
-    const di = DAY_UP.indexOf(dayUp); if(di===-1) return null;
+    const di = DAY_UP_N.indexOf(dayUp); if(di===-1) return null;
     if(cyc==="A") cyc="Α"; if(cyc==="B") cyc="Β";
     if(cyc!=="Α" && cyc!=="Β") return null;
     return { kind, day:DAYS[di], cycle:cyc };
@@ -334,8 +365,14 @@
     const base = (state.base[dayName] && state.base[dayName][ck]) || [];
     return benchOf(base, weekIndex(date, cs));
   }
+  function isHoliday(date){ return !!holidayFor(date); }
+  function holidayFor(date){
+    const iso = toISO(date);
+    return (state.holidays||[]).find(h=>h.from && iso>=h.from && iso<=(h.to||h.from)) || null;
+  }
   function allOnDutyThatDay(date){
     if(!state.cycleStart) return [];
+    if(isHoliday(date)) return [];
     const wd = date.getDay(); if(wd===0||wd===6) return [];
     const dayName = DAYS[wd-1];
     return CYCLE_KEYS.flatMap(ck=>cycleRegular(dayName, ck, date)).filter(Boolean);
@@ -343,12 +380,12 @@
 
   // ---------- parse / serialize ----------
   function parseDataText(text){
-    const cfg = { base:emptyDayMap(), backup:emptyDayMap(), overrides:[], cycleTimes:{} };
+    const cfg = { base:emptyDayMap(), backup:emptyDayMap(), overrides:[], cycleTimes:{}, holidays:[] };
     text.split(/\r?\n/).forEach(raw=>{
       const line = raw.trim();
       if(!line || line.startsWith("#")) return;
       const eq = line.indexOf("="); if(eq === -1) return;
-      const key = line.slice(0,eq).trim().toUpperCase();
+      const key = normKey(line.slice(0,eq));
       const val = line.slice(eq+1).trim();
       if(key==="CYCLE_START"){ const dt=parseAnyDate(val); cfg.cycleStart = dt ? toISO(dt) : ""; }
       else if(key==="LAST_UPDATED") cfg.lastUpdated = val;
@@ -357,6 +394,18 @@
       else if(key==="OVERRIDE"){
         const p = val.split(",").map(s=>s.trim());
         if(p.length>=3){ const dt = parseAnyDate(p[0]); if(dt) cfg.overrides.push({date:toISO(dt),absent:p[1],substitute:p[2]}); }
+      }
+      else if(key==="ΑΡΓΙΑ" || key==="ΑΡΓΙΕΣ" || key==="HOLIDAY"){
+        const parts = val.split(",");
+        const span  = parts[0].trim();
+        const label = parts.slice(1).join(",").trim();
+        const m = span.split(/\s*(?:-|–|—|έως|ως)\s*/).filter(Boolean);
+        const d1 = parseAnyDate(m[0]);
+        const d2 = m.length>1 ? parseAnyDate(m[1]) : d1;
+        if(d1 && d2){
+          const a = d1<=d2 ? d1 : d2, b = d1<=d2 ? d2 : d1;
+          cfg.holidays.push({ from:toISO(a), to:toISO(b), label:label||"Αργία" });
+        }
       } else {
         const pk = parseCycleKey(key);
         if(pk){
@@ -387,6 +436,12 @@
         const b = state.backup[d][ck]||["","","",""];
         if(b.some(x=>x && x.trim()!=="")) L.push("ΑΝΑΠΛ_"+DAY_UP[di]+"_"+ck+" = " + b.join("; "));
       });
+    });
+    L.push("");
+    (state.holidays||[]).forEach(h=>{
+      if(!h.from) return;
+      const span = (h.to && h.to!==h.from) ? (isoToDMY(h.from)+" - "+isoToDMY(h.to)) : isoToDMY(h.from);
+      L.push("ΑΡΓΙΑ = " + span + (h.label ? ", " + h.label : ""));
     });
     L.push("");
     state.overrides.forEach(ov=>{
@@ -487,7 +542,39 @@
   }
 
   // ---------- read UI -> state ----------
+  function renderHolidays(){
+    const box = document.getElementById("holidays");
+    if(!box) return;
+    const list = state.holidays || [];
+    if(!list.length){
+      box.innerHTML = '<div class="hint" style="margin:0 0 10px;">Δεν έχει οριστεί καμία αργία.</div>';
+      return;
+    }
+    box.innerHTML = list.map((h,i)=>
+      '<div class="holrow" data-i="'+i+'">'+
+        '<div class="fld"><span>Από</span><input type="date" class="holf" data-f="from" data-i="'+i+'" value="'+esc(h.from||"")+'"></div>'+
+        '<div class="fld"><span>Έως (προαιρετικό)</span><input type="date" class="holf" data-f="to" data-i="'+i+'" value="'+esc((h.to&&h.to!==h.from)?h.to:"")+'"></div>'+
+        '<div class="fld grow"><span>Περιγραφή</span><input type="text" class="holf" data-f="label" data-i="'+i+'" value="'+esc(h.label||"")+'" placeholder="π.χ. Διακοπές Χριστουγέννων"></div>'+
+        '<button type="button" class="btn ghost del" data-del="'+i+'">✕</button>'+
+      '</div>'
+    ).join("");
+  }
+  function pullHolidaysFromUI(){
+    document.querySelectorAll(".holf").forEach(inp=>{
+      const i = +inp.dataset.i, f = inp.dataset.f;
+      if(!state.holidays[i]) return;
+      state.holidays[i][f] = inp.value.trim();
+    });
+    state.holidays.forEach(h=>{
+      if(h.to && h.from && h.to < h.from){ const t=h.from; h.from=h.to; h.to=t; }
+      if(!h.to) h.to = h.from;
+      if(!h.label) h.label = "Αργία";
+    });
+    state.holidays = state.holidays.filter(h=>h.from);
+  }
+
   function pullFromUI(){
+    pullHolidaysFromUI();
     const csRaw = document.getElementById("cycleStart").value;
     const csDt = parseAnyDate(csRaw);
     state.cycleStart = csDt ? toISO(csDt) : "";
@@ -529,6 +616,7 @@
     });
     refreshCycleLabels();
     renderOverrides();
+    renderHolidays();
   }
 
   // ---------- fairness checks ----------
@@ -573,6 +661,9 @@
       const tag = "Κάλυψη #"+(i+1)+" ("+isoToDMY(ov.date)+")";
       if(ov.absent===ov.substitute)
         checks.push({ok:false,msg:tag+": ο απών και ο αναπληρωτής είναι το ίδιο άτομο."});
+      const holOv = ov.date ? holidayFor(parseISODate(ov.date)) : null;
+      if(holOv)
+        checks.push({ok:false,msg:tag+": η ημερομηνία πέφτει σε αργία («"+holOv.label+"») — δεν υπάρχει εφημερία εκείνη την ημέρα."});
       if(!names.includes(ov.absent))
         checks.push({ok:false,msg:tag+": το όνομα «"+ov.absent+"» δεν υπάρχει στο βασικό πρόγραμμα (πιθανό ορθογραφικό)."});
       if(!names.includes(ov.substitute))
@@ -691,7 +782,10 @@
   }
   function schoolDaysInRange(start,end){
     const days=[];
-    for(let d=new Date(start); d<=end; d=addDays(d,1)){ const wd=d.getDay(); if(wd!==0 && wd!==6) days.push(new Date(d)); }
+    for(let d=new Date(start); d<=end; d=addDays(d,1)){
+      const wd=d.getDay();
+      if(wd!==0 && wd!==6 && !isHoliday(d)) days.push(new Date(d));
+    }
     return days;
   }
   function rosterForDate(d){
@@ -853,6 +947,8 @@
     if(wd===0 || wd===6){ out.innerHTML = '<div class="ovempty">'+fmtDMY(d)+': Σαββατοκύριακο — δεν υπάρχει εφημερία.</div>'; return; }
     const cs = parseISODate(state.cycleStart);
     if(d < cs){ out.innerHTML = '<div class="ovempty">'+fmtDMY(d)+': πριν την έναρξη του κύκλου ('+isoToDMY(state.cycleStart)+').</div>'; return; }
+    const holD = holidayFor(d);
+    if(holD){ out.innerHTML = '<div class="ovempty">'+fmtDMY(d)+': αργία — '+esc(holD.label)+'. Δεν λειτουργεί το σχολείο.</div>'; return; }
     const r = rosterForDate(d);
     if(!r){ out.innerHTML = '<div class="ovempty">Το πρόγραμμα δεν έχει συμπληρωθεί για αυτή την ημέρα.</div>'; return; }
     const dc = DAY_COLORS[r.dayName];
@@ -1038,12 +1134,30 @@
     }
   });
 
+  document.getElementById("addHoliday").addEventListener("click", ()=>{
+    pullHolidaysFromUI();
+    state.holidays = state.holidays || [];
+    state.holidays.push({ from:"", to:"", label:"" });
+    renderHolidays(); runChecks();
+  });
+  document.getElementById("holidays").addEventListener("click", e=>{
+    const b = e.target.closest("[data-del]");
+    if(!b) return;
+    pullHolidaysFromUI();
+    state.holidays.splice(+b.dataset.del, 1);
+    renderHolidays(); runChecks();
+  });
+  document.getElementById("holidays").addEventListener("change", ()=>{
+    pullHolidaysFromUI(); renderHolidays(); runChecks(); renderDayView();
+  });
+
   // ---------- load ----------
   fetch("data.txt?_="+Date.now())
     .then(r=>{ if(!r.ok) throw 0; return r.text(); })
     .then(t=>{
       const cfg = parseDataText(t);
       state.base = cfg.base; state.overrides = cfg.overrides; state.backup = cfg.backup;
+      state.holidays = cfg.holidays || [];
       state.cycleStart = cfg.cycleStart||"";
       state.cycleTimes = { "Α": cfg.cycleTimes["Α"]||DEFAULT_CYCLE_TIMES["Α"], "Β": cfg.cycleTimes["Β"]||DEFAULT_CYCLE_TIMES["Β"] };
       if(state.cycleStart){
@@ -1057,8 +1171,37 @@
 
   // ---------- save ----------
   const tokenInp = document.getElementById("token");
-  try{ tokenInp.value = localStorage.getItem("efimeries_token")||""; }catch(e){}
-  tokenInp.addEventListener("change", ()=>{ try{ localStorage.setItem("efimeries_token", tokenInp.value.trim()); }catch(e){} });
+  const rememberInp = document.getElementById("rememberToken");
+  const TK = "efimeries_token";
+  function storedToken(){
+    try{ return localStorage.getItem(TK) || sessionStorage.getItem(TK) || ""; }catch(e){ return ""; }
+  }
+  function persistToken(){
+    const v = tokenInp.value.trim();
+    try{
+      localStorage.removeItem(TK); sessionStorage.removeItem(TK);
+      if(v) (rememberInp.checked ? localStorage : sessionStorage).setItem(TK, v);
+    }catch(e){}
+  }
+  try{ rememberInp.checked = !!localStorage.getItem(TK); }catch(e){}
+  tokenInp.value = storedToken();
+  tokenInp.addEventListener("change", persistToken);
+  rememberInp.addEventListener("change", persistToken);
+  document.getElementById("forgetToken").addEventListener("click", ()=>{
+    try{ localStorage.removeItem(TK); sessionStorage.removeItem(TK); }catch(e){}
+    tokenInp.value = ""; rememberInp.checked = false;
+    const st = document.getElementById("status");
+    st.className = "ok"; st.textContent = "Το token διαγράφηκε από αυτή τη συσκευή.";
+  });
+
+  /* UTF-8 → base64 χωρίς την καταργημένη unescape() */
+  function toBase64Utf8(str){
+    const bytes = new TextEncoder().encode(str);
+    let bin = "";
+    const CH = 0x8000;
+    for(let i=0;i<bytes.length;i+=CH) bin += String.fromCharCode.apply(null, bytes.subarray(i, i+CH));
+    return btoa(bin);
+  }
 
   state.repo = detectRepo();
   const statusEl = document.getElementById("status");
@@ -1076,11 +1219,17 @@
       const cur = await fetch(api, {headers});
       if(!cur.ok) throw new Error("Δεν βρέθηκε το data.txt ("+cur.status+"). Έλεγξε το token και τα δικαιώματα.");
       const curJson = await cur.json();
-      const content = btoa(unescape(encodeURIComponent(serialize())));
+      const content = toBase64Utf8(serialize());
       const res = await fetch(api, {
         method:"PUT", headers,
         body: JSON.stringify({ message:"Ενημέρωση εφημεριών από τη σελίδα διαχείρισης", content, sha: curJson.sha })
       });
+      if(res.status===409){
+        throw new Error("Κάποιος άλλος άλλαξε το data.txt στο μεταξύ. Φόρτωσε ξανά τη σελίδα (F5) για να δεις την τρέχουσα έκδοση και ξανακάνε τις αλλαγές σου, αλλιώς θα σβηστεί η δουλειά του.");
+      }
+      if(res.status===401 || res.status===403){
+        throw new Error("Το token δεν έγινε δεκτό ("+res.status+"). Έλεγξε αν έχει λήξει ή αν έχει δικαίωμα Contents → Read and write στο repository.");
+      }
       if(!res.ok){
         const err = await res.json().catch(()=>({}));
         throw new Error("Αποτυχία ("+res.status+"): "+(err.message||"άγνωστο σφάλμα"));
