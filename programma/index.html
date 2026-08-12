@@ -201,7 +201,51 @@
   }
 </style>
 </head>
+<style>
+  #saveAlert{display:none;position:sticky;top:0;z-index:9999;background:#b91c1c;color:#fff;
+    padding:11px 16px;font-weight:700;font-size:14px;line-height:1.45;
+    align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 4px 14px rgba(0,0,0,.25);}
+  #saveAlert.on{display:flex;}
+  #saveAlert button{background:#fff;color:#b91c1c;border:none;border-radius:8px;padding:7px 13px;
+    font-weight:800;font-size:13px;cursor:pointer;font-family:inherit;}
+  #saveAlert .txt{flex:1 1 320px;min-width:260px;}
+  #backupBar{display:none;background:#fef3c7;color:#78350f;border-bottom:1px solid #fcd34d;
+    padding:9px 16px;font-size:13.5px;font-weight:600;align-items:center;gap:11px;flex-wrap:wrap;}
+  #backupBar.on{display:flex;}
+  #backupBar button{background:#78350f;color:#fff;border:none;border-radius:8px;padding:6px 12px;
+    font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;}
+  #backupBar .dismiss{background:transparent;color:#78350f;text-decoration:underline;padding:6px 4px;font-weight:600;}
+  #saveTick{font-size:12px;color:#64748b;font-weight:600;white-space:nowrap;}
+  #saveTick.bad{color:#b91c1c;}
+  #genOverlay{display:none;position:fixed;inset:0;z-index:10000;background:rgba(15,23,42,.62);
+    align-items:center;justify-content:center;}
+  #genOverlay.on{display:flex;}
+  #genOverlay .box{background:#fff;border-radius:16px;padding:26px 30px;text-align:center;
+    max-width:340px;box-shadow:0 24px 60px -20px rgba(0,0,0,.5);}
+  #genOverlay h3{margin:0 0 6px;font-size:17px;}
+  #genOverlay p{margin:0;font-size:13.5px;color:#475569;line-height:1.5;}
+  #genOverlay .spin{width:34px;height:34px;margin:0 auto 14px;border:3px solid #e2e8f0;
+    border-top-color:#2563eb;border-radius:50%;animation:gspin .8s linear infinite;}
+  @keyframes gspin{to{transform:rotate(360deg);}}
+  @media print{ #saveAlert,#backupBar,#genOverlay{display:none !important;} }
+</style>
 <body>
+<div id="saveAlert">
+  <span class="txt">⚠ <b>Η αυτόματη αποθήκευση δεν λειτουργεί.</b> <span id="saveAlertWhy"></span>
+  Η δουλειά σου υπάρχει μόνο σε αυτή την καρτέλα και θα χαθεί αν την κλείσεις.</span>
+  <button onclick="saveProject()">💾 Κατέβασε αντίγραφο τώρα</button>
+</div>
+<div id="backupBar">
+  <span id="backupTxt"></span>
+  <button onclick="saveProject()">💾 Κατέβασε αντίγραφο</button>
+  <button class="dismiss" onclick="dismissBackupBar()">Όχι τώρα</button>
+</div>
+<div id="genOverlay"><div class="box">
+  <div class="spin"></div>
+  <h3>Δημιουργία προγράμματος…</h3>
+  <p>Ο υπολογισμός δοκιμάζει χιλιάδες συνδυασμούς. Μην κλείσεις την καρτέλα — μπορεί να χρειαστεί
+  μέχρι <span id="genLimitTxt">20</span> δευτερόλεπτα.</p>
+</div></div>
 <header>
   <div>
     <h1>📅 Ωρολόγιο Πρόγραμμα</h1>
@@ -215,6 +259,7 @@
     <button class="ghost" onclick="document.getElementById('importCsv').click()">⬆️ Εισαγωγή CSV</button>
     <input type="file" id="importCsv" accept=".csv" class="hidden" onchange="importAssignmentsCSV(event)">
     <button class="ghost danger" onclick="resetAll()">Καθαρισμός</button>
+    <span id="saveTick"></span>
   </div>
 </header>
 
@@ -867,7 +912,21 @@ function computeQuality(){
   return Math.max(0, 100-penalty);
 }
 
+const GEN_TIME_LIMIT_MS = 20000;
+/* Δείχνει την οθόνη αναμονής και αφήνει τον browser να τη ζωγραφίσει πριν αρχίσει ο υπολογισμός. */
 function autoGenerate(){
+  const ov = document.getElementById('genOverlay');
+  const lim = document.getElementById('genLimitTxt');
+  if(lim) lim.textContent = Math.round(GEN_TIME_LIMIT_MS/1000);
+  if(ov) ov.classList.add('on');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    setTimeout(()=>{
+      try{ autoGenerateRun(); }
+      finally{ if(ov) ov.classList.remove('on'); }
+    }, 20);
+  }));
+}
+function autoGenerateRun(){
   autoPairSplits();
   lastChanges=[];
   const D=S.settings.days.length,P=maxPeriods(), key=(d,p)=>d+'-'+p;
@@ -1018,9 +1077,13 @@ function autoGenerate(){
   });
 
   let steps=0; const LIMIT=1500000;
+  const t0=Date.now(); let timedOut=false;
   function bt(i){
     if(i>=toPlace.length)return true;
     if(++steps>LIMIT)return false;
+    /* Χρονικό όριο: χωρίς αυτό η καρτέλα μπορεί να μείνει κολλημένη επ' αόριστον. */
+    if((steps & 8191)===0 && Date.now()-t0 > GEN_TIME_LIMIT_MS){ timedOut=true; return false; }
+    if(timedOut) return false;
     const u=toPlace[i];
     for(const {d,p} of slots(u)){ place(u,d,p,true); if(bt(i+1))return true; place(u,d,p,false); }
     return false;
@@ -1029,12 +1092,15 @@ function autoGenerate(){
   if(ok){
     S.timetable=grid; save(); renderTimetable();
     const q=computeQuality();
+    backupDismissed=false; setTimeout(checkBackupAge,400);
     showMsg(`✅ Το πρόγραμμα δημιουργήθηκε χωρίς συγκρούσεις. Ποιότητα: ${q}%`+(fixedFail.length?` (⚠ ${fixedFail.length} κλειδώματα δεν εφαρμόστηκαν ακριβώς όπως ζητήθηκε)`:''),'ok');
     pushHistory();
   } else {
     greedyFill(grid,teacherBusy,roomBusy,teacherUnavail);
     S.timetable=grid; save(); renderTimetable();
-    showMsg('⚠️ Δεν βρέθηκε πλήρης λύση χωρίς συγκρούσεις. Τοποθετήθηκαν όσα ήταν εφικτά — πάτησε «🔧 Προτάσεις λύσεων» ή χαλάρωσε περιορισμούς.','err');
+    showMsg(timedOut
+      ? '⏱️ Ο υπολογισμός σταμάτησε στο όριο των '+Math.round(GEN_TIME_LIMIT_MS/1000)+' δευτερολέπτων. Τοποθετήθηκαν όσα ήταν εφικτά — πάτησε «🔧 Προτάσεις λύσεων», ή χαλάρωσε περιορισμούς και ξαναδοκίμασε.'
+      : '⚠️ Δεν βρέθηκε πλήρης λύση χωρίς συγκρούσεις. Τοποθετήθηκαν όσα ήταν εφικτά — πάτησε «🔧 Προτάσεις λύσεων» ή χαλάρωσε περιορισμούς.','err');
     pushHistory();
   }
 }
@@ -1895,7 +1961,12 @@ function exportCSV(){
   const csv='﻿'+rows.map(r=>r.map(c=>`"${(c||'').toString().replace(/"/g,'""')}"`).join(';')).join('\n');
   download('Orologio_Programma.csv',csv,'text/csv');
 }
-function saveProject(){ download('Orologio_Programma.json',JSON.stringify(S,null,2),'application/json'); }
+function saveProject(){
+  const d=new Date();
+  const stamp=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  download('Orologio_Programma_'+stamp+'.json', JSON.stringify(S,null,2), 'application/json');
+  noteBackupTaken();
+}
 function loadProject(e){
   const f=e.target.files[0]; if(!f)return;
   const r=new FileReader(); r.onload=()=>{try{S=JSON.parse(r.result);normalizeTimetable();renderAll();ttHistory=[];ttHistoryIdx=-1;pushHistory();alert('Το έργο φορτώθηκε.');}catch(err){alert('Σφάλμα ανάγνωσης αρχείου.');}};
@@ -1906,8 +1977,114 @@ function download(name,content,type){
   const a=document.createElement('a');a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);
 }
 
-function save(){try{localStorage.setItem('ttSchool',JSON.stringify(S));}catch(e){}}
-function load(){try{const d=localStorage.getItem('ttSchool');if(d){S=JSON.parse(d);normalizeTimetable();}}catch(e){}}
+const LS_KEY='ttSchool', LS_BACKUP='ttSchoolLastBackup';
+let saveBroken=false;
+
+function bytesLabel(n){ return n>1048576 ? (n/1048576).toFixed(1)+' MB' : Math.round(n/1024)+' KB'; }
+
+/* Αποθηκεύει ΚΑΙ επαληθεύει: ξαναδιαβάζει αμέσως ό,τι έγραψε.
+   Αν αποτύχει (γεμάτος χώρος, ιδιωτική περιήγηση, μπλοκαρισμένα δεδομένα ιστότοπου),
+   το λέει καθαρά αντί να το καταπιεί σιωπηλά. */
+function save(){
+  let payload;
+  try{ payload = JSON.stringify(S); }
+  catch(e){ flagSaveBroken('Τα δεδομένα δεν μπόρεσαν να μετατραπούν σε κείμενο.'); return false; }
+  try{
+    localStorage.setItem(LS_KEY, payload);
+    const back = localStorage.getItem(LS_KEY);
+    if(back === null || back.length !== payload.length){
+      flagSaveBroken('Ο browser δέχτηκε την εγγραφή αλλά τα δεδομένα δεν διαβάστηκαν σωστά πίσω.');
+      return false;
+    }
+  }catch(e){
+    const quota = (e && (e.name==='QuotaExceededError' || e.name==='NS_ERROR_DOM_QUOTA_REACHED' || e.code===22));
+    flagSaveBroken(quota
+      ? ('Ο αποθηκευτικός χώρος του browser γέμισε (το αρχείο σου είναι '+bytesLabel(payload.length)+').')
+      : 'Ο browser δεν επιτρέπει αποθήκευση σε αυτή τη σελίδα (ιδιωτική περιήγηση ή αποκλεισμένα δεδομένα ιστότοπου).');
+    return false;
+  }
+  clearSaveBroken();
+  markSaved();
+  checkBackupAge();
+  return true;
+}
+
+function flagSaveBroken(why){
+  saveBroken = true;
+  const bar = document.getElementById('saveAlert');
+  const w = document.getElementById('saveAlertWhy');
+  if(w) w.textContent = why;
+  if(bar) bar.classList.add('on');
+  const t = document.getElementById('saveTick');
+  if(t){ t.className='bad'; t.textContent='⚠ δεν αποθηκεύεται'; }
+}
+function clearSaveBroken(){
+  if(!saveBroken) return;
+  saveBroken = false;
+  const bar = document.getElementById('saveAlert');
+  if(bar) bar.classList.remove('on');
+}
+function markSaved(){
+  const t = document.getElementById('saveTick');
+  if(!t) return;
+  const d = new Date();
+  t.className='';
+  t.textContent = 'αποθηκεύτηκε ' + String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+
+function load(){
+  try{
+    const d = localStorage.getItem(LS_KEY);
+    if(d){ S = JSON.parse(d); normalizeTimetable(); }
+  }catch(e){
+    alert('Τα αποθηκευμένα δεδομένα δεν διαβάστηκαν (πιθανώς κατεστραμμένα). Ξεκινάς από κενό — αν έχεις αντίγραφο .json, φόρτωσέ το με «📂 Φόρτωση».');
+  }
+  /* Δοκιμή εγγραφής στην εκκίνηση, ώστε το πρόβλημα να φανεί ΠΡΙΝ δουλέψεις μια ώρα. */
+  try{
+    localStorage.setItem('ttProbe','1');
+    if(localStorage.getItem('ttProbe')!=='1') throw new Error('probe');
+    localStorage.removeItem('ttProbe');
+  }catch(e){
+    flagSaveBroken('Ο browser δεν επιτρέπει αποθήκευση σε αυτή τη σελίδα.');
+  }
+}
+
+/* ---- υπενθύμιση αντιγράφου ασφαλείας ---- */
+let backupDismissed=false;
+function daysSinceBackup(){
+  try{
+    const v = localStorage.getItem(LS_BACKUP);
+    if(!v) return null;
+    return Math.floor((Date.now() - Number(v)) / 86400000);
+  }catch(e){ return null; }
+}
+function checkBackupAge(){
+  const bar = document.getElementById('backupBar');
+  if(!bar || backupDismissed || saveBroken) return;
+  if(!S.classes.length && !S.teachers.length){ bar.classList.remove('on'); return; }
+  const d = daysSinceBackup();
+  if(d === null){
+    document.getElementById('backupTxt').innerHTML =
+      'Δεν έχεις κατεβάσει ποτέ αντίγραφο ασφαλείας. Τα δεδομένα ζουν <b>μόνο σε αυτόν τον browser</b> — ένας καθαρισμός ιστορικού τα σβήνει.';
+    bar.classList.add('on');
+  } else if(d >= 7){
+    document.getElementById('backupTxt').innerHTML =
+      'Τελευταίο αντίγραφο ασφαλείας: πριν <b>'+d+' ημέρες</b>. Καλό είναι να κατεβάσεις ένα νέο.';
+    bar.classList.add('on');
+  } else {
+    bar.classList.remove('on');
+  }
+}
+function dismissBackupBar(){
+  backupDismissed = true;
+  document.getElementById('backupBar').classList.remove('on');
+}
+function noteBackupTaken(){
+  try{ localStorage.setItem(LS_BACKUP, String(Date.now())); }catch(e){}
+  backupDismissed = false;
+  const bar = document.getElementById('backupBar');
+  if(bar) bar.classList.remove('on');
+}
 function resetAll(){if(confirm('Διαγραφή όλων των δεδομένων;')){localStorage.removeItem('ttSchool');S={settings:{days:["Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή"],periodsPerDay:[7,7,7,7,7],splitGroups:JSON.parse(JSON.stringify(DEFAULT_GROUPS)),maxConsecutive:0,avoidSameDaySubject:true,abWeeks:false,breakPeriod:[-1,-1,-1,-1,-1]},teachers:[],classes:[],rooms:[],subjects:[],assignments:[],timetable:{}};ttHistory=[];ttHistoryIdx=-1;renderAll();pushHistory();}}
 
 function esc(s){return (s||'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -1962,6 +2139,10 @@ function loadSample(){
 buildTabs(); load();
 if(!S.classes.length && !S.teachers.length){ buildDemoData(); renderAll(); autoGenerate(); gotoTimetable('all'); }
 else { renderAll(); pushHistory(); }
+checkBackupAge();
+window.addEventListener('beforeunload', e=>{
+  if(saveBroken){ e.preventDefault(); e.returnValue=''; return ''; }
+});
 </script>
 </body>
 </html>
