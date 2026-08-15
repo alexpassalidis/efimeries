@@ -1,0 +1,1060 @@
+{
+  "settings": {
+    "days": [
+      "Δευτέρα",
+      "Τρίτη",
+      "Τετάρτη",
+      "Πέμπτη",
+      "Παρασκευή"
+    ],
+    "periodsPerDay": [
+      7,
+      7,
+      7,
+      7,
+      6
+    ],
+    "splitGroups": [
+      [
+        "Γαλλικά",
+        "Γερμανικά"
+      ],
+      [
+        "Τεχνολογία",
+        "Πληροφορική"
+      ]
+    ],
+    "maxConsecutive": 0,
+    "avoidSameDaySubject": true,
+    "abWeeks": false,
+    "breakPeriod": [
+      -1,
+      -1,
+      -1,
+      -1,
+      -1
+    ]
+  },
+  "teachers": [
+    {
+      "id": "2z05dht",
+      "name": "Γεωργίου (Φυσικές Επ.)",
+      "unavail": [],
+      "maxPerDay": null,
+      "pref": ""
+    },
+    {
+      "id": "9epxfpg",
+      "name": "Μακρή (Φυσικές Επ.)",
+      "unavail": [],
+      "maxPerDay": null,
+      "pref": ""
+    },
+    {
+      "id": "cx120k0",
+      "name": "Παπαγιάννη (Θρησκευτικά)",
+      "unavail": [],
+      "maxPerDay": null,
+      "pref": ""
+    },
+    {
+      "id": "r0v9f5x",
+      "name": "Νικολάου (Γυμναστής)",
+      "unavail": [],
+      "maxPerDay": null,
+      "pref": ""
+    },
+    {
+      "id": "1r6llyg",
+      "name": "Ράπτη (Γυμνάστρια)",
+      "unavail": [],
+      "maxPerDay": null,
+      "pref": ""
+    },
+    {
+      "id": "jil2age",
+      "name": "Αλεξίου (Μουσική)",
+      "unavail": [],
+      "maxPerDay": null,
+      "pref": ""
+    },
+    {
+      "id": "99zbvut",
+      "name": "Στεφάνου (Καλλιτεχνικά)",
+      "unavail": [],
+      "maxPerDay": null,
+      "pref": ""
+    },
+    {
+      "id": "8kxd3tv",
+      "name": "Dubois (Γαλλικά)",
+      "unavail": [],
+      "maxPerDay": null,
+      "pref": ""
+    },
+    {
+      "id": "2hyq3td",
+      "name": "Müller (Γερμανικά)",
+      "unavail": [],
+      "maxPerDay": null,
+      "pref": ""
+    },
+    {
+      "id": "ielpa5w",
+      "name": "Αντωνίου (Τεχνολογία)",
+      "unavail": [],
+      "maxPerDay": null,
+      "pref": ""
+    },
+    {
+      "id": "ms33cya",
+      "name": "Passalidis",
+      "unavail": [],
+      "maxPerDay": null,
+      "pref": ""
+    }
+  ],
+  "classes": [
+    {
+      "id": "m53o0yp",
+      "name": "Α1"
+    },
+    {
+      "id": "4qnqbk5",
+      "name": "Α2"
+    },
+    {
+      "id": "4fue6px",
+      "name": "Β1"
+    },
+    {
+      "id": "k619rjq",
+      "name": "Β2"
+    }
+  ],
+  "rooms": [
+    {
+      "id": "a139ljq",
+      "name": "Αίθουσα Ξ.Γλ. 1"
+    },
+    {
+      "id": "ze9fv7b",
+      "name": "Αίθουσα Ξ.Γλ. 2"
+    },
+    {
+      "id": "qc9eftg",
+      "name": "Αίθουσα Τεχνολογίας"
+    }
+  ],
+  "subjects": [
+    {
+      "id": "jalkjl1",
+      "name": "Νέα Ελληνικά",
+      "color": "#fca5a5",
+      "double": false
+    },
+    {
+      "id": "c9ubebr",
+      "name": "Αρχαία",
+      "color": "#fcd34d",
+      "double": false
+    },
+    {
+      "id": "6zw3vsx",
+      "name": "Ιστορία",
+      "color": "#f9a8d4",
+      "double": false
+    },
+    {
+      "id": "5aop7nc",
+      "name": "Μαθηματικά",
+      "color": "#93c5fd",
+      "double": false
+    },
+    {
+      "id": "ia2xtvg",
+      "name": "Φυσικές Επιστήμες",
+      "color": "#86efac",
+      "double": false
+    },
+    {
+      "id": "yc6bcnn",
+      "name": "Αγγλικά",
+      "color": "#fdba74",
+      "double": false
+    },
+    {
+      "id": "1m1f96v",
+      "name": "Θρησκευτικά",
+      "color": "#d9f99d",
+      "double": false
+    },
+    {
+      "id": "32r0mq9",
+      "name": "Γυμναστική",
+      "color": "#c4b5fd",
+      "double": false
+    },
+    {
+      "id": "40onbww",
+      "name": "Μουσική",
+      "color": "#a5f3fc",
+      "double": false
+    },
+    {
+      "id": "aze2bm8",
+      "name": "Καλλιτεχνικά",
+      "color": "#f5d0fe",
+      "double": false
+    },
+    {
+      "id": "dlztap2",
+      "name": "Γαλλικά",
+      "color": "#67e8f9",
+      "double": false
+    },
+    {
+      "id": "hawk4od",
+      "name": "Γερμανικά",
+      "color": "#fde047",
+      "double": false
+    },
+    {
+      "id": "sqdivsq",
+      "name": "Τεχνολογία",
+      "color": "#fda4af",
+      "double": false
+    },
+    {
+      "id": "5l55y40",
+      "name": "Πληροφορική",
+      "color": "#a5b4fc",
+      "double": false
+    }
+  ],
+  "assignments": [
+    {
+      "id": "rrw6on0",
+      "classId": "m53o0yp",
+      "subjectId": "ia2xtvg",
+      "teacherId": "2z05dht",
+      "roomId": "",
+      "hours": 3,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "scsiyd8",
+      "classId": "m53o0yp",
+      "subjectId": "1m1f96v",
+      "teacherId": "cx120k0",
+      "roomId": "",
+      "hours": 1,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "2jwnrer",
+      "classId": "m53o0yp",
+      "subjectId": "32r0mq9",
+      "teacherId": "r0v9f5x",
+      "roomId": "",
+      "hours": 2,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "09od5ws",
+      "classId": "m53o0yp",
+      "subjectId": "40onbww",
+      "teacherId": "jil2age",
+      "roomId": "",
+      "hours": 1,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "txk4oyf",
+      "classId": "m53o0yp",
+      "subjectId": "aze2bm8",
+      "teacherId": "99zbvut",
+      "roomId": "",
+      "hours": 1,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "x57t4jl",
+      "classId": "m53o0yp",
+      "subjectId": "dlztap2",
+      "teacherId": "8kxd3tv",
+      "roomId": "a139ljq",
+      "hours": 2,
+      "pgroup": "Ξένη Γλώσσα",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "4659661",
+      "classId": "m53o0yp",
+      "subjectId": "hawk4od",
+      "teacherId": "2hyq3td",
+      "roomId": "ze9fv7b",
+      "hours": 2,
+      "pgroup": "Ξένη Γλώσσα",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "3cf21vg",
+      "classId": "m53o0yp",
+      "subjectId": "sqdivsq",
+      "teacherId": "ielpa5w",
+      "roomId": "qc9eftg",
+      "hours": 2,
+      "pgroup": "Τεχν./Πληρ.",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "bu2ygfg",
+      "classId": "4qnqbk5",
+      "subjectId": "ia2xtvg",
+      "teacherId": "2z05dht",
+      "roomId": "",
+      "hours": 3,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "85exg15",
+      "classId": "4qnqbk5",
+      "subjectId": "1m1f96v",
+      "teacherId": "cx120k0",
+      "roomId": "",
+      "hours": 1,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "rlm6djn",
+      "classId": "4qnqbk5",
+      "subjectId": "32r0mq9",
+      "teacherId": "r0v9f5x",
+      "roomId": "",
+      "hours": 2,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "ay2ekls",
+      "classId": "4qnqbk5",
+      "subjectId": "40onbww",
+      "teacherId": "jil2age",
+      "roomId": "",
+      "hours": 1,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "6no2v9f",
+      "classId": "4qnqbk5",
+      "subjectId": "aze2bm8",
+      "teacherId": "99zbvut",
+      "roomId": "",
+      "hours": 1,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "ndt5abh",
+      "classId": "4qnqbk5",
+      "subjectId": "dlztap2",
+      "teacherId": "8kxd3tv",
+      "roomId": "a139ljq",
+      "hours": 2,
+      "pgroup": "Ξένη Γλώσσα",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "0yzndkh",
+      "classId": "4qnqbk5",
+      "subjectId": "hawk4od",
+      "teacherId": "2hyq3td",
+      "roomId": "ze9fv7b",
+      "hours": 2,
+      "pgroup": "Ξένη Γλώσσα",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "dhop7br",
+      "classId": "4qnqbk5",
+      "subjectId": "sqdivsq",
+      "teacherId": "ielpa5w",
+      "roomId": "qc9eftg",
+      "hours": 2,
+      "pgroup": "Τεχν./Πληρ.",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "hpxum3f",
+      "classId": "4fue6px",
+      "subjectId": "ia2xtvg",
+      "teacherId": "2z05dht",
+      "roomId": "",
+      "hours": 3,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "7jl7860",
+      "classId": "4fue6px",
+      "subjectId": "1m1f96v",
+      "teacherId": "cx120k0",
+      "roomId": "",
+      "hours": 1,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "n8trqo3",
+      "classId": "4fue6px",
+      "subjectId": "32r0mq9",
+      "teacherId": "r0v9f5x",
+      "roomId": "",
+      "hours": 2,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "i4s5jz4",
+      "classId": "4fue6px",
+      "subjectId": "40onbww",
+      "teacherId": "jil2age",
+      "roomId": "",
+      "hours": 1,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "7qzucfc",
+      "classId": "4fue6px",
+      "subjectId": "aze2bm8",
+      "teacherId": "99zbvut",
+      "roomId": "",
+      "hours": 1,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "fvxh9ur",
+      "classId": "4fue6px",
+      "subjectId": "dlztap2",
+      "teacherId": "8kxd3tv",
+      "roomId": "a139ljq",
+      "hours": 2,
+      "pgroup": "Ξένη Γλώσσα",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "taqsg1y",
+      "classId": "4fue6px",
+      "subjectId": "hawk4od",
+      "teacherId": "2hyq3td",
+      "roomId": "ze9fv7b",
+      "hours": 2,
+      "pgroup": "Ξένη Γλώσσα",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "nn6jblp",
+      "classId": "4fue6px",
+      "subjectId": "sqdivsq",
+      "teacherId": "ielpa5w",
+      "roomId": "qc9eftg",
+      "hours": 2,
+      "pgroup": "Τεχν./Πληρ.",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "3p9dia9",
+      "classId": "k619rjq",
+      "subjectId": "ia2xtvg",
+      "teacherId": "9epxfpg",
+      "roomId": "",
+      "hours": 3,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "21xxnmw",
+      "classId": "k619rjq",
+      "subjectId": "1m1f96v",
+      "teacherId": "cx120k0",
+      "roomId": "",
+      "hours": 1,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "5k69oub",
+      "classId": "k619rjq",
+      "subjectId": "32r0mq9",
+      "teacherId": "1r6llyg",
+      "roomId": "",
+      "hours": 2,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "plebwms",
+      "classId": "k619rjq",
+      "subjectId": "40onbww",
+      "teacherId": "jil2age",
+      "roomId": "",
+      "hours": 1,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "1m3s3yf",
+      "classId": "k619rjq",
+      "subjectId": "aze2bm8",
+      "teacherId": "99zbvut",
+      "roomId": "",
+      "hours": 1,
+      "pgroup": "",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "xsm6ee8",
+      "classId": "k619rjq",
+      "subjectId": "dlztap2",
+      "teacherId": "8kxd3tv",
+      "roomId": "a139ljq",
+      "hours": 2,
+      "pgroup": "Ξένη Γλώσσα",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "rbiakm9",
+      "classId": "k619rjq",
+      "subjectId": "hawk4od",
+      "teacherId": "2hyq3td",
+      "roomId": "ze9fv7b",
+      "hours": 2,
+      "pgroup": "Ξένη Γλώσσα",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    },
+    {
+      "id": "4vc6c8i",
+      "classId": "k619rjq",
+      "subjectId": "sqdivsq",
+      "teacherId": "ielpa5w",
+      "roomId": "qc9eftg",
+      "hours": 2,
+      "pgroup": "Τεχν./Πληρ.",
+      "fixDay": -1,
+      "fixPeriod": -1,
+      "week": "both"
+    }
+  ],
+  "timetable": {
+    "m53o0yp": [
+      [
+        null,
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "rrw6on0"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "txk4oyf"
+          ],
+          "locked": false
+        },
+        null,
+        null
+      ],
+      [
+        null,
+        {
+          "assignmentIds": [
+            "2jwnrer"
+          ],
+          "locked": false
+        },
+        null,
+        {
+          "assignmentIds": [
+            "rrw6on0"
+          ],
+          "locked": false
+        },
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "x57t4jl",
+            "4659661"
+          ],
+          "locked": false
+        }
+      ],
+      [
+        {
+          "assignmentIds": [
+            "09od5ws"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "rrw6on0"
+          ],
+          "locked": false
+        },
+        null,
+        {
+          "assignmentIds": [
+            "3cf21vg"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "2jwnrer"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "x57t4jl",
+            "4659661"
+          ],
+          "locked": false
+        },
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "3cf21vg"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "scsiyd8"
+          ],
+          "locked": false
+        },
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    ],
+    "4qnqbk5": [
+      [
+        {
+          "assignmentIds": [
+            "dhop7br"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "6no2v9f"
+          ],
+          "locked": false
+        },
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        {
+          "assignmentIds": [
+            "ndt5abh",
+            "0yzndkh"
+          ],
+          "locked": false
+        },
+        null,
+        null,
+        null,
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "rlm6djn"
+          ],
+          "locked": false
+        }
+      ],
+      [
+        {
+          "assignmentIds": [
+            "bu2ygfg"
+          ],
+          "locked": false
+        },
+        null,
+        null,
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "ay2ekls"
+          ],
+          "locked": false
+        },
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "85exg15"
+          ],
+          "locked": false
+        },
+        null,
+        {
+          "assignmentIds": [
+            "bu2ygfg"
+          ],
+          "locked": false
+        },
+        null
+      ],
+      [
+        {
+          "assignmentIds": [
+            "ndt5abh",
+            "0yzndkh"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "bu2ygfg"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "rlm6djn"
+          ],
+          "locked": false
+        },
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "dhop7br"
+          ],
+          "locked": false
+        },
+        null
+      ]
+    ],
+    "4fue6px": [
+      [
+        null,
+        {
+          "assignmentIds": [
+            "i4s5jz4"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "fvxh9ur",
+            "taqsg1y"
+          ],
+          "locked": false
+        },
+        null,
+        {
+          "assignmentIds": [
+            "nn6jblp"
+          ],
+          "locked": false
+        },
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "hpxum3f"
+          ],
+          "locked": false
+        }
+      ],
+      [
+        null,
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "7jl7860"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "nn6jblp"
+          ],
+          "locked": false
+        },
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "n8trqo3"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "7qzucfc"
+          ],
+          "locked": false
+        },
+        null,
+        {
+          "assignmentIds": [
+            "fvxh9ur",
+            "taqsg1y"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "hpxum3f"
+          ],
+          "locked": false
+        }
+      ],
+      [
+        {
+          "assignmentIds": [
+            "n8trqo3"
+          ],
+          "locked": false
+        },
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "hpxum3f"
+          ],
+          "locked": false
+        },
+        null,
+        null,
+        null
+      ]
+    ],
+    "k619rjq": [
+      [
+        null,
+        null,
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "5k69oub"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "4vc6c8i"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "3p9dia9"
+          ],
+          "locked": false
+        }
+      ],
+      [
+        null,
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "3p9dia9"
+          ],
+          "locked": false
+        },
+        null,
+        {
+          "assignmentIds": [
+            "4vc6c8i"
+          ],
+          "locked": false
+        },
+        {
+          "assignmentIds": [
+            "1m3s3yf"
+          ],
+          "locked": false
+        }
+      ],
+      [
+        {
+          "assignmentIds": [
+            "xsm6ee8",
+            "rbiakm9"
+          ],
+          "locked": false
+        },
+        null,
+        null,
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "21xxnmw"
+          ],
+          "locked": false
+        },
+        null
+      ],
+      [
+        null,
+        {
+          "assignmentIds": [
+            "xsm6ee8",
+            "rbiakm9"
+          ],
+          "locked": false
+        },
+        null,
+        null,
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "5k69oub"
+          ],
+          "locked": false
+        }
+      ],
+      [
+        {
+          "assignmentIds": [
+            "3p9dia9"
+          ],
+          "locked": false
+        },
+        null,
+        null,
+        {
+          "assignmentIds": [
+            "plebwms"
+          ],
+          "locked": false
+        },
+        null,
+        null,
+        null
+      ]
+    ]
+  },
+  "_serverStamp": "2026-08-15T14:02:47.333Z"
+}
