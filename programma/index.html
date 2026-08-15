@@ -215,9 +215,11 @@
   #backupBar button{background:#78350f;color:#fff;border:none;border-radius:8px;padding:6px 12px;
     font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;}
   #backupBar .dismiss{background:transparent;color:#78350f;text-decoration:underline;padding:6px 4px;font-weight:600;}
-  #saveTick{font-size:12px;color:#64748b;font-weight:600;white-space:nowrap;}
-  #saveTick.bad{color:#b91c1c;}
-  #srcTick{font-size:12px;color:#64748b;font-weight:600;white-space:nowrap;}
+  #saveTick,#srcTick{font-size:12px;font-weight:700;white-space:nowrap;color:#fff;
+    background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+    border-radius:999px;padding:5px 11px;letter-spacing:.01em;}
+  #saveTick:empty,#srcTick:empty{display:none;}
+  #saveTick.bad{background:#fecaca;border-color:#fca5a5;color:#7f1d1d;}
   #genOverlay{display:none;position:fixed;inset:0;z-index:10000;background:rgba(15,23,42,.62);
     align-items:center;justify-content:center;}
   #genOverlay.on{display:flex;}
@@ -2059,7 +2061,7 @@ const SERVER_FILE = 'programma.json';
 function stampOf(obj){ return (obj && obj._serverStamp) ? obj._serverStamp : null; }
 function showSource(txt){
   const el = document.getElementById('srcTick');
-  if(el) el.textContent = txt ? ('· ' + txt) : '';
+  if(el) el.textContent = txt || '';
 }
 
 /* Κατεβάζει το αρχείο που θα ανεβάσεις στο repository. Το όνομα πρέπει να μείνει programma.json. */
