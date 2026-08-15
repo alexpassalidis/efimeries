@@ -37,63 +37,6 @@
   },
   "teachers": [
     {
-      "id": "35n9icy",
-      "name": "Παπαδόπουλος (Μαθ.)",
-      "unavail": [
-        "1-1",
-        "3-3",
-        "1-4"
-      ],
-      "maxPerDay": null,
-      "pref": ""
-    },
-    {
-      "id": "8up4iir",
-      "name": "Δήμου (Μαθ.)",
-      "unavail": [
-        "2-1"
-      ],
-      "maxPerDay": null,
-      "pref": ""
-    },
-    {
-      "id": "7h62w2r",
-      "name": "Ιωάννου (Φιλόλογος)",
-      "unavail": [
-        "2-4",
-        "3-2",
-        "4-1"
-      ],
-      "maxPerDay": null,
-      "pref": ""
-    },
-    {
-      "id": "bdmpddf",
-      "name": "Βασιλείου (Φιλόλογος)",
-      "unavail": [],
-      "maxPerDay": null,
-      "pref": ""
-    },
-    {
-      "id": "d4xcr2q",
-      "name": "Κωνσταντίνου (Φιλόλογος)",
-      "unavail": [
-        "4-3"
-      ],
-      "maxPerDay": null,
-      "pref": ""
-    },
-    {
-      "id": "9u59ynv",
-      "name": "Smith (Αγγλικά)",
-      "unavail": [
-        "1-2",
-        "2-4"
-      ],
-      "maxPerDay": null,
-      "pref": ""
-    },
-    {
       "id": "2z05dht",
       "name": "Γεωργίου (Φυσικές Επ.)",
       "unavail": [],
@@ -166,7 +109,9 @@
     {
       "id": "ms33cya",
       "name": "Passalidis",
-      "unavail": []
+      "unavail": [],
+      "maxPerDay": null,
+      "pref": ""
     }
   ],
   "classes": [
@@ -289,72 +234,12 @@
   ],
   "assignments": [
     {
-      "id": "y3rvxd5",
-      "classId": "m53o0yp",
-      "subjectId": "jalkjl1",
-      "teacherId": "7h62w2r",
-      "roomId": "",
-      "hours": 4,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "vr6j7hl",
-      "classId": "m53o0yp",
-      "subjectId": "c9ubebr",
-      "teacherId": "7h62w2r",
-      "roomId": "",
-      "hours": 3,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "oile49y",
-      "classId": "m53o0yp",
-      "subjectId": "6zw3vsx",
-      "teacherId": "7h62w2r",
-      "roomId": "",
-      "hours": 2,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "hm0pflk",
-      "classId": "m53o0yp",
-      "subjectId": "5aop7nc",
-      "teacherId": "35n9icy",
-      "roomId": "",
-      "hours": 4,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
       "id": "rrw6on0",
       "classId": "m53o0yp",
       "subjectId": "ia2xtvg",
       "teacherId": "2z05dht",
       "roomId": "",
       "hours": 3,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "vnnmfb7",
-      "classId": "m53o0yp",
-      "subjectId": "yc6bcnn",
-      "teacherId": "9u59ynv",
-      "roomId": "",
-      "hours": 2,
       "pgroup": "",
       "fixDay": -1,
       "fixPeriod": -1,
@@ -445,72 +330,12 @@
       "week": "both"
     },
     {
-      "id": "kjxep7n",
-      "classId": "4qnqbk5",
-      "subjectId": "jalkjl1",
-      "teacherId": "7h62w2r",
-      "roomId": "",
-      "hours": 4,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "djcqvfb",
-      "classId": "4qnqbk5",
-      "subjectId": "c9ubebr",
-      "teacherId": "7h62w2r",
-      "roomId": "",
-      "hours": 3,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "o7angfk",
-      "classId": "4qnqbk5",
-      "subjectId": "6zw3vsx",
-      "teacherId": "7h62w2r",
-      "roomId": "",
-      "hours": 2,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "rir11kp",
-      "classId": "4qnqbk5",
-      "subjectId": "5aop7nc",
-      "teacherId": "35n9icy",
-      "roomId": "",
-      "hours": 4,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
       "id": "bu2ygfg",
       "classId": "4qnqbk5",
       "subjectId": "ia2xtvg",
       "teacherId": "2z05dht",
       "roomId": "",
       "hours": 3,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "rhgxlaz",
-      "classId": "4qnqbk5",
-      "subjectId": "yc6bcnn",
-      "teacherId": "9u59ynv",
-      "roomId": "",
-      "hours": 2,
       "pgroup": "",
       "fixDay": -1,
       "fixPeriod": -1,
@@ -601,72 +426,12 @@
       "week": "both"
     },
     {
-      "id": "vb49up1",
-      "classId": "4fue6px",
-      "subjectId": "jalkjl1",
-      "teacherId": "bdmpddf",
-      "roomId": "",
-      "hours": 4,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "5lbqggo",
-      "classId": "4fue6px",
-      "subjectId": "c9ubebr",
-      "teacherId": "bdmpddf",
-      "roomId": "",
-      "hours": 3,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "z4e95b3",
-      "classId": "4fue6px",
-      "subjectId": "6zw3vsx",
-      "teacherId": "bdmpddf",
-      "roomId": "",
-      "hours": 2,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "oqta64j",
-      "classId": "4fue6px",
-      "subjectId": "5aop7nc",
-      "teacherId": "35n9icy",
-      "roomId": "",
-      "hours": 4,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
       "id": "hpxum3f",
       "classId": "4fue6px",
       "subjectId": "ia2xtvg",
       "teacherId": "2z05dht",
       "roomId": "",
       "hours": 3,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "ltc6y3r",
-      "classId": "4fue6px",
-      "subjectId": "yc6bcnn",
-      "teacherId": "9u59ynv",
-      "roomId": "",
-      "hours": 2,
       "pgroup": "",
       "fixDay": -1,
       "fixPeriod": -1,
@@ -757,72 +522,12 @@
       "week": "both"
     },
     {
-      "id": "hc2e3zl",
-      "classId": "k619rjq",
-      "subjectId": "jalkjl1",
-      "teacherId": "bdmpddf",
-      "roomId": "",
-      "hours": 4,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "dfdj0mc",
-      "classId": "k619rjq",
-      "subjectId": "c9ubebr",
-      "teacherId": "bdmpddf",
-      "roomId": "",
-      "hours": 3,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "eynfo3g",
-      "classId": "k619rjq",
-      "subjectId": "6zw3vsx",
-      "teacherId": "bdmpddf",
-      "roomId": "",
-      "hours": 2,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "flfznca",
-      "classId": "k619rjq",
-      "subjectId": "5aop7nc",
-      "teacherId": "8up4iir",
-      "roomId": "",
-      "hours": 4,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
       "id": "3p9dia9",
       "classId": "k619rjq",
       "subjectId": "ia2xtvg",
       "teacherId": "9epxfpg",
       "roomId": "",
       "hours": 3,
-      "pgroup": "",
-      "fixDay": -1,
-      "fixPeriod": -1,
-      "week": "both"
-    },
-    {
-      "id": "kms2oi6",
-      "classId": "k619rjq",
-      "subjectId": "yc6bcnn",
-      "teacherId": "9u59ynv",
-      "roomId": "",
-      "hours": 2,
       "pgroup": "",
       "fixDay": -1,
       "fixPeriod": -1,
@@ -917,18 +622,8 @@
     "m53o0yp": [
       [
         null,
-        {
-          "assignmentIds": [
-            "y3rvxd5"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "hm0pflk"
-          ],
-          "locked": false
-        },
+        null,
+        null,
         {
           "assignmentIds": [
             "rrw6on0"
@@ -941,21 +636,11 @@
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "vr6j7hl"
-          ],
-          "locked": false
-        },
+        null,
         null
       ],
       [
-        {
-          "assignmentIds": [
-            "hm0pflk"
-          ],
-          "locked": false
-        },
+        null,
         {
           "assignmentIds": [
             "2jwnrer"
@@ -969,18 +654,8 @@
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "y3rvxd5"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "oile49y"
-          ],
-          "locked": false
-        },
+        null,
+        null,
         {
           "assignmentIds": [
             "x57t4jl",
@@ -1002,16 +677,10 @@
           ],
           "locked": false
         },
+        null,
         {
           "assignmentIds": [
-            "hm0pflk"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "3cf21vg",
-            "hhh8v6k"
+            "3cf21vg"
           ],
           "locked": false
         },
@@ -1031,23 +700,12 @@
         null
       ],
       [
-        {
-          "assignmentIds": [
-            "vnnmfb7"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "y3rvxd5"
-          ],
-          "locked": false
-        },
+        null,
+        null,
         null,
         {
           "assignmentIds": [
-            "3cf21vg",
-            "hhh8v6k"
+            "3cf21vg"
           ],
           "locked": false
         },
@@ -1057,45 +715,15 @@
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "vr6j7hl"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "hm0pflk"
-          ],
-          "locked": false
-        }
+        null,
+        null
       ],
       [
-        {
-          "assignmentIds": [
-            "y3rvxd5"
-          ],
-          "locked": false
-        },
         null,
-        {
-          "assignmentIds": [
-            "vr6j7hl"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "vnnmfb7"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "oile49y"
-          ],
-          "locked": false
-        },
+        null,
+        null,
+        null,
+        null,
         null,
         null
       ]
@@ -1104,8 +732,7 @@
       [
         {
           "assignmentIds": [
-            "dhop7br",
-            "y008o59"
+            "dhop7br"
           ],
           "locked": false
         },
@@ -1115,31 +742,11 @@
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "djcqvfb"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "rir11kp"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "o7angfk"
-          ],
-          "locked": false
-        },
         null,
-        {
-          "assignmentIds": [
-            "kjxep7n"
-          ],
-          "locked": false
-        }
+        null,
+        null,
+        null,
+        null
       ],
       [
         {
@@ -1149,24 +756,9 @@
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "kjxep7n"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "djcqvfb"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "rir11kp"
-          ],
-          "locked": false
-        },
+        null,
+        null,
+        null,
         null,
         null,
         {
@@ -1183,24 +775,9 @@
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "o7angfk"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "rhgxlaz"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "djcqvfb"
-          ],
-          "locked": false
-        },
+        null,
+        null,
+        null,
         null,
         {
           "assignmentIds": [
@@ -1208,12 +785,7 @@
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "kjxep7n"
-          ],
-          "locked": false
-        }
+        null
       ],
       [
         null,
@@ -1225,24 +797,14 @@
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "rir11kp"
-          ],
-          "locked": false
-        },
+        null,
         {
           "assignmentIds": [
             "bu2ygfg"
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "rhgxlaz"
-          ],
-          "locked": false
-        }
+        null
       ],
       [
         {
@@ -1264,22 +826,11 @@
           ],
           "locked": false
         },
+        null,
+        null,
         {
           "assignmentIds": [
-            "kjxep7n"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "rir11kp"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "dhop7br",
-            "y008o59"
+            "dhop7br"
           ],
           "locked": false
         },
@@ -1288,12 +839,7 @@
     ],
     "4fue6px": [
       [
-        {
-          "assignmentIds": [
-            "z4e95b3"
-          ],
-          "locked": false
-        },
+        null,
         {
           "assignmentIds": [
             "i4s5jz4"
@@ -1307,54 +853,23 @@
           ],
           "locked": false
         },
+        null,
         {
           "assignmentIds": [
-            "vb49up1"
+            "nn6jblp"
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "nn6jblp",
-            "cy6pkzi"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "5lbqggo"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "oqta64j"
-          ],
-          "locked": false
-        }
+        null,
+        null
       ],
       [
         null,
         null,
-        {
-          "assignmentIds": [
-            "oqta64j"
-          ],
-          "locked": false
-        },
         null,
-        {
-          "assignmentIds": [
-            "ltc6y3r"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "5lbqggo"
-          ],
-          "locked": false
-        },
+        null,
+        null,
+        null,
         {
           "assignmentIds": [
             "hpxum3f"
@@ -1363,18 +878,8 @@
         }
       ],
       [
-        {
-          "assignmentIds": [
-            "z4e95b3"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "ltc6y3r"
-          ],
-          "locked": false
-        },
+        null,
+        null,
         null,
         {
           "assignmentIds": [
@@ -1384,23 +889,12 @@
         },
         {
           "assignmentIds": [
-            "nn6jblp",
-            "cy6pkzi"
+            "nn6jblp"
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "oqta64j"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "vb49up1"
-          ],
-          "locked": false
-        }
+        null,
+        null
       ],
       [
         null,
@@ -1417,12 +911,7 @@
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "vb49up1"
-          ],
-          "locked": false
-        },
+        null,
         {
           "assignmentIds": [
             "fvxh9ur",
@@ -1445,54 +934,24 @@
           "locked": false
         },
         null,
-        {
-          "assignmentIds": [
-            "5lbqggo"
-          ],
-          "locked": false
-        },
+        null,
         {
           "assignmentIds": [
             "hpxum3f"
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "vb49up1"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "oqta64j"
-          ],
-          "locked": false
-        },
+        null,
+        null,
         null
       ]
     ],
     "k619rjq": [
       [
         null,
-        {
-          "assignmentIds": [
-            "hc2e3zl"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "kms2oi6"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "flfznca"
-          ],
-          "locked": false
-        },
+        null,
+        null,
+        null,
         {
           "assignmentIds": [
             "5k69oub"
@@ -1501,8 +960,7 @@
         },
         {
           "assignmentIds": [
-            "4vc6c8i",
-            "4p3r55s"
+            "4vc6c8i"
           ],
           "locked": false
         },
@@ -1514,24 +972,9 @@
         }
       ],
       [
-        {
-          "assignmentIds": [
-            "eynfo3g"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "flfznca"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "dfdj0mc"
-          ],
-          "locked": false
-        },
+        null,
+        null,
+        null,
         {
           "assignmentIds": [
             "3p9dia9"
@@ -1541,8 +984,7 @@
         null,
         {
           "assignmentIds": [
-            "4vc6c8i",
-            "4p3r55s"
+            "4vc6c8i"
           ],
           "locked": false
         },
@@ -1561,24 +1003,9 @@
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "hc2e3zl"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "dfdj0mc"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "kms2oi6"
-          ],
-          "locked": false
-        },
+        null,
+        null,
+        null,
         null,
         {
           "assignmentIds": [
@@ -1586,12 +1013,7 @@
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "flfznca"
-          ],
-          "locked": false
-        }
+        null
       ],
       [
         null,
@@ -1603,19 +1025,9 @@
           "locked": false
         },
         null,
-        {
-          "assignmentIds": [
-            "hc2e3zl"
-          ],
-          "locked": false
-        },
         null,
-        {
-          "assignmentIds": [
-            "eynfo3g"
-          ],
-          "locked": false
-        },
+        null,
+        null,
         {
           "assignmentIds": [
             "5k69oub"
@@ -1630,12 +1042,7 @@
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "dfdj0mc"
-          ],
-          "locked": false
-        },
+        null,
         null,
         {
           "assignmentIds": [
@@ -1643,21 +1050,11 @@
           ],
           "locked": false
         },
-        {
-          "assignmentIds": [
-            "flfznca"
-          ],
-          "locked": false
-        },
-        {
-          "assignmentIds": [
-            "hc2e3zl"
-          ],
-          "locked": false
-        },
+        null,
+        null,
         null
       ]
     ]
   },
-  "_serverStamp": "2026-08-15T13:48:16.707Z"
+  "_serverStamp": "2026-08-15T14:02:47.333Z"
 }
