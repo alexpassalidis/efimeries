@@ -117,11 +117,27 @@
     table.pgrid td.pnamecell{ font-weight:700; color:#1B2A4A; text-align:right; }
     .psub{ display:block; font-size:6.8pt; font-weight:600; color:#B5533C; }
     .pcut{ text-align:center; color:#999; font-size:8pt; letter-spacing:2px; border-top:1.5px dashed #bbb; margin:3.5mm 0; padding-top:1mm; }
-    .pweek .pday{ font-size:11pt; margin:2mm 0 1mm; }
-    .pweek table.pgrid td{ font-size:7.4pt; padding:0.7mm 1.5mm; }
-    .pweek table.pgrid th.cyclehdr{ font-size:7.2pt; padding:0.7mm 1.5mm; }
-    .pweek .pdayblock{ page-break-inside:avoid; margin-bottom:2mm; }
     .pholiday{ font-size:8.3pt; font-weight:700; color:#B5533C; border:1px solid #bbb; padding:1.4mm 2mm; }
+
+    /* ---- εβδομαδιαία εκτύπωση: συμπαγής, οικονομική σε χαρτί & μελάνι ---- */
+    .pweek{ border:1px solid #555; border-radius:3px; padding:2.5mm 3.5mm; page-break-inside:avoid; }
+    .pweek .phead{ border-bottom:1px solid #555; padding-bottom:1.2mm; }
+    .pweek .pschool{ font-size:10pt; color:#000; }
+    .pweek .ptitle{ font-size:7.4pt; letter-spacing:.6px; color:#000; }
+    table.wgrid{ width:100%; border-collapse:collapse; margin-top:1.6mm; }
+    table.wgrid th{ font-size:6.4pt; font-weight:800; text-transform:uppercase; letter-spacing:.3px;
+                    color:#000; background:none; text-align:left; padding:0.7mm 1.4mm; border:1px solid #666; }
+    table.wgrid td{ font-size:7.2pt; color:#000; padding:0.6mm 1.4mm; border:1px solid #c8c8c8; vertical-align:middle; }
+    table.wgrid tr.wstart td{ border-top:1px solid #666; }
+    table.wgrid td.wday{ font-weight:800; font-size:7.4pt; white-space:nowrap; width:22mm; border-right:1px solid #666; }
+    table.wgrid td.wday .wdate{ display:block; font-weight:600; font-size:6.2pt; color:#444; }
+    table.wgrid td.wpos{ font-size:6.5pt; color:#333; width:34mm; }
+    table.wgrid td.wnum{ width:4.5mm; text-align:center; font-weight:800; font-size:6.4pt; color:#444; }
+    table.wgrid td.wname{ font-weight:700; }
+    table.wgrid td.whol{ font-weight:700; font-size:7pt; }
+    .wsub{ font-weight:500; font-size:6pt; color:#555; }
+    .pweek .pfoot{ margin-top:1.2mm; font-size:5.8pt; color:#666; text-align:right; }
+    .pcut.wcut{ margin:11mm 0; font-size:7pt; }
   }
 </style>
 </head>
@@ -149,7 +165,7 @@
 
   <div class="actions">
     <button class="printbtn" id="printBtn">🖨 Ημέρα (×2 σε Α4)</button>
-    <button class="printbtn" id="printWeekBtn">🖨 Όλη η εβδομάδα</button>
+    <button class="printbtn" id="printWeekBtn">🖨 Εβδομάδα (×2 σε Α4)</button>
   </div>
 
   <div class="footer" id="footerLabel"></div>
@@ -441,37 +457,59 @@
     document.getElementById("printArea").innerHTML = sheetHTML() + '<div class="pcut">✂ — — — — — — — — — — κόψτε εδώ — — — — — — — — — — ✂</div>' + sheetHTML();
   }
 
-  /* print: ολόκληρη η εβδομάδα (Δευτέρα–Παρασκευή) σε μία σελίδα Α4 */
+  /* print: ολόκληρη η εβδομάδα (Δευτέρα–Παρασκευή) — συμπαγής πίνακας,
+     δύο ίδια αντίγραφα στο ίδιο φύλλο Α4 με γραμμή κοψίματος στη μέση. */
   function buildWeekPrint(){
     const fri = addDays(shownMonday,4);
     const sameMonth = shownMonday.getMonth()===fri.getMonth();
     const range = shownMonday.getDate() + (sameMonth?"":" "+MONTHS[shownMonday.getMonth()]) +
                   " – " + fri.getDate() + " " + MONTHS[fri.getMonth()] + " " + fri.getFullYear();
-    const blocks = DAYS.map((dname,i)=>{
+
+    const t1 = cycleTime("Α"), t2 = cycleTime("Β");
+    const head = '<tr>'+
+      '<th style="width:22mm;">Ημέρα</th>'+
+      '<th colspan="2">Θέση</th>'+
+      '<th>Α΄ κύκλος '+esc(t1)+'</th>'+
+      '<th>Β΄ κύκλος '+esc(t2)+'</th></tr>';
+
+    const rows = DAYS.map((dname,i)=>{
       const dd = addDays(shownMonday,i);
+      const dayCell = '<td class="wday" rowspan="4">'+dname+
+                      '<span class="wdate">'+dd.getDate()+'/'+(dd.getMonth()+1)+'</span></td>';
       const h = holidayFor(dd);
-      let body;
       if(h){
-        body = '<table class="pgrid"><tr><td class="pholiday" colspan="3">Δεν λειτουργεί το σχολείο — '+esc(h.label)+'</td></tr></table>';
-      } else {
-        const cds = assignmentFor(dd);
-        const any = cds.some(cd=>cd.entries.some(s=>s.regular && s.regular.trim()!==""));
-        const groups = cds.map(cd=>{
-          const rows = (any ? cd.entries : [{},{},{},{}]).map((s,k)=>{
-            const eff = s && s.substitute ? esc(s.substitute) : (s && s.regular ? esc(s.regular) : "—");
-            const note = s && s.substitute ? '<span class="psub">αναπλ. '+esc(s.regular)+'</span>' : '';
-            return '<tr><td class="pnumcell">'+(k+1)+'</td><td class="pposcell">'+POSITIONS[k]+'</td><td class="pnamecell">'+eff+note+'</td></tr>';
-          }).join("");
-          return '<tr><th class="cyclehdr" colspan="3">'+esc(cd.label)+' ('+esc(cd.time)+')</th></tr>' + rows;
-        }).join("");
-        body = '<table class="pgrid">'+groups+'</table>';
+        return '<tr class="wstart"><td class="wday">'+dname+
+               '<span class="wdate">'+dd.getDate()+'/'+(dd.getMonth()+1)+'</span></td>'+
+               '<td class="whol" colspan="4">Δεν λειτουργεί το σχολείο — '+esc(h.label)+'</td></tr>';
       }
-      return '<div class="pdayblock"><div class="pday">'+dname+' '+fmtDMY(dd)+'</div>'+body+'</div>';
+      const cds = assignmentFor(dd);
+      const any = cds.some(cd=>cd.entries.some(s=>s.regular && s.regular.trim()!==""));
+      const cell = (cd,k)=>{
+        const s = any ? cd.entries[k] : null;
+        const eff = s && s.substitute ? esc(s.substitute) : (s && s.regular ? esc(s.regular) : "—");
+        const note = s && s.substitute ? ' <span class="wsub">(αντί '+esc(s.regular)+')</span>' : '';
+        return '<td class="wname">'+eff+note+'</td>';
+      };
+      return POSITIONS.map((pos,k)=>
+        '<tr'+(k===0?' class="wstart"':'')+'>'+
+        (k===0 ? dayCell : '')+
+        '<td class="wnum">'+(k+1)+'</td><td class="wpos">'+pos+'</td>'+
+        cell(cds[0],k)+cell(cds[1],k)+
+        '</tr>'
+      ).join("");
     }).join("");
+
+    function sheetHTML(){
+      return '<div class="psheet pweek">'+
+        '<div class="phead"><span class="pschool">3ο Γυμνάσιο Πολίχνης</span>'+
+        '<span class="ptitle">ΕΦΗΜΕΡΙΕΣ · ΕΒΔΟΜΑΔΑ '+esc(range)+'</span></div>'+
+        '<table class="wgrid">'+head+rows+'</table>'+
+        '</div>';
+    }
     document.getElementById("printArea").innerHTML =
-      '<div class="psheet pweek">'+
-      '<div class="phead"><span class="pschool">3ο Γυμνάσιο Πολίχνης</span><span class="ptitle">ΕΦΗΜΕΡΙΕΣ — ΕΒΔΟΜΑΔΑ '+esc(range)+'</span></div>'+
-      blocks + '</div>';
+      sheetHTML() +
+      '<div class="pcut wcut">✂ — — — — — — — — — — κόψτε εδώ — — — — — — — — — — ✂</div>' +
+      sheetHTML();
   }
 
   document.getElementById("chips").addEventListener("click", e=>{
