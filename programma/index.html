@@ -217,6 +217,7 @@
   #backupBar .dismiss{background:transparent;color:#78350f;text-decoration:underline;padding:6px 4px;font-weight:600;}
   #saveTick{font-size:12px;color:#64748b;font-weight:600;white-space:nowrap;}
   #saveTick.bad{color:#b91c1c;}
+  #srcTick{font-size:12px;color:#64748b;font-weight:600;white-space:nowrap;}
   #genOverlay{display:none;position:fixed;inset:0;z-index:10000;background:rgba(15,23,42,.62);
     align-items:center;justify-content:center;}
   #genOverlay.on{display:flex;}
@@ -256,10 +257,13 @@
     <button class="ghost" onclick="saveProject()">💾 Αποθήκευση</button>
     <button class="ghost" onclick="document.getElementById('loadFile').click()">📂 Φόρτωση</button>
     <input type="file" id="loadFile" accept=".json" class="hidden" onchange="loadProject(event)">
+    <button class="ghost" onclick="exportForServer()" title="Κατεβάζει programma.json — ανέβασέ το στο repository για να το βλέπουν όλες οι συσκευές">📤 Έκδοση για server</button>
+    <button class="ghost" onclick="loadFromServer(false)" title="Φέρνει το programma.json από τον server">☁️ Φόρτωση από server</button>
     <button class="ghost" onclick="document.getElementById('importCsv').click()">⬆️ Εισαγωγή CSV</button>
     <input type="file" id="importCsv" accept=".csv" class="hidden" onchange="importAssignmentsCSV(event)">
     <button class="ghost danger" onclick="resetAll()">Καθαρισμός</button>
     <span id="saveTick"></span>
+    <span id="srcTick"></span>
   </div>
 </header>
 
@@ -2036,7 +2040,7 @@ function load(){
   try{
     const d = localStorage.getItem(LS_KEY);
     if(d){ S = JSON.parse(d); normalizeTimetable(); }
-  }catch(e){
+  }catch(e2){
     alert('Τα αποθηκευμένα δεδομένα δεν διαβάστηκαν (πιθανώς κατεστραμμένα). Ξεκινάς από κενό — αν έχεις αντίγραφο .json, φόρτωσέ το με «📂 Φόρτωση».');
   }
   /* Δοκιμή εγγραφής στην εκκίνηση, ώστε το πρόβλημα να φανεί ΠΡΙΝ δουλέψεις μια ώρα. */
@@ -2047,6 +2051,73 @@ function load(){
   }catch(e){
     flagSaveBroken('Ο browser δεν επιτρέπει αποθήκευση σε αυτή τη σελίδα.');
   }
+}
+
+/* ---- κοινό πρόγραμμα από τον server (programma.json δίπλα στο HTML) ---- */
+const SERVER_FILE = 'programma.json';
+
+function stampOf(obj){ return (obj && obj._serverStamp) ? obj._serverStamp : null; }
+function showSource(txt){
+  const el = document.getElementById('srcTick');
+  if(el) el.textContent = txt ? ('· ' + txt) : '';
+}
+
+/* Κατεβάζει το αρχείο που θα ανεβάσεις στο repository. Το όνομα πρέπει να μείνει programma.json. */
+function exportForServer(){
+  const d = new Date();
+  S._serverStamp = d.toISOString();
+  save();
+  download(SERVER_FILE, JSON.stringify(S,null,2), 'application/json');
+  noteBackupTaken();
+  showMsg('Κατέβηκε το <b>programma.json</b>. Ανέβασέ το με το VS Code στον ίδιο φάκελο με το HTML, '+
+          'και κάθε συσκευή που δεν έχει δικά της δεδομένα θα ανοίγει με αυτό το πρόγραμμα.','ok');
+  showSource('έκδοση server: ' + d.toLocaleDateString('el-GR'));
+}
+
+async function fetchServerProject(){
+  const res = await fetch(SERVER_FILE + '?_=' + Date.now(), {cache:'no-store'});
+  if(!res.ok) throw new Error('http ' + res.status);
+  return JSON.parse(await res.text());
+}
+
+function adoptProject(obj, srcLabel){
+  S = obj;
+  normalizeTimetable();
+  renderAll();
+  ttHistory=[]; ttHistoryIdx=-1; pushHistory();
+  save();
+  const st = stampOf(obj);
+  showSource(srcLabel + (st ? ' ' + new Date(st).toLocaleDateString('el-GR') : ''));
+}
+
+/* Χειροκίνητη φόρτωση: αντικαθιστά ό,τι υπάρχει τοπικά. */
+async function loadFromServer(silent){
+  try{
+    const obj = await fetchServerProject();
+    const has = S.classes.length || S.teachers.length;
+    if(!silent && has && !confirm('Θα αντικατασταθεί το πρόγραμμα αυτής της συσκευής με την έκδοση του server. Συνέχεια;')) return;
+    adoptProject(obj, 'από server');
+    gotoTimetable('all');
+    showMsg('☁️ Φορτώθηκε το πρόγραμμα από τον server.','ok');
+  }catch(e){
+    if(!silent) showMsg('Δεν βρέθηκε αρχείο <b>programma.json</b> στον server (ή η σελίδα άνοιξε τοπικά με file://). '+
+                        'Πάτα «📤 Έκδοση για server» και ανέβασέ το πρώτα.','err');
+    return false;
+  }
+  return true;
+}
+
+/* Εκκίνηση σε συσκευή χωρίς δικά της δεδομένα: server → αλλιώς demo. */
+async function bootFresh(){
+  try{
+    const obj = await fetchServerProject();
+    adoptProject(obj, 'από server');
+    gotoTimetable('all');
+    showMsg('☁️ Φορτώθηκε το πρόγραμμα του σχολείου από τον server.','ok');
+    return;
+  }catch(e){ /* δεν υπάρχει ακόμα — πάμε σε demo */ }
+  buildDemoData(); renderAll(); autoGenerate(); gotoTimetable('all');
+  showSource('demo');
 }
 
 /* ---- υπενθύμιση αντιγράφου ασφαλείας ---- */
@@ -2137,8 +2208,22 @@ function loadSample(){
 }
 
 buildTabs(); load();
-if(!S.classes.length && !S.teachers.length){ buildDemoData(); renderAll(); autoGenerate(); gotoTimetable('all'); }
-else { renderAll(); pushHistory(); }
+if(!S.classes.length && !S.teachers.length){
+  bootFresh();
+} else {
+  renderAll(); pushHistory();
+  const st = stampOf(S);
+  showSource(st ? ('βάση: έκδοση server ' + new Date(st).toLocaleDateString('el-GR')) : 'τοπικά δεδομένα');
+  /* Ενημέρωση αν ο server έχει νεότερη έκδοση από αυτή που βασίστηκε η συσκευή. */
+  fetchServerProject().then(obj=>{
+    const sv = stampOf(obj), loc = stampOf(S);
+    if(sv && (!loc || sv > loc)){
+      showMsg('☁️ Ο server έχει νεότερη έκδοση του προγράμματος ('+new Date(sv).toLocaleDateString('el-GR')+'). '+
+              'Αν θέλεις να την πάρεις σε αυτή τη συσκευή, πάτα «☁️ Φόρτωση από server» — '+
+              'πρόσεξε ότι θα αντικαταστήσει ό,τι έχεις εδώ.','err');
+    }
+  }).catch(()=>{});
+}
 checkBackupAge();
 window.addEventListener('beforeunload', e=>{
   if(saveBroken){ e.preventDefault(); e.returnValue=''; return ''; }
