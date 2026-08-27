@@ -259,6 +259,7 @@
     </div>
     <div class="savebar" style="margin-top:14px;">
       <button class="btn gold" id="save">💾 Αποθήκευση στο GitHub</button>
+      <button class="btn ghost" id="undoChanges">↺ Ακύρωση αλλαγών</button>
       <button class="btn ghost" id="showText">Εναλλακτικά: δείξε μου το κείμενο</button>
       <span id="status"></span>
     </div>
@@ -1152,6 +1153,10 @@
   });
 
   // ---------- load ----------
+  let lastLoadedState = null;
+  function snapshotState(){
+    return JSON.parse(JSON.stringify({ base:state.base, backup:state.backup, overrides:state.overrides, holidays:state.holidays, cycleStart:state.cycleStart, cycleTimes:state.cycleTimes }));
+  }
   fetch("data.txt?_="+Date.now())
     .then(r=>{ if(!r.ok) throw 0; return r.text(); })
     .then(t=>{
@@ -1166,8 +1171,23 @@
         if(t2 < cs) ovWeekMonday = mondayOf(cs);
       }
       pushToUI(); populateMonths(); runChecks(); renderDayView();
+      lastLoadedState = snapshotState();
     })
-    .catch(()=>{ pushToUI(); populateMonths(); runChecks(); renderDayView(); });
+    .catch(()=>{ pushToUI(); populateMonths(); runChecks(); renderDayView(); lastLoadedState = snapshotState(); });
+
+  document.getElementById("undoChanges").addEventListener("click", ()=>{
+    if(!lastLoadedState){ return; }
+    if(!confirm("Να ακυρωθούν όλες οι αλλαγές που έκανες και να επανέλθει η τελευταία αποθηκευμένη έκδοση;")) return;
+    state.base = JSON.parse(JSON.stringify(lastLoadedState.base));
+    state.backup = JSON.parse(JSON.stringify(lastLoadedState.backup));
+    state.overrides = JSON.parse(JSON.stringify(lastLoadedState.overrides));
+    state.holidays = JSON.parse(JSON.stringify(lastLoadedState.holidays));
+    state.cycleStart = lastLoadedState.cycleStart;
+    state.cycleTimes = JSON.parse(JSON.stringify(lastLoadedState.cycleTimes));
+    pushToUI(); runChecks(); renderDayView();
+    const st = document.getElementById("status");
+    st.className = "ok"; st.textContent = "Οι αλλαγές ακυρώθηκαν.";
+  });
 
   // ---------- save ----------
   const tokenInp = document.getElementById("token");
@@ -1212,6 +1232,7 @@
     statusEl.className=""; statusEl.textContent="";
     if(!state.repo){ statusEl.className="err"; statusEl.textContent="Δεν εντοπίστηκε το repository — άνοιξε τη σελίδα από το github.io link."; return; }
     if(!token){ statusEl.className="err"; statusEl.textContent="Βάλε πρώτα το GitHub token."; return; }
+    if(!confirm("Να αποθηκευτούν οι αλλαγές στο GitHub τώρα; Θα αντικαταστήσουν την τρέχουσα δημόσια έκδοση.")) return;
     statusEl.textContent = "Αποθήκευση…";
     const api = "https://api.github.com/repos/"+state.repo.owner+"/"+state.repo.repo+"/contents/data.txt";
     const headers = { "Authorization":"Bearer "+token, "Accept":"application/vnd.github+json" };
@@ -1235,6 +1256,7 @@
         throw new Error("Αποτυχία ("+res.status+"): "+(err.message||"άγνωστο σφάλμα"));
       }
       statusEl.className="ok"; statusEl.textContent="✔ Αποθηκεύτηκε! Η σελίδα ενημερώνεται σε ~1 λεπτό.";
+      lastLoadedState = snapshotState();
     }catch(err){
       statusEl.className="err"; statusEl.textContent=err.message;
     }
