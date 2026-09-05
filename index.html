@@ -267,8 +267,33 @@
     if(cyc!=="Α" && cyc!=="Β") return null;
     return { kind, day:DAYS[di], cycle:cyc };
   }
+  function weekKeyOf(dateObj){ return toISO(mondayOf(dateObj)); }
+  function emptyWeek(){
+    const w = { base:{}, backup:{} };
+    DAYS.forEach(d=>{ w.base[d]={"Α":["","","",""],"Β":["","","",""]}; w.backup[d]={"Α":"","Β":""}; });
+    return w;
+  }
+  function weekHasContent(wk){
+    if(!wk) return false;
+    return DAYS.some(d=>["Α","Β"].some(ck=>(wk.base[d][ck]||[]).some(n=>n&&n.trim())));
+  }
+  function parseWeekKey(raw){
+    const parts = stripAccents(String(raw)).toUpperCase().replace(/\s+/g,"").split("_");
+    if(parts[0]!=="ΕΒΔ" || parts.length<4) return null;
+    const dt = parseAnyDate(parts[1]);
+    if(!dt) return null;
+    let rest = parts.slice(2), kind="base";
+    if(rest[0]==="ΑΝΑΠΛ"){ kind="backup"; rest=rest.slice(1); }
+    if(rest.length!==2) return null;
+    let [dayUp,cyc] = rest;
+    const di = DAY_UP.map(x=>stripAccents(x).toUpperCase()).indexOf(dayUp);
+    if(di===-1) return null;
+    if(cyc==="A") cyc="Α"; if(cyc==="B") cyc="Β";
+    if(cyc!=="Α" && cyc!=="Β") return null;
+    return { week: toISO(mondayOf(dt)), kind, day: DAYS[di], cycle: cyc };
+  }
   function parseDataText(text){
-    const cfg = { base:emptyDayMap(), backup:emptyDayMap(), overrides:[], cycleTimes:{}, holidays:[] };
+    const cfg = { base:emptyDayMap(), backup:emptyDayMap(), weeks:{}, overrides:[], cycleTimes:{}, holidays:[] };
     text.split(/\r?\n/).forEach(raw=>{
       const line = raw.trim();
       if(!line || line.startsWith("#")) return;
@@ -293,6 +318,14 @@
         if(d1 && d2){
           const a = d1<=d2 ? d1 : d2, b = d1<=d2 ? d2 : d1;
           cfg.holidays.push({ from:toISO(a), to:toISO(b), label:label||"Αργία" });
+        }
+      } else if(/^ΕΒΔ_/.test(key)){
+        const wk = parseWeekKey(line.slice(0,eq));
+        if(wk){
+          if(!cfg.weeks[wk.week]) cfg.weeks[wk.week] = emptyWeek();
+          const arr = val.split(/[;,]/).map(s=>s.trim());
+          if(wk.kind==="backup") cfg.weeks[wk.week].backup[wk.day][wk.cycle] = (arr.filter(Boolean)[0]||"");
+          else cfg.weeks[wk.week].base[wk.day][wk.cycle] = [0,1,2,3].map(i=>arr[i]||"");
         }
       } else {
         const pk = parseCycleKey(key);
@@ -334,17 +367,19 @@
     const cs = parseISO(cfg.cycleStart);
     const w = weekIndex(date, cs);
     const iso = toISO(date);
+    const wkBlock = (cfg.weeks||{})[weekKeyOf(date)];
+    const useWeek = weekHasContent(wkBlock);
     return CYCLES.map(c=>{
       const base = (cfg.base[dayName] && cfg.base[dayName][c.key]) || ["","","",""];
       const bkList = (cfg.backup[dayName] && cfg.backup[dayName][c.key]) || [];
-      const reg = positioned(base, w);
+      const reg = useWeek ? [0,1,2,3].map(i=>(wkBlock.base[dayName][c.key]||[])[i]||"") : positioned(base, w);
       const entries = reg.map((n,i)=>({regular:n, substitute:null}));
       cfg.overrides.forEach(ov=>{
         if(ov.date!==iso) return;
         const want = normName(ov.absent);
         entries.forEach(s=>{ if(s.regular && normName(s.regular)===want) s.substitute = ov.substitute; });
       });
-      const backupName = backupForWeek(bkList, w);
+      const backupName = useWeek ? (wkBlock.backup[dayName][c.key]||"") : backupForWeek(bkList, w);
       return { key:c.key, label:c.label, time:cycleTime(c.key), entries, backupName };
     });
   }
