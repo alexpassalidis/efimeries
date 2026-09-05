@@ -47,10 +47,10 @@
   .dayrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
   @media (max-width:640px){.dayrow{grid-template-columns:1fr 1fr;}}
   .dayrow input{font-size:13.5px;padding:8px 9px;}
-  .bkinput{margin-top:4px;font-size:13px;padding:8px 10px;border-style:dashed;color:var(--terracotta);border-color:var(--terracotta);background:#FBF7F4;}
+  .bkinput{font-size:13px;padding:8px 10px;border-style:dashed;color:var(--terracotta);border-color:var(--terracotta);background:#fff;}
   .bkinput::placeholder{color:#C99;}
-  .poolwrap{margin-top:8px;}
-  .poolinput{font-size:13px;padding:8px 10px;border-style:dashed;border-color:var(--board);background:#F4F8F5;}
+  .backupbox{margin-top:8px;padding:9px 10px 10px;border:1.5px dashed var(--terracotta);border-radius:10px;background:#FBF7F4;}
+  .backupbox .poslabel{color:var(--terracotta);font-weight:700;margin-bottom:5px;}
   .poslabel{font-size:10.5px;color:var(--muted);margin-bottom:2px;}
   .datewrap{position:relative;}
   .datewrap .dateinput{padding-right:38px;}
@@ -99,6 +99,10 @@
   td:first-child, th:first-child{text-align:left;}
   .neg{color:var(--terracotta);font-weight:700;}
   .pos{color:var(--ok);font-weight:700;}
+  td.hotcell{background:rgba(181,83,60,0.14);font-weight:800;color:var(--terracotta);}
+  tr.toprow td{background:rgba(46,125,70,0.09);}
+  .minihead{font-size:12.5px;font-weight:700;color:var(--muted);margin:14px 0 6px;}
+  .minihead:first-child{margin-top:0;}
 
   .savebar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
   .holrow{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:9px;}
@@ -137,6 +141,28 @@
 <div class="wrap">
   <h1>Διαχείριση Εφημεριών</h1>
   <div class="sub">Κάνε τις αλλαγές, δες τους ελέγχους δικαιοσύνης, πάτα Αποθήκευση. Η δημόσια σελίδα ενημερώνεται σε ~1 λεπτό.</div>
+
+  <div id="loadWarn" style="display:none;background:rgba(181,83,60,0.1);border:1.5px solid var(--terracotta);color:var(--terracotta);border-radius:12px;padding:12px 14px;margin-bottom:18px;font-size:13.5px;line-height:1.5;font-weight:600;">
+    ⚠ Δεν φορτώθηκε το <b>data.txt</b>, γι' αυτό το πρόγραμμα και οι πίνακες δικαιοσύνης είναι άδειοι.<br>
+    <span style="font-weight:400;">Συνήθως συμβαίνει όταν ανοίγεις το admin.html με διπλό κλικ από τον υπολογιστή (διεύθυνση file://…) αντί από τη σελίδα
+    <b>alexpassalidis.github.io/efimeries/admin.html</b>. Άνοιξέ το από εκεί και θα φορτώσουν κανονικά όλα τα ονόματα.</span>
+  </div>
+
+  <div id="extrasWarn" style="display:none;background:rgba(217,164,65,0.14);border:1.5px solid var(--gold);color:#7A5A12;border-radius:12px;padding:12px 14px;margin-bottom:18px;font-size:13.5px;line-height:1.5;">
+    <b>⚠ Προσοχή:</b> το αρχείο είχε <b>επιπλέον ονόματα ρεζέρβας</b> πέρα από τις 4 θέσεις. Η ρεζέρβα καταργήθηκε,
+    οπότε τα παρακάτω <b>δεν θα αποθηκευτούν</b> την επόμενη φορά που θα πατήσεις Αποθήκευση. Αν κάποιον/α τον θέλεις,
+    βάλ' τον σε μία από τις 4 θέσεις ή στον «Αναπληρωτή κύκλου»:
+    <div id="extrasList" style="margin-top:6px;font-weight:700;"></div>
+  </div>
+
+  <div id="draftWarn" style="display:none;background:rgba(46,125,70,0.10);border:1.5px solid var(--ok);color:#1F5B32;border-radius:12px;padding:12px 14px;margin-bottom:18px;font-size:13.5px;line-height:1.5;">
+    <b>💾 Βρέθηκαν αλλαγές που δεν πρόλαβες να αποθηκεύσεις</b> <span id="draftWhen" style="font-weight:400;"></span>.
+    Τις κράτησε ο υπολογιστής σου αυτόματα, για να μη χρειαστεί να τα ξαναγράψεις.
+    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+      <button type="button" class="btn primary" id="draftRestore" style="padding:7px 14px;font-size:13px;">↩ Επαναφορά</button>
+      <button type="button" class="btn ghost" id="draftDiscard" style="padding:7px 14px;font-size:13px;">Αγνόησέ τις</button>
+    </div>
+  </div>
 
   <div class="panel">
     <h2>Ρυθμίσεις</h2>
@@ -203,7 +229,12 @@
   <div class="panel">
     <h2>Έλεγχος δικαιοσύνης</h2>
     <ul class="checks" id="checks"></ul>
-    <div style="overflow-x:auto;margin-top:12px;">
+    <div class="hint" style="margin-top:0;margin-bottom:8px;">
+      Ταξινομημένο από αυτόν που έχει κάνει <b>τις λιγότερες εφημερίες</b> — οι 3 πρώτοι είναι τονισμένοι: αυτούς βάζεις πρώτους όταν χρειάζεται κάλυψη.
+      «Εβδομαδιαίες θέσεις» = πόσες φορές εμφανίζεται κάποιος στο βασικό εβδομαδιαίο πρόγραμμα.
+      «Εφημερίες φέτος» = πόσες πραγματικά έκανε από την έναρξη του κύκλου έως σήμερα (τακτικές + καλύψεις).
+    </div>
+    <div style="overflow-x:auto;">
       <table id="balanceTable"></table>
     </div>
   </div>
@@ -226,6 +257,7 @@
         <button type="button" class="calbtn" data-cal="viewDate" aria-label="Ημερολόγιο">📅</button>
         <input type="date" class="calnative" data-cal="viewDate" tabindex="-1" aria-hidden="true">
       </div>
+      <button type="button" class="btn ghost" id="printDayView">🖨 Εκτύπωση αυτής της ημέρας</button>
     </div>
     <div style="overflow-x:auto;"><div id="viewOut"></div></div>
   </div>
@@ -291,7 +323,7 @@
   const GMONTHS = ["Ιανουάριος","Φεβρουάριος","Μάρτιος","Απρίλιος","Μάιος","Ιούνιος","Ιούλιος","Αύγουστος","Σεπτέμβριος","Οκτώβριος","Νοέμβριος","Δεκέμβριος"];
 
   function emptyDayMap(){ const o={}; DAYS.forEach(d=>o[d]={"Α":["","","",""],"Β":["","","",""]}); return o; }
-  const state = { base:emptyDayMap(), backup:emptyDayMap(), overrides:[], cycleStart:"", cycleTimes:{...DEFAULT_CYCLE_TIMES}, repo:null };
+  const state = { base:emptyDayMap(), backup:emptyDayMap(), overrides:[], holidays:[], cycleStart:"", cycleTimes:{...DEFAULT_CYCLE_TIMES}, repo:null };
 
   // ---------- utils ----------
   function parseISODate(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
@@ -316,11 +348,12 @@
     const start=((4*w)%L+L)%L; const four=[]; for(let k=0;k<4;k++) four.push(list[(start+k)%L]);
     return rotated(four, ((rotOffset(w,L)%4)+4)%4);
   }
-  function benchOf(list, w){
-    const L=list.length; if(L<=4) return [];
-    const start=((4*w)%L+L)%L; const act=new Set(); for(let k=0;k<4;k++) act.add((start+k)%L);
-    const b=[]; for(let idx=0;idx<L;idx++){ if(!act.has(idx)&&list[idx]&&list[idx].trim()!=="") b.push(list[idx]); }
-    return b;
+  /* Ο αναπληρωτής κύκλου δεν είναι πια "ανά θέση" — είναι ΕΝΑ άτομο για όλο τον κύκλο.
+     Αν καταχωρηθούν 2+ ονόματα (με ;), εναλλάσσονται δίκαια ανά εβδομάδα. */
+  function backupForWeek(list, w){
+    const arr = (list||[]).map(x=>x&&x.trim()).filter(Boolean);
+    if(!arr.length) return "";
+    return arr[((w%arr.length)+arr.length)%arr.length];
   }
   function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   /* Κανονικοποίηση μόνο για συγκρίσεις (τόνοι, πεζά/κεφαλαία, διπλά κενά). Η εμφάνιση μένει ως έχει. */
@@ -356,15 +389,10 @@
     const base = (state.base[dayName] && state.base[dayName][ck]) || ["","","",""];
     return positioned(base, weekIndex(date, cs));
   }
-  function cycleBackup(dayName, ck, date){
+  function cycleBackupName(dayName, ck, date){
     const cs = parseISODate(state.cycleStart);
-    const bk = (state.backup[dayName] && state.backup[dayName][ck]) || ["","","",""];
-    return positioned(bk, weekIndex(date, cs));
-  }
-  function cycleBench(dayName, ck, date){
-    const cs = parseISODate(state.cycleStart);
-    const base = (state.base[dayName] && state.base[dayName][ck]) || [];
-    return benchOf(base, weekIndex(date, cs));
+    const bk = (state.backup[dayName] && state.backup[dayName][ck]) || [];
+    return backupForWeek(bk, weekIndex(date, cs));
   }
   function isHoliday(date){ return !!holidayFor(date); }
   function holidayFor(date){
@@ -472,10 +500,8 @@
           '<input type="text" data-pos="'+(p-1)+'" data-kind="reg" placeholder="Καθηγητής/τρια">'+
           '</div>').join("") +
       '</div>' +
-      '<div class="poolwrap"><div class="poslabel">Επιπλέον ρεζέρβα αυτού του κύκλου (ονόματα με ; — μπαίνουν εκ περιτροπής)</div>'+
-      '<input type="text" class="poolinput" data-day="'+d+'" data-cycle="'+ck+'" placeholder="π.χ. Παπαδόπουλος; Νικολάου; ..."></div>'+
-      '<div class="poolwrap"><div class="poslabel">Εφεδρείες (προαιρετικό) — ΙΔΙΑ ΣΕΙΡΑ κι αριθμός με το σύνολο πάνω (4 θέσεις + ρεζέρβα)</div>'+
-      '<input type="text" class="bkinput" data-day="'+d+'" data-cycle="'+ck+'" placeholder="π.χ. εφεδρεία1; εφεδρεία2; ..."></div>'+
+      '<div class="backupbox"><div class="poslabel">🧩 Αναπληρωτής κύκλου — 1 άτομο που καλύπτει όποιον/α λείψει σε αυτόν τον κύκλο, όποια κι αν είναι η θέση του.</div>'+
+      '<input type="text" class="bkinput" data-day="'+d+'" data-cycle="'+ck+'" placeholder="π.χ. Παπαδοπούλου"></div>'+
       '</div>'
     ).join("");
     block.innerHTML = '<div class="dayname"><span class="daydot"></span>'+d+'</div>' + cycleBlocks;
@@ -561,6 +587,7 @@
     ).join("");
   }
   function pullHolidaysFromUI(){
+    if(!Array.isArray(state.holidays)) state.holidays = [];
     document.querySelectorAll(".holf").forEach(inp=>{
       const i = +inp.dataset.i, f = inp.dataset.f;
       if(!state.holidays[i]) return;
@@ -574,6 +601,14 @@
     state.holidays = state.holidays.filter(h=>h.from);
   }
 
+  /* Το «;» και το «,» χωρίζουν ονόματα μέσα στο data.txt — αν μπουν μέσα σε όνομα, το αρχείο
+     χαλάει και τα ονόματα μετακινούνται. Τα αφαιρούμε καθώς γράφεις, ώστε να μη χαθεί τίποτα. */
+  function cleanNameField(inp){
+    const raw = inp.value;
+    const visible = raw.replace(/[;,]/g, " ");
+    if(visible !== raw) inp.value = visible;   // το βλέπει αμέσως ο χρήστης
+    return visible.replace(/\s+/g, " ").trim();
+  }
   function pullFromUI(){
     pullHolidaysFromUI();
     const csRaw = document.getElementById("cycleStart").value;
@@ -584,15 +619,11 @@
     document.querySelectorAll(".dayrow").forEach(row=>{
       const d = row.dataset.day, ck = row.dataset.cycle;
       const arr = ["","","",""];
-      row.querySelectorAll("input").forEach(inp=>{ arr[+inp.dataset.pos] = inp.value.trim(); });
-      const poolInp = document.querySelector('.poolinput[data-day="'+d+'"][data-cycle="'+ck+'"]');
-      const extras = poolInp ? poolInp.value.split(/[;,]/).map(s=>s.trim()).filter(Boolean) : [];
-      const full = arr.concat(extras);
-      state.base[d][ck] = full;
+      row.querySelectorAll("input").forEach(inp=>{ arr[+inp.dataset.pos] = cleanNameField(inp); });
+      state.base[d][ck] = arr;
       const bkInp = document.querySelector('.bkinput[data-day="'+d+'"][data-cycle="'+ck+'"]');
-      const bkRaw = bkInp ? bkInp.value.split(/[;,]/).map(s=>s.trim()) : [];
-      const bkFull = full.map((_,i)=> bkRaw[i] || "");
-      state.backup[d][ck] = bkFull;
+      const bkName = bkInp ? cleanNameField(bkInp) : "";
+      state.backup[d][ck] = bkName ? [bkName] : [];
     });
     refreshCycleLabels();
   }
@@ -606,14 +637,10 @@
         inp.value = (state.base[d][ck]||[])[+inp.dataset.pos] || "";
       });
     });
-    document.querySelectorAll(".poolinput").forEach(inp=>{
-      const d = inp.dataset.day, ck = inp.dataset.cycle;
-      inp.value = ((state.base[d][ck]||[]).slice(4)).join("; ");
-    });
     document.querySelectorAll(".bkinput").forEach(inp=>{
       const d = inp.dataset.day, ck = inp.dataset.cycle;
-      const bk = state.backup[d][ck]||[];
-      inp.value = bk.some(x=>x) ? bk.join("; ") : "";
+      const bk = (state.backup[d][ck]||[]).filter(Boolean);
+      inp.value = bk.join("; ");
     });
     refreshCycleLabels();
     renderOverrides();
@@ -637,6 +664,11 @@
         const dup = filled.filter((n,i)=>filled.indexOf(n)!==i);
         if(dup.length)
           checks.push({ok:false,msg:tag+": το όνομα «"+dup[0]+"» εμφανίζεται δύο φορές."});
+        const bkNow = (state.backup[d][ck]||[]).filter(Boolean);
+        if(filled.length>=4 && !bkNow.length)
+          checks.push({ok:true,msg:tag+": δεν έχει οριστεί αναπληρωτής κύκλου (προαιρετικό, αλλά συνιστάται ώστε να ξέρετε αμέσως ποιον να καλέσετε αν λείψει κάποιος)."});
+        if(bkNow.length && filled.some(n=>bkNow.includes(n)))
+          checks.push({ok:false,msg:tag+": ο αναπληρωτής κύκλου συμπίπτει με κάποιον από τους τακτικούς — βάλε άλλο όνομα."});
       });
       // ίδιο άτομο σε πισίνες και των δύο κύκλων την ίδια μέρα (κίνδυνος να συμπέσουν κάποια εβδομάδα)
       const a1 = (state.base[d]["Α"]||[]).filter(n=>n);
@@ -701,8 +733,10 @@
       }
     });
 
-    // 5. balance summary
-    const balances = names.map(n=>({n, w:weekly[n]||0, c:covers[n]||0, o:covered[n]||0, b:(covers[n]||0)-(covered[n]||0)}));
+    // 5. balance summary (+ πραγματικές εφημερίες φέτος, για να ξέρεις ποιον να βάλεις)
+    let totalsAll = {};
+    try{ totalsAll = computeTotals("ALL") || {}; }catch(e){ totalsAll = {}; }
+    const balances = names.map(n=>({n, w:weekly[n]||0, t:totalsAll[n]||0, c:covers[n]||0, o:covered[n]||0, b:(covers[n]||0)-(covered[n]||0)}));
     const owing = balances.filter(x=>x.b<0);
     const owed = balances.filter(x=>x.b>0);
     if(owing.length)
@@ -720,9 +754,11 @@
 
     const tbl = document.getElementById("balanceTable");
     if(balances.length){
-      tbl.innerHTML = "<tr><th>Καθηγητής/τρια</th><th>Εμφανίσεις</th><th>Κάλυψε</th><th>Καλύφθηκε</th><th>Ισοζύγιο</th></tr>" +
-        balances.sort((a,b)=>a.b-b.b).map(x=>
-          "<tr><td>"+esc(x.n)+"</td><td>"+x.w+"</td><td>"+x.c+"</td><td>"+x.o+"</td><td class='"+(x.b<0?"neg":x.b>0?"pos":"")+"'>"+(x.b>0?"+":"")+x.b+"</td></tr>"
+      // Σειρά: λιγότερες πραγματικές εφημερίες πρώτα, μετά όποιος χρωστάει, μετά λιγότερες εβδομαδιαίες θέσεις.
+      const sorted = balances.slice().sort((a,b)=> (a.t-b.t) || (a.b-b.b) || (a.w-b.w));
+      tbl.innerHTML = "<tr><th>Καθηγητής/τρια</th><th>Εβδομαδιαίες θέσεις</th><th>Εφημερίες φέτος</th><th>Κάλυψε</th><th>Καλύφθηκε</th><th>Ισοζύγιο</th></tr>" +
+        sorted.map((x,i)=>
+          "<tr"+(i<3?' class="toprow"':"")+"><td>"+esc(x.n)+"</td><td>"+x.w+"</td><td><b>"+x.t+"</b></td><td>"+x.c+"</td><td>"+x.o+"</td><td class='"+(x.b<0?"neg":x.b>0?"pos":"")+"'>"+(x.b>0?"+":"")+x.b+"</td></tr>"
         ).join("");
     } else tbl.innerHTML = "";
 
@@ -732,21 +768,15 @@
   }
 
   // ---------- rotation audit: συνδυάζει και τους δύο κύκλους ανά θέση ----------
-  function renderAudit(){
-    const note = document.getElementById("auditNote");
-    const tbl = document.getElementById("auditTable");
-    tbl.innerHTML = ""; note.textContent = "";
+  /* Πίνακας «ποιος πήγε πόσες φορές σε ποια θέση/χώρο», μαζί με τις πραγματικές καλύψεις.
+     Επαναχρησιμοποιείται και από την πρόταση δίκαιης κάλυψης, ώστε η δικαιοσύνη χώρου να
+     μετράει και εκεί (να μην προτείνεται συνέχεια το ίδιο άτομο για την ίδια θέση). */
+  function computePositionMatrix(){
     const names = allNames();
-    if(!state.cycleStart || !names.length){
-      note.textContent = "Συμπλήρωσε το πρόγραμμα και την ημερομηνία έναρξης για να ενεργοποιηθεί ο έλεγχος.";
-      return;
-    }
+    if(!state.cycleStart || !names.length) return null;
     const cs = parseISODate(state.cycleStart);
     const today = new Date(); today.setHours(0,0,0,0);
-    if(today < cs){
-      note.textContent = "Ο κύκλος ξεκινά στις "+isoToDMY(state.cycleStart)+" — ο απολογισμός θα εμφανίζεται από τότε και μετά.";
-      return;
-    }
+    if(today < cs) return { names, mat:null, cs };
     const mat = {}; names.forEach(n=>mat[n]=[0,0,0,0]);
     for(let d = new Date(cs); d <= today; d = new Date(d.getTime()+86400000)){
       const wd = d.getDay();
@@ -761,17 +791,38 @@
         duty.forEach((n,j)=>{ if(n && mat[n]) mat[n][j]++; });
       });
     }
+    return { names, mat, cs };
+  }
+  function renderAudit(){
+    const note = document.getElementById("auditNote");
+    const tbl = document.getElementById("auditTable");
+    tbl.innerHTML = ""; note.textContent = "";
+    const info = computePositionMatrix();
+    if(!info){
+      note.textContent = "Συμπλήρωσε το πρόγραμμα και την ημερομηνία έναρξης για να ενεργοποιηθεί ο έλεγχος.";
+      return;
+    }
+    if(!info.mat){
+      note.textContent = "Ο κύκλος ξεκινά στις "+isoToDMY(state.cycleStart)+" — ο απολογισμός θα εμφανίζεται από τότε και μετά.";
+      return;
+    }
+    const { names, mat } = info;
     let warnAny = false;
     tbl.innerHTML = "<tr><th>Καθηγητής/τρια</th>" + POSITIONS.map(p=>"<th>"+p+"</th>").join("") + "<th>Σύνολο</th><th></th></tr>" +
       names.map(n=>{
         const r = mat[n], tot = r[0]+r[1]+r[2]+r[3];
-        const even = (Math.max(...r) - Math.min(...r)) <= 1;
+        const mx = Math.max(...r), mn = Math.min(...r);
+        const even = (mx - mn) <= 1;
         if(!even) warnAny = true;
-        return "<tr><td>"+esc(n)+"</td>"+r.map(v=>"<td>"+v+"</td>").join("")+
+        const cells = r.map((v,idx)=>{
+          const hot = !even && v===mx && v>mn+1;
+          return "<td"+(hot?" class='hotcell' title='Πηγαίνει πολύ πιο συχνά σε αυτή τη θέση από τους άλλους — «"+esc(POSITIONS[idx])+"»'":"")+">"+v+"</td>";
+        }).join("");
+        return "<tr><td>"+esc(n)+"</td>"+cells+
                "<td><b>"+tot+"</b></td><td>"+(even?"<span class='pos'>✔</span>":"<span class='neg'>⚠</span>")+"</td></tr>";
       }).join("");
     note.textContent = warnAny
-      ? "⚠ Κάποιοι δεν έχουν περάσει (ακόμη) ισομερώς από όλες τις θέσεις — συνήθως οφείλεται σε καλύψεις και εξισορροπείται στη συνέχεια του κύκλου. Οι μετρήσεις συνδυάζουν και τους δύο κύκλους (φυσικός χώρος)."
+      ? "⚠ Κάποιοι δεν έχουν περάσει (ακόμη) ισομερώς από όλες τις θέσεις — τα κελιά με χρώμα δείχνουν πού υπάρχει υπερβολική συγκέντρωση (π.χ. συνέχεια «Αυλή»). Συνήθως οφείλεται σε καλύψεις και εξισορροπείται στη συνέχεια του κύκλου. Οι μετρήσεις συνδυάζουν και τους δύο κύκλους (φυσικός χώρος)."
       : "✔ Μέχρι σήμερα, όλοι έχουν περάσει ισομερώς από όλες τις θέσεις (μαζί με τις καλύψεις, και οι δύο κύκλοι συνδυασμένα).";
   }
 
@@ -803,8 +854,8 @@
       if(!base.some(n=>n && n.trim()!=="")) return null;
       const reg = positioned(base, w);
       const entries = reg.map((n,i)=>({ pos:POSITIONS[i], original:n, name:(n && subs[n]) ? subs[n] : n, covered:!!(n && subs[n]) }));
-      const bench = benchOf(base, w);
-      return { cycle:ck, label:cycleLabel(ck), entries, bench };
+      const bkName = backupForWeek(state.backup[dayName][ck], w);
+      return { cycle:ck, label:cycleLabel(ck), entries, bkName };
     }).filter(Boolean);
     if(!cyclesOut.length) return null;
     return { dayName, cyclesOut };
@@ -959,10 +1010,50 @@
         const who = e.covered ? "<span class='neg'>"+esc(e.name)+"</span> <span style='color:#888;font-size:11px;'>(αντί "+esc(e.original)+")</span>" : (e.name?esc(e.name):"—");
         return "<tr style='border-left:3px solid "+dc.bold+";'><td>"+esc(cd.label)+"</td><td>"+esc(e.pos)+"</td><td>"+who+"</td></tr>";
       })).join("") + '</table>';
-    const benchLines = r.cyclesOut.filter(cd=>cd.bench && cd.bench.length)
-      .map(cd=>"<div style='margin-top:8px;font-size:13px;'><b>Ρεζέρβα ("+esc(cd.label)+"):</b> "+cd.bench.map(esc).join(", ")+"</div>").join("");
-    if(benchLines) html += benchLines;
+    const backupLines = r.cyclesOut.filter(cd=>cd.bkName)
+      .map(cd=>"<div style='margin-top:8px;font-size:13px;color:var(--terracotta);'><b>🧩 Αναπληρωτής κύκλου ("+esc(cd.label)+"):</b> "+esc(cd.bkName)+"</div>").join("");
+    if(backupLines) html += backupLines;
     out.innerHTML = html;
+  }
+
+  // ---------- print a single day (from Προβολή ημέρας) ----------
+  function printDayView(){
+    const inp = document.getElementById("viewDate");
+    const d = parseAnyDate(inp ? inp.value : "");
+    if(!d){ alert("Διάλεξε πρώτα ημερομηνία."); return; }
+    if(!state.cycleStart){ alert("Βάλε πρώτα την ημερομηνία έναρξης κύκλου."); return; }
+    let body;
+    const wd = d.getDay();
+    const cs = parseISODate(state.cycleStart);
+    const holD = holidayFor(d);
+    if(wd===0 || wd===6){
+      body = '<div class="rpmuted">'+fmtDMY(d)+': Σαββατοκύριακο — δεν υπάρχει εφημερία.</div>';
+    } else if(d < cs){
+      body = '<div class="rpmuted">'+fmtDMY(d)+': πριν την έναρξη του κύκλου ('+isoToDMY(state.cycleStart)+').</div>';
+    } else if(holD){
+      body = '<div class="rpmuted">'+fmtDMY(d)+': αργία — '+esc(holD.label)+'. Δεν λειτουργεί το σχολείο.</div>';
+    } else {
+      const r = rosterForDate(d);
+      if(!r){
+        body = '<div class="rpmuted">Το πρόγραμμα δεν έχει συμπληρωθεί για αυτή την ημέρα.</div>';
+      } else {
+        body = r.cyclesOut.map(cd=>{
+          let h = '<h3>'+esc(cd.label)+'</h3><table><tr><th>Θέση</th><th>Εφημερία</th></tr>';
+          h += cd.entries.map(e=>{
+            const who = e.covered ? esc(e.name)+" <span class='rpmuted'>(αντί "+esc(e.original)+")</span>" : (e.name?esc(e.name):"—");
+            return "<tr><td>"+esc(e.pos)+"</td><td>"+who+"</td></tr>";
+          }).join("");
+          h += '</table>';
+          if(cd.bkName) h += "<div class='rpmuted' style='margin:-2mm 0 4mm;'><b>🧩 Αναπληρωτής κύκλου:</b> "+esc(cd.bkName)+"</div>";
+          return h;
+        }).join("");
+      }
+    }
+    const dName = (wd>=1&&wd<=5) ? DAYS[wd-1] : "";
+    const h = '<div class="rphead"><span class="rpschool">3ο Γυμνάσιο Πολίχνης</span><span class="rptitle">ΕΦΗΜΕΡΙΕΣ — '+esc(dName)+' '+fmtDMY(d)+'</span></div>' +
+      body + '<div class="rpmuted" style="margin-top:6mm;font-size:9pt;">Εκτυπώθηκε: '+fmtDMY(new Date())+'</div>';
+    document.getElementById("reportPrintArea").innerHTML = h;
+    window.print();
   }
 
   // ---------- print monthly report ----------
@@ -1052,14 +1143,28 @@
     });
     const eligible = names.filter(n=> n!==ov.absent && !duty.includes(n) && !recent.has(n));
     if(!eligible.length) return;
+    const totalsAll = computeTotals("ALL");
+    const posIdx = duty.indexOf(ov.absent);
+    const posInfo = computePositionMatrix();
+    const posCount = (n)=> (posIdx>=0 && posInfo && posInfo.mat && posInfo.mat[n]) ? posInfo.mat[n][posIdx] : 0;
+    // Προτεραιότητα: 1) ποιος χρωστάει περισσότερο (ισοζύγιο καλύψεων) 2) λιγότερες εμφανίσεις φέτος
+    // 3) λιγότερες φορές σε αυτή ΤΗ ΘΕΣΗ (δικαιοσύνη χώρου — να μην πηγαίνει συνέχεια ο ίδιος στην αυλή)
     eligible.sort((a,b)=>{
       const ba=(covers[a]-covered[a]), bb=(covers[b]-covered[b]);
       if(ba!==bb) return ba-bb;
+      const ta = totalsAll[a]||0, tb = totalsAll[b]||0;
+      if(ta!==tb) return ta-tb;
+      const pa = posCount(a), pb = posCount(b);
+      if(pa!==pb) return pa-pb;
       return covers[a]-covers[b];
     });
+    const pick = eligible[0];
+    const reasons = [];
+    if(covers[pick]-covered[pick]<0) reasons.push("χρωστάει εφημερία");
+    else reasons.push("χαμηλότερο φορτίο (" + (totalsAll[pick]||0) + " εφημερίες φέτος)");
+    if(posIdx>=0 && posInfo && posInfo.mat) reasons.push("λιγότερες φορές στη θέση «"+POSITIONS[posIdx]+"» ("+posCount(pick)+")");
     box.style.display = "block";
-    box.textContent = "💡 Πρόταση δίκαιης κάλυψης για "+isoToDMY(ov.date)+": "+eligible[0]+
-      (covers[eligible[0]]-covered[eligible[0]]<0 ? " (χρωστάει εφημερία)" : " (χαμηλότερο φορτίο)");
+    box.textContent = "💡 Πρόταση δίκαιης κάλυψης για "+isoToDMY(ov.date)+": "+pick+" — "+reasons.join(", ")+".";
   }
 
   // ---------- events ----------
@@ -1082,10 +1187,12 @@
       }
     }
     runChecks();
+    saveDraft();
   });
   document.addEventListener("change", e=>{
     if(e.target.closest(".dayrow") || e.target.id==="cycle1Time" || e.target.id==="cycle2Time") { pullFromUI(); renderOverrides(); }
     runChecks();
+    saveDraft();
   });
   document.getElementById("addOverride").addEventListener("click", ()=>{
     pullFromUI();
@@ -1097,6 +1204,7 @@
   document.getElementById("ovNext").addEventListener("click", ()=>{ ovWeekMonday = addDays(ovWeekMonday,7); renderOverrides(); });
   document.getElementById("reportMonth").addEventListener("change", renderReport);
   document.getElementById("printReport").addEventListener("click", printReport);
+  document.getElementById("printDayView").addEventListener("click", printDayView);
   ovDiv.addEventListener("click", e=>{
     const b = e.target.closest("[data-del]");
     if(b){ state.overrides.splice(+b.dataset.del,1); renderOverrides(); runChecks(); }
@@ -1152,6 +1260,34 @@
     pullHolidaysFromUI(); renderHolidays(); runChecks(); renderDayView();
   });
 
+  // ---------- τοπικό πρόχειρο (για να μη χαθεί ποτέ ό,τι γράφεις) ----------
+  const DRAFT_KEY = "efimeries_draft";
+  function draftBody(text){ return String(text||"").split(/\r?\n/).filter(l=>!/^\s*LAST_UPDATED\s*=/.test(l)).join("\n").trim(); }
+  let draftTimer = null;
+  function saveDraft(){
+    clearTimeout(draftTimer);
+    draftTimer = setTimeout(()=>{
+      try{ localStorage.setItem(DRAFT_KEY, JSON.stringify({ ts: Date.now(), text: serialize() })); }catch(e){}
+    }, 700);
+  }
+  function clearDraft(){ try{ localStorage.removeItem(DRAFT_KEY); }catch(e){} }
+  function readDraft(){
+    try{ const raw = localStorage.getItem(DRAFT_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+  }
+  function offerDraft(serverText){
+    const d = readDraft();
+    if(!d || !d.text) return;
+    if(draftBody(d.text) === draftBody(serverText)){ clearDraft(); return; }  // ίδια πράγματα, δεν χρειάζεται
+    const box = document.getElementById("draftWarn");
+    const when = document.getElementById("draftWhen");
+    if(!box) return;
+    if(when && d.ts){
+      const dt = new Date(d.ts);
+      when.textContent = "(" + fmtDMY(dt) + ", " + String(dt.getHours()).padStart(2,"0") + ":" + String(dt.getMinutes()).padStart(2,"0") + ")";
+    }
+    box.style.display = "block";
+  }
+
   // ---------- load ----------
   let lastLoadedState = null;
   function snapshotState(){
@@ -1161,6 +1297,24 @@
     .then(r=>{ if(!r.ok) throw 0; return r.text(); })
     .then(t=>{
       const cfg = parseDataText(t);
+      // Η ρεζέρβα καταργήθηκε: κρατάμε μόνο τις 4 θέσεις, αλλά ειδοποιούμε αν το αρχείο είχε παραπάνω ονόματα.
+      const dropped = [];
+      DAYS.forEach(d=>CYCLE_KEYS.forEach(ck=>{
+        const arr = cfg.base[d][ck] || [];
+        const extra = arr.slice(4).filter(x=>x && x.trim());
+        if(extra.length) dropped.push("«"+d+" – "+CYCLE_TITLES[ck]+"»: "+extra.join(", "));
+        const four = ["","","",""];
+        for(let i=0;i<4;i++) four[i] = arr[i] || "";
+        cfg.base[d][ck] = four;
+        // ο αναπληρωτής είναι πλέον ΕΝΑ άτομο — κρατάμε το πρώτο, ειδοποιώντας για τα υπόλοιπα
+        const bk = (cfg.backup[d][ck] || []).filter(x=>x && x.trim());
+        if(bk.length>1) dropped.push("«"+d+" – "+CYCLE_TITLES[ck]+"» (αναπληρωτές): "+bk.slice(1).join(", "));
+        cfg.backup[d][ck] = bk.length ? [bk[0].trim()] : [];
+      }));
+      if(dropped.length){
+        const ew = document.getElementById("extrasWarn"), el = document.getElementById("extrasList");
+        if(ew && el){ el.innerHTML = dropped.map(esc).join("<br>"); ew.style.display = "block"; }
+      }
       state.base = cfg.base; state.overrides = cfg.overrides; state.backup = cfg.backup;
       state.holidays = cfg.holidays || [];
       state.cycleStart = cfg.cycleStart||"";
@@ -1172,8 +1326,32 @@
       }
       pushToUI(); populateMonths(); runChecks(); renderDayView();
       lastLoadedState = snapshotState();
+      offerDraft(t);
     })
-    .catch(()=>{ pushToUI(); populateMonths(); runChecks(); renderDayView(); lastLoadedState = snapshotState(); });
+    .catch(()=>{
+      const wrn = document.getElementById("loadWarn");
+      if(wrn) wrn.style.display = "block";
+      state.holidays = state.holidays || [];
+      pushToUI(); populateMonths(); runChecks(); renderDayView(); lastLoadedState = snapshotState();
+    });
+
+  document.getElementById("draftRestore").addEventListener("click", ()=>{
+    const d = readDraft();
+    if(!d || !d.text) return;
+    const cfg = parseDataText(d.text);
+    state.base = cfg.base; state.backup = cfg.backup; state.overrides = cfg.overrides;
+    state.holidays = cfg.holidays || [];
+    state.cycleStart = cfg.cycleStart || state.cycleStart;
+    state.cycleTimes = { "Α": cfg.cycleTimes["Α"]||state.cycleTimes["Α"], "Β": cfg.cycleTimes["Β"]||state.cycleTimes["Β"] };
+    pushToUI(); renderOverrides(); runChecks(); renderDayView();
+    document.getElementById("draftWarn").style.display = "none";
+    const st = document.getElementById("status");
+    st.className = "ok"; st.textContent = "Οι αλλαγές επανήλθαν — πάτα Αποθήκευση για να μπουν στο GitHub.";
+  });
+  document.getElementById("draftDiscard").addEventListener("click", ()=>{
+    clearDraft();
+    document.getElementById("draftWarn").style.display = "none";
+  });
 
   document.getElementById("undoChanges").addEventListener("click", ()=>{
     if(!lastLoadedState){ return; }
@@ -1257,6 +1435,8 @@
       }
       statusEl.className="ok"; statusEl.textContent="✔ Αποθηκεύτηκε! Η σελίδα ενημερώνεται σε ~1 λεπτό.";
       lastLoadedState = snapshotState();
+      clearDraft();
+      const dw = document.getElementById("draftWarn"); if(dw) dw.style.display = "none";
     }catch(err){
       statusEl.className="err"; statusEl.textContent=err.message;
     }

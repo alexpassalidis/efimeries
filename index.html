@@ -88,9 +88,9 @@
   .reserve.filled .rname{color:var(--muted);}
 
   .empty{text-align:center;padding:36px 22px;color:var(--muted);font-size:14.5px;line-height:1.6;background:#fff;border-radius:18px;box-shadow:0 10px 22px -16px rgba(27,42,74,0.28);}
-  .benchline{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:#fff;border-radius:16px;padding:12px 16px;margin-top:10px;box-shadow:0 10px 22px -16px rgba(27,42,74,0.28);}
-  .benchline .blabel{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:2px;}
-  .benchline .bname{font-size:13px;font-weight:700;color:var(--board);background:var(--paper);border-radius:20px;padding:3px 11px;}
+  .backupline{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:#FBF7F4;border:1.5px dashed var(--terracotta);border-radius:16px;padding:12px 16px;margin-top:10px;}
+  .backupline .blabel{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--terracotta);margin-right:2px;}
+  .backupline .bname{font-size:13px;font-weight:700;color:var(--board);background:#fff;border-radius:20px;padding:3px 11px;}
 
   .actions{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin-top:6px;}
   .printbtn{border:none;border-radius:14px;padding:11px 20px;font-size:13.5px;font-weight:700;font-family:inherit;color:var(--board);background:#fff;cursor:pointer;box-shadow:0 8px 20px -12px rgba(27,42,74,0.35);transition:transform .12s ease, background .15s ease;}
@@ -238,11 +238,12 @@
     const start=((4*w)%L+L)%L; const four=[]; for(let k=0;k<4;k++) four.push(list[(start+k)%L]);
     return rotated(four, ((rotOffset(w,L)%4)+4)%4);
   }
-  function benchOf(list, w){
-    const L=list.length; if(L<=4) return [];
-    const start=((4*w)%L+L)%L; const act=new Set(); for(let k=0;k<4;k++) act.add((start+k)%L);
-    const b=[]; for(let idx=0;idx<L;idx++){ if(!act.has(idx)&&list[idx]&&list[idx].trim()!=="") b.push(list[idx]); }
-    return b;
+  /* Ο αναπληρωτής κύκλου είναι ΕΝΑ άτομο για όλο τον κύκλο (καλύπτει όποια θέση κι αν αδειάσει).
+     Αν έχουν καταχωρηθεί 2+ ονόματα (με ;), εναλλάσσονται δίκαια ανά εβδομάδα. */
+  function backupForWeek(list, w){
+    const arr = (list||[]).map(x=>x&&x.trim()).filter(Boolean);
+    if(!arr.length) return "";
+    return arr[((w%arr.length)+arr.length)%arr.length];
   }
   function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   function stripAccents(x){
@@ -333,18 +334,16 @@
     const iso = toISO(date);
     return CYCLES.map(c=>{
       const base = (cfg.base[dayName] && cfg.base[dayName][c.key]) || ["","","",""];
-      const bkList = ((cfg.backup[dayName] && cfg.backup[dayName][c.key]) || []).slice();
-      while(bkList.length < base.length) bkList.push("");
+      const bkList = (cfg.backup[dayName] && cfg.backup[dayName][c.key]) || [];
       const reg = positioned(base, w);
-      const rbk = positioned(bkList, w);
-      const entries = reg.map((n,i)=>({regular:n, backup:rbk[i]||"", substitute:null}));
+      const entries = reg.map((n,i)=>({regular:n, substitute:null}));
       cfg.overrides.forEach(ov=>{
         if(ov.date!==iso) return;
         const want = normName(ov.absent);
         entries.forEach(s=>{ if(s.regular && normName(s.regular)===want) s.substitute = ov.substitute; });
       });
-      const bench = benchOf(base, w);
-      return { key:c.key, label:c.label, time:cycleTime(c.key), entries, bench };
+      const backupName = backupForWeek(bkList, w);
+      return { key:c.key, label:c.label, time:cycleTime(c.key), entries, backupName };
     });
   }
 
@@ -415,7 +414,6 @@
           const missTag = s.substitute ? '<span class="miss">λείπει</span>' : '';
           let resCls, resLabel, resName;
           if(s.substitute){ resCls=" filled"; resLabel="Καλύπτει"; resName=esc(s.substitute); }
-          else if(s.backup && s.backup.trim()!==""){ resCls=""; resLabel="Εφεδρεία"; resName=esc(s.backup); }
           else { resCls=""; resLabel="Αναπληρωτής"; resName="—"; }
           return '<div class="row">'+
                    '<div class="slot">'+(i+1)+'</div>'+
@@ -425,10 +423,10 @@
                      '<span class="rname">'+resName+'</span></div>'+
                  '</div>';
         }).join("");
-        const benchLine = (cd.bench && cd.bench.length)
-          ? '<div class="benchline"><span class="blabel">Ρεζέρβα εβδομάδας</span>'+cd.bench.map(n=>'<span class="bname">'+esc(n)+'</span>').join("")+'</div>'
+        const backupLine = cd.backupName
+          ? '<div class="backupline"><span class="blabel">🧩 Αναπληρωτής κύκλου</span><span class="bname">'+esc(cd.backupName)+'</span></div>'
           : '';
-        return '<div class="cyclegroup"><div class="cyclehead"><span class="ctitle">'+esc(cd.label)+'</span><span class="ctime">'+esc(cd.time)+'</span></div><div class="card">'+rows+'</div>'+benchLine+'</div>';
+        return '<div class="cyclegroup"><div class="cyclehead"><span class="ctitle">'+esc(cd.label)+'</span><span class="ctime">'+esc(cd.time)+'</span></div><div class="card">'+rows+'</div>'+backupLine+'</div>';
       }).join("");
     }
 
@@ -453,11 +451,13 @@
       const groups = cyclesData.map(cd=>{
         const rows = (hasAny ? cd.entries : [{},{},{},{}]).map((s,i)=>{
           const eff = s && s.regular ? esc(s.regular) : "—";
-          const note = s && s.substitute ? '<span class="psub">αναπλ: '+esc(s.substitute)+'</span>'
-                     : (s && s.backup && s.backup.trim()!=="" ? '<span class="psub">εφ: '+esc(s.backup)+'</span>' : '');
+          const note = s && s.substitute ? '<span class="psub">αναπλ: '+esc(s.substitute)+'</span>' : '';
           return '<tr><td class="pnumcell">'+(i+1)+'</td><td class="pposcell">'+POSITIONS[i]+'</td><td class="pnamecell">'+eff+note+'</td></tr>';
         }).join("");
-        return '<tr><th class="cyclehdr" colspan="3">'+esc(cd.label)+' ('+esc(cd.time)+')</th></tr>' + rows;
+        const bkRow = (hasAny && cd.backupName)
+          ? '<tr><td></td><td class="pposcell" style="font-style:italic;color:#666;">Αναπληρωτής κύκλου</td><td class="pnamecell" style="font-style:italic;font-weight:400;color:#666;">'+esc(cd.backupName)+'</td></tr>'
+          : '';
+        return '<tr><th class="cyclehdr" colspan="3">'+esc(cd.label)+' ('+esc(cd.time)+')</th></tr>' + rows + bkRow;
       }).join("");
       const bodyHTML = hol
         ? '<table class="pgrid"><tr><td class="pholiday" colspan="3">Δεν λειτουργεί το σχολείο — '+esc(hol.label)+'</td></tr></table>'
@@ -487,7 +487,7 @@
 
     const rows = DAYS.map((dname,i)=>{
       const dd = addDays(shownMonday,i);
-      const dayCell = '<td class="wday" rowspan="4">'+dname+
+      const dayCell = '<td class="wday" rowspan="5">'+dname+
                       '<span class="wdate">'+dd.getDate()+'/'+(dd.getMonth()+1)+'</span></td>';
       const h = holidayFor(dd);
       if(h){
@@ -503,13 +503,19 @@
         const note = s && s.substitute ? ' <span class="wsub">(αναπλ: '+esc(s.substitute)+')</span>' : '';
         return '<td class="wname">'+eff+note+'</td>';
       };
-      return POSITIONS.map((pos,k)=>
+      const posRows = POSITIONS.map((pos,k)=>
         '<tr'+(k===0?' class="wstart"':'')+'>'+
         (k===0 ? dayCell : '')+
         '<td class="wnum">'+(k+1)+'</td><td class="wpos">'+pos+'</td>'+
         cell(cds[0],k)+cell(cds[1],k)+
         '</tr>'
       ).join("");
+      const bk0 = any && cds[0] && cds[0].backupName ? esc(cds[0].backupName) : "—";
+      const bk1 = any && cds[1] && cds[1].backupName ? esc(cds[1].backupName) : "—";
+      const bkRow = '<tr><td class="wnum"></td><td class="wpos" style="font-style:italic;color:#666;">Αναπληρωτής κύκλου</td>'+
+        '<td class="wname" style="font-style:italic;font-weight:400;color:#666;">'+bk0+'</td>'+
+        '<td class="wname" style="font-style:italic;font-weight:400;color:#666;">'+bk1+'</td></tr>';
+      return posRows + bkRow;
     }).join("");
 
     function sheetHTML(){
